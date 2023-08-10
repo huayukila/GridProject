@@ -11,6 +11,7 @@ namespace Framework.BuildProject
         public Transform prefab;
         public int width;
         public int height;
+        public Terrain terrain;
 
         [SerializeField]
         public List< BuildingLevelData> LevelDatasList=new List<BuildingLevelData>();

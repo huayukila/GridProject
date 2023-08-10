@@ -10,11 +10,11 @@ namespace Framework.BuildProject
         void Start()
         {
             dataModel = this.GetModel<IResourceDataModel>();
-            resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Mood) + " Stone:" + dataModel.GetRes(ResourceType.Stone)
+            resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" + dataModel.GetRes(ResourceType.Stone)
                 + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Worker:" + dataModel.GetRes(ResourceType.Worker);
             this.RegisterEvent<RefreshResPanel>(e =>
             {
-                resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Mood) + " Stone:" + dataModel.GetRes(ResourceType.Stone)
+                resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" + dataModel.GetRes(ResourceType.Stone)
                 + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Worker:" + dataModel.GetRes(ResourceType.Worker);
             }).UnregisterWhenGameObjectDestroyde(gameObject);
         }

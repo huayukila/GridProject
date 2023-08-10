@@ -11,7 +11,6 @@ namespace Framework.BuildProject
         public void RemoveWorker(GameObject obj);
         public void GetDamage(GameObject obj,int damage);
 
-
         public Buildingobj GetBuildData(GameObject obj);
     }
 

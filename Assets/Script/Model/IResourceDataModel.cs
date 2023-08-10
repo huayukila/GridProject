@@ -3,30 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Framework.BuildProject
 {
-    public enum ResourceType
-    {
-        Mood,
-        Stone,
-        Gold,
-        Worker
-    }
-    [Serializable]
-    public struct BuildingCost
-    {
-        public ResourceType resType;
-        public int Cost;
-    }
-    [Serializable]
-    public struct BuildingLevelData
-    {
-        public int Level;
-        public int MaxWorker;
-        public int MaxHp;
-        public BuildingCost[] costList;
-    }
     public interface IResourceDataModel : IModel
     {
-        //
         void DeductResources(BuildingCost[] costList);
         void DeductResources(BuildingCost buildingCost);
         void DeductResources(ResourceType resourceType,int value);
@@ -46,10 +24,10 @@ namespace Framework.BuildProject
             //ç°ÇÕàÍâûå≈íËìIÇ»êîílÇ…ÇµÇƒ
             resDic = new Dictionary<ResourceType, int>
             {
-                { ResourceType.Mood, 100 },
+                { ResourceType.Wood, 100 },
                 { ResourceType.Stone, 100 },
                 { ResourceType.Gold, 100 },
-                { ResourceType.Worker, 10 }
+                { ResourceType.Worker, 0 }
             };
         }
         public void DeductResources(BuildingCost[] costList)

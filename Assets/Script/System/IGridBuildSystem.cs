@@ -7,23 +7,6 @@ using UnityEngine;
 
 namespace Framework.BuildProject
 {
-    public enum Dir
-    {
-        Down,
-        Left,
-        Up,
-        Right
-    }
-    public enum State
-    {
-        Normal,
-        Build
-    }
-    public enum ObjectType
-    {
-
-    }
-
     public class Buildingobj
     {
         public int WorkerNum;

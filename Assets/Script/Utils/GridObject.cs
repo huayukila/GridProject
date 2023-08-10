@@ -6,7 +6,8 @@ public class GridObject
     int x;
     int z;
     Transform objectTransform;
-    
+
+    public Terrain terrain;
     public bool Canbuild => objectTransform == null;
     public GridObject(GridUtils<GridObject> grid, int x, int z)
     {
@@ -16,7 +17,7 @@ public class GridObject
     }
     public void SetTransform(Transform transform)
     {
-        this.objectTransform = transform;
+        objectTransform = transform;
     }
     public void DestoryObject()
     {

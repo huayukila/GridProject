@@ -7,13 +7,13 @@ namespace Framework.BuildProject
     [CustomEditor(typeof(BuildingData))]
     public class BuildingConfigEditor : Editor
     {
-        BuildingData buildingData;
         SerializedProperty buildingLevelProp;
         SerializedProperty nameString;
         SerializedProperty Height;
         SerializedProperty Width;
         SerializedProperty Prefab;
         SerializedProperty Visual;
+        SerializedProperty Terrain;
         private void OnEnable()
         {
             buildingLevelProp = serializedObject.FindProperty("LevelDatasList");
@@ -22,6 +22,7 @@ namespace Framework.BuildProject
             Width = serializedObject.FindProperty("width");
             Prefab = serializedObject.FindProperty("prefab");
             Visual = serializedObject.FindProperty("visual");
+            Terrain = serializedObject.FindProperty("terrain");
         }
         public override void OnInspectorGUI()
         {
@@ -31,6 +32,8 @@ namespace Framework.BuildProject
             EditorGUILayout.PropertyField(Visual);
             EditorGUILayout.PropertyField(Height);
             EditorGUILayout.PropertyField (Width);
+            EditorGUILayout.PropertyField (Terrain);
+
             EditorGUILayout.PropertyField(buildingLevelProp);
 
             serializedObject.ApplyModifiedProperties();
