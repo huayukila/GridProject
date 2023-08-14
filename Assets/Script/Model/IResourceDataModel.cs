@@ -5,13 +5,13 @@ namespace Framework.BuildProject
 {
     public interface IResourceDataModel : IModel
     {
-        void DeductResources(BuildingCost[] costList);
-        void DeductResources(BuildingCost buildingCost);
+        void DeductResources(ResourceCost[] costList);
+        void DeductResources(ResourceCost buildingCost);
         void DeductResources(ResourceType resourceType,int value);
         
         void RiseResources(ResourceType resourceType,int value);
-        bool IsResEnough(BuildingCost[] costList);
-        bool IsResEnough(BuildingCost buildingCost);
+        bool IsResEnough(ResourceCost[] costList);
+        bool IsResEnough(ResourceCost buildingCost);
         int GetRes(ResourceType resourceType);
     }
     public class ResourceDataModel : AbstractModel, IResourceDataModel
@@ -30,18 +30,18 @@ namespace Framework.BuildProject
                 { ResourceType.Worker, 0 }
             };
         }
-        public void DeductResources(BuildingCost[] costList)
+        public void DeductResources(ResourceCost[] costList)
         {
             if (IsResEnough(costList))
             {
-                foreach (BuildingCost buildingCost in costList)
+                foreach (ResourceCost buildingCost in costList)
                 {
                     resDic[buildingCost.resType] -= buildingCost.Cost;
                 }
             }
         }
 
-        public void DeductResources(BuildingCost buildingCost)
+        public void DeductResources(ResourceCost buildingCost)
         {
             if (resDic.TryGetValue(buildingCost.resType, out int cost))
             {
@@ -58,9 +58,9 @@ namespace Framework.BuildProject
             return 0;
         }
 
-        public bool IsResEnough(BuildingCost[] costList)
+        public bool IsResEnough(ResourceCost[] costList)
         {
-            foreach (BuildingCost buildingCost in costList)
+            foreach (ResourceCost buildingCost in costList)
             {
                 //Ç‹Ç∏ÅAé´ìTÇÃíÜÇ…Ç±ÇÃéëåπÇ™ë∂ç›ÇµÇƒÇ¢ÇÈÇÃÇ©ÇämîFÇ∑ÇÈ
                 if (resDic.TryGetValue(buildingCost.resType, out int cost))
@@ -81,7 +81,7 @@ namespace Framework.BuildProject
             return true;
         }
 
-        public bool IsResEnough(BuildingCost buildingCost)
+        public bool IsResEnough(ResourceCost buildingCost)
         {
             if (resDic[buildingCost.resType] < buildingCost.Cost)
             {

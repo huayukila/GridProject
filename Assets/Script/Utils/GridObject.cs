@@ -7,13 +7,17 @@ public class GridObject
     int z;
     Transform objectTransform;
 
-    public Terrain terrain;
-    public bool Canbuild => objectTransform == null;
+    public bool isNull => objectTransform == null;
+    public ResourceCost TerrainData;
     public GridObject(GridUtils<GridObject> grid, int x, int z)
     {
         this.grid = grid;
         this.x = x;
         this.z = z;
+        TerrainData = new ResourceCost() {
+            resType = ResourceType.None,
+            Cost = 0
+        };
     }
     public void SetTransform(Transform transform)
     {

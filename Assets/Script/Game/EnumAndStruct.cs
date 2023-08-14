@@ -2,6 +2,7 @@ using System;
 
 public enum ResourceType
 {
+    None,
     Wood,
     Stone,
     Gold,
@@ -34,7 +35,7 @@ public enum Terrain
 
 
 [Serializable]
-public struct BuildingCost
+public struct ResourceCost
 {
     public ResourceType resType;
     public int Cost;
@@ -45,5 +46,5 @@ public struct BuildingLevelData
     public int Level;
     public int MaxWorker;
     public int MaxHp;
-    public BuildingCost[] costList;
+    public ResourceCost[] costList;
 }

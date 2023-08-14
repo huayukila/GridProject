@@ -36,7 +36,6 @@ public class GridUtils<TGridObject>
             }
         }
 
-
         //テスト用
         GameObject TextRoot = new("TextRoot");
         for (int x = 0; x < gridArray.GetLength(0); x++)

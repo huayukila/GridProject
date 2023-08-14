@@ -13,7 +13,7 @@ namespace Framework.BuildProject
         SerializedProperty Width;
         SerializedProperty Prefab;
         SerializedProperty Visual;
-        SerializedProperty Terrain;
+        SerializedProperty NeedResource;
         private void OnEnable()
         {
             buildingLevelProp = serializedObject.FindProperty("LevelDatasList");
@@ -22,7 +22,7 @@ namespace Framework.BuildProject
             Width = serializedObject.FindProperty("width");
             Prefab = serializedObject.FindProperty("prefab");
             Visual = serializedObject.FindProperty("visual");
-            Terrain = serializedObject.FindProperty("terrain");
+            NeedResource = serializedObject.FindProperty("NeedResource");
         }
         public override void OnInspectorGUI()
         {
@@ -32,7 +32,7 @@ namespace Framework.BuildProject
             EditorGUILayout.PropertyField(Visual);
             EditorGUILayout.PropertyField(Height);
             EditorGUILayout.PropertyField (Width);
-            EditorGUILayout.PropertyField (Terrain);
+            EditorGUILayout.PropertyField (NeedResource);
 
             EditorGUILayout.PropertyField(buildingLevelProp);
 

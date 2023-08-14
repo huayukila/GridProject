@@ -1,8 +1,5 @@
 using DG.Tweening;
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -37,8 +34,11 @@ namespace Framework.BuildProject
     }
     public class GridBuildSystem : AbstractSystem, IGridBuildSystem
     {
+        //グリッドマップ対象
         GridUtils<GridObject> grid;
+        //建物対象
         BuildingData building;
+        
         Transform visualBuilding;
         Dir dir = Dir.Down;
 
@@ -56,7 +56,15 @@ namespace Framework.BuildProject
         }
         public void CreatGrid(int gridWidth, int gridHeight, float cellSize)
         {
-            grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero, (GridUtils<GridObject> g, int x, int z) => new GridObject(g, x, z));
+            grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
+                (GridUtils<GridObject> g, int x, int z) => new GridObject(g, x, z)
+                );
+            //地形設定ファイルからグリッドマップを設定する
+            //...
+
+
+            //テースト用
+            grid.GetGridObjectByXY(1, 1).TerrainData.resType=ResourceType.Gold;
         }
         public void SetBuilding()
         {
@@ -69,12 +77,12 @@ namespace Framework.BuildProject
                 Debug.Log(x + "," + z);
                 if (x >= 0 && z >= 0 && x <= grid.GetGridSize().x && z <= grid.GetGridSize().y)
                 {
-                    //建物のグリッド
+                    //建物の占有グリッドリスト
                     List<Vector2Int> gridPositionList = GetGridPositionList(new Vector2Int(x, z), dir);
                     //マップ中フラグ
                     bool isInGridMap = true;
                     //築けるフラグ
-                    bool isCanBuil = true;
+                    bool isCanBuil=true;
 
                     //建物の毎グリッドはマップの中にあるのか
                     foreach (Vector2Int gridPosition in gridPositionList)
@@ -91,15 +99,16 @@ namespace Framework.BuildProject
                         //グリッドの中にも建物がありました
                         foreach (Vector2Int gridPosition in gridPositionList)
                         {
-                            if (!grid.GetGridObjectByXY(gridPosition.x, gridPosition.y).Canbuild)
+                            GridObject gObj= grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
+                            if (!gObj.isNull||gObj.TerrainData.resType!=building.NeedResource)
                             {
-                                Debug.Log("ここはもう何か築かれた");
+                                Debug.Log("ここに築くことはできません");
                                 isCanBuil = false;
                                 break;
                             }
                         }
                     }
-                    if (isInGridMap && isCanBuil)
+                    if (isCanBuil&&isInGridMap)
                     {
                         //基準点偏移
                         Vector2Int rotationOffset = GetRotationOffset(dir);
@@ -107,7 +116,7 @@ namespace Framework.BuildProject
                         Vector3 buildingObjectWorldPosition = grid.GetWorldPosition3D(x, z) +
                             new Vector3(rotationOffset.x, 0, rotationOffset.y) * grid.GetCellSize;
                         //建物生成
-                        Transform buildTransform = UnityEngine.Object.Instantiate(
+                        Transform buildTransform = Object.Instantiate(
                             building.prefab,
                             buildingObjectWorldPosition,
                             Quaternion.Euler(0, GetRotationAngle(dir), 0));

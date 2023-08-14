@@ -17,12 +17,15 @@ MonoBehaviour:
   prefab: {fileID: 3801415977465005682, guid: b05cdd0d428136941b6b96cf79df6515, type: 3}
   width: 1
   height: 1
+  NeedResource: 3
   LevelDatasList:
   - Level: 1
     MaxWorker: 0
     MaxHp: 100
     costList:
-    - resType: 0
-      Cost: 20
     - resType: 1
       Cost: 10
+    - resType: 2
+      Cost: 5
+    - resType: 4
+      Cost: -4
