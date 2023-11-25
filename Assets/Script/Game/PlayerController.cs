@@ -6,23 +6,25 @@ namespace Framework.BuildProject
     {
         IGridBuildSystem gridBuildSystem;
 
-        public BuildPanel buildPanel;
+        public BuildDataPanelManager m_BuildDataPanelManager;
+
         // Start is called before the first frame update
         private void Awake()
         {
             gridBuildSystem = this.GetSystem<IGridBuildSystem>();
             gridBuildSystem.CreatGrid(10, 10, 10f);
         }
+
         void Start()
         {
-            buildPanel.CloseLabe();
         }
+
         // Update is called once per frame
         void Update()
         {
-            switch (gridBuildSystem.state.Value)
+            switch (gridBuildSystem.m_State.Value)
             {
-                case State.Normal:
+                case PlayerState.Normal:
                     if (Input.GetMouseButton(0))
                     {
                         if (!UtilsClass.Instance.IsMouseOverUI())
@@ -32,16 +34,18 @@ namespace Framework.BuildProject
                             Physics.Raycast(ray, out hit);
                             if (hit.transform.tag == "Building")
                             {
-                                buildPanel.OpenLabe(hit.transform.gameObject);
+                                m_BuildDataPanelManager.OpenPanel(hit.transform.gameObject);
                             }
                         }
                     }
+
                     if (Input.GetMouseButton(1))
                     {
-                        buildPanel.CloseLabe();
+                        m_BuildDataPanelManager.ClosePanel();
                     }
+
                     break;
-                case State.Build:
+                case PlayerState.Build:
                     gridBuildSystem.VisualBuildingFollowMouse();
                     if (Input.GetMouseButtonDown(0))
                     {
@@ -50,22 +54,24 @@ namespace Framework.BuildProject
                             gridBuildSystem.SetBuilding();
                         }
                     }
+
                     if (Input.GetMouseButtonDown(1))
                     {
-                        gridBuildSystem.ChangeToNormalState();
+                        gridBuildSystem.CancelSelect();
                     }
+
                     if (Input.GetKeyDown(KeyCode.R))
                     {
                         gridBuildSystem.BuildingRota();
                     }
-                    break;
-                default:
+
                     break;
             }
         }
+
         void OnDestroy()
         {
-            gridBuildSystem.state.Unregister(e => { });
+            gridBuildSystem.m_State.Unregister(e => { });
         }
     }
 }

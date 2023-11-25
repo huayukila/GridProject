@@ -514,7 +514,7 @@ namespace Framework
     /// </summary>
     public static class UnregisterExtension
     {
-        public static void UnregisterWhenGameObjectDestroyde(this IUnregister unRegister, GameObject gameObject)
+        public static void UnregisterWhenGameObjectDestroyed(this IUnregister unRegister, GameObject gameObject)
         {
             var trigger = gameObject.GetComponent<UnregisterOnDestroyTrigger>();
             if (!trigger)

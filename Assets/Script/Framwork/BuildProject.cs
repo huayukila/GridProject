@@ -6,10 +6,9 @@ namespace Framework.BuildProject
         {
             RegisterModel<IBuilDataModel>(new BuildDataModel());
             RegisterModel<IResourceDataModel>(new ResourceDataModel());
-            RegisterModel<IBuildingModel>(new BuildingModel());
-
-
+            RegisterModel<IBuildingObjModel>(new BuildingObjModel());
             RegisterSystem<IGridBuildSystem>(new GridBuildSystem());
+            RegisterSystem<IBuildingSystem>(new BuildingSystem());
         }
     }
 }

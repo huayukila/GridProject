@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
-  m_Name: House
+  m_Name: Factory
   m_EditorClassIdentifier: 
-  m_NameString: House
-  m_BuildingType: 1
-  m_Visual: {fileID: 1639077064690215285, guid: 3bd2284f7b090b24285d4f56c025df6d, type: 3}
-  m_Prefab: {fileID: 3801415977465005682, guid: b05cdd0d428136941b6b96cf79df6515, type: 3}
-  m_Width: 1
-  m_Height: 1
+  m_NameString: Factory
+  m_BuildingType: 2
+  m_Visual: {fileID: 5418684679506296960, guid: 1aef52de246f16c459eaeccdbf8d6345, type: 3}
+  m_Prefab: {fileID: 6501529897645314109, guid: d1edb15d6012f7148b67b95b29ae4b59, type: 3}
+  m_Width: 2
+  m_Height: 2
   m_NeedResource: 0
   m_LevelDatasList:
   - m_Level: 1
-    m_MaxWorker: 4
-    m_MaxHp: 100
+    m_MaxWorker: 2
+    m_MaxHp: 500
     m_UpdateTime: 5
     m_CostList:
     - resType: 1
-      Cost: 20
+      Cost: 50
     - resType: 2
-      Cost: 10
+      Cost: 30

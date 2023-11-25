@@ -28,4 +28,3 @@ public class ICanSayFuck : Test
         Debug.Log("Fuck");
     }
 }
-

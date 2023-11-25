@@ -29,7 +29,7 @@ namespace Framework.BuildProject
             BuildingConfigDic = new Dictionary<string, BuildingData>()
             {
                 {"House",Resources.Load<BuildingData>("BuildData/House")},
-                {"Factory1",Resources.Load<BuildingData>("BuildData/Factory1")}
+                {"Factory",Resources.Load<BuildingData>("BuildData/Factory")}
             };
         }
     }

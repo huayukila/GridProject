@@ -1,5 +1,13 @@
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
+[Serializable]
+public struct ResourceCost
+{
+    public ResourceType resType;
+    public int Cost;
+}
 public class GridObject
 {
     GridUtils<GridObject> grid;
@@ -29,5 +37,10 @@ public class GridObject
         {
             Object.Destroy(objectTransform.gameObject);
         }
+    }
+
+    public Transform GetTransform()
+    {
+        return objectTransform;
     }
 }

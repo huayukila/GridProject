@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Framework.BuildProject
@@ -5,18 +6,37 @@ namespace Framework.BuildProject
     public class ResoureceDataTopPanel : BuildController
     {
         public Text resoreceDataTxt;
+
+        private float m_DurationTime;
         IResourceDataModel dataModel;
+        
+
         // Start is called before the first frame update
         void Start()
         {
             dataModel = this.GetModel<IResourceDataModel>();
-            resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" + dataModel.GetRes(ResourceType.Stone)
-                + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Worker:" + dataModel.GetRes(ResourceType.Worker);
-            this.RegisterEvent<RefreshResPanel>(e =>
+            RefreshResPanel();
+            this.RegisterEvent<RefreshResPanel>(e => RefreshResPanel()
+            ).UnregisterWhenGameObjectDestroyed(gameObject);
+            m_DurationTime = Time.time;
+        }
+
+
+        private void Update()
+        {
+            if (Time.time - m_DurationTime < 1.0f)
             {
-                resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" + dataModel.GetRes(ResourceType.Stone)
-                + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Worker:" + dataModel.GetRes(ResourceType.Worker);
-            }).UnregisterWhenGameObjectDestroyde(gameObject);
+                return;
+            }
+            RefreshResPanel();
+        }
+
+        void RefreshResPanel()
+        {
+            resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" +
+                                   dataModel.GetRes(ResourceType.Stone)
+                                   + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Idle Population:" +
+                                   dataModel.GetRes(ResourceType.Worker)+"/Max Population:"+dataModel.MaxWorkerNum;
         }
     }
 }
