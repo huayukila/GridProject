@@ -9,6 +9,7 @@ namespace Framework.BuildProject
             RegisterModel<IBuildingObjModel>(new BuildingObjModel());
             RegisterSystem<IGridBuildSystem>(new GridBuildSystem());
             RegisterSystem<IBuildingSystem>(new BuildingSystem());
+            RegisterSystem<IBulletSystem>(new BulletSystem());
         }
     }
 }

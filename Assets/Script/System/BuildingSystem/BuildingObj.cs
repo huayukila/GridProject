@@ -28,7 +28,11 @@ namespace Framework.BuildProject
         public void Update()
         {
             if (!isWorking)
+            {
+                m_DurationTime = Time.time;
                 return;
+            }
+
             if (Time.time - m_DurationTime < m_UpdateTime) return;
 
             OnUpdate();
@@ -50,7 +54,7 @@ namespace Framework.BuildProject
             m_WorkerNum = 0;
             m_MaxWorkerNum = data.m_LevelDatasList[0].m_MaxWorker;
             m_UpdateTime = data.m_LevelDatasList[0].m_UpdateTime;
-            m_DurationTime = Time.time;
+            m_DurationTime = 0;
             m_BuildingType = data.m_BuildingType;
             m_BuildingOccupancyGrids = gridObjList;
             m_GameObj = gridObjList[0].GetTransform().gameObject;
