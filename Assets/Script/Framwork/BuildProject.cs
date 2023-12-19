@@ -10,6 +10,7 @@ namespace Framework.BuildProject
             RegisterSystem<IGridBuildSystem>(new GridBuildSystem());
             RegisterSystem<IBuildingSystem>(new BuildingSystem());
             RegisterSystem<IBulletSystem>(new BulletSystem());
+            RegisterSystem<IEnemySystem>(new EnemySystem());
         }
     }
 }

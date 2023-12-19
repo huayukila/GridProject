@@ -22,6 +22,13 @@ namespace Framework.BuildProject
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                BulletBase bullet = this.GetSystem<IBulletSystem>().GetBullet(BulletType.Arrow);
+                bullet.Set(0.3f, 10);
+                bullet.Shoot(Vector3.zero, transform);
+            }
+
             switch (gridBuildSystem.m_State.Value)
             {
                 case PlayerState.Normal:
@@ -31,8 +38,7 @@ namespace Framework.BuildProject
                         {
                             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                             RaycastHit hit;
-                            Physics.Raycast(ray, out hit);
-                            if (hit.transform.tag == "Building")
+                            if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Building")
                             {
                                 m_BuildDataPanelManager.OpenPanel(hit.transform.gameObject);
                             }

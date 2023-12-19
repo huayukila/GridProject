@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Framework.BuildProject
 {
     public class GameManager : BuildController
     {
+        public Transform m_RootNode;
         private void Awake()
         {
             DontDestroyOnLoad(this);
