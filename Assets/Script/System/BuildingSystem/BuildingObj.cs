@@ -15,13 +15,16 @@ namespace Framework.BuildProject
         public string m_BuildingName;
         public BuildingType m_BuildingType;
 
-        private float m_DurationTime;
-        private GameObject m_GameObj;
         public int m_MaxBuildingHp;
         public int m_MaxWorkerNum;
         public int m_UpdateTime;
         public int m_WorkerNum;
 
+        public Vector2Int GridXY;
+        public Dir Dir;
+
+        private float m_DurationTime;
+        private GameObject m_GameObj;
         public List<GridObject> m_BuildingOccupancyGrids { get; private set; }
         private bool isWorking => m_WorkerNum > 0;
 
@@ -45,19 +48,22 @@ namespace Framework.BuildProject
         }
 
         //ÇŸÇ©ÇÃåöï®ÉfÅ[É^
-        public void Init(BuildingData data, List<GridObject> gridObjList)
+        public void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_,Dir dir_)
         {
-            m_BuildingName = data.m_NameString;
-            m_MaxBuildingHp = data.m_LevelDatasList[0].m_MaxHp;
+            m_BuildingName = data_.m_NameString;
+            m_MaxBuildingHp = data_.m_LevelDatasList[0].m_MaxHp;
             m_BuildingHp = m_MaxBuildingHp;
-            m_BuildingLevel = data.m_LevelDatasList[0].m_Level;
+            m_BuildingLevel = data_.m_LevelDatasList[0].m_Level;
             m_WorkerNum = 0;
-            m_MaxWorkerNum = data.m_LevelDatasList[0].m_MaxWorker;
-            m_UpdateTime = data.m_LevelDatasList[0].m_UpdateTime;
+            m_MaxWorkerNum = data_.m_LevelDatasList[0].m_MaxWorker;
+            m_UpdateTime = data_.m_LevelDatasList[0].m_UpdateTime;
             m_DurationTime = 0;
-            m_BuildingType = data.m_BuildingType;
-            m_BuildingOccupancyGrids = gridObjList;
-            m_GameObj = gridObjList[0].GetTransform().gameObject;
+            m_BuildingType = data_.m_BuildingType;
+            m_BuildingOccupancyGrids = gridObjList_;
+            m_GameObj = gridObjList_[0].GetTransform().gameObject;
+
+            GridXY = gridXY_;
+            Dir = dir_;
         }
 
         protected virtual void OnUpdate()

@@ -12,7 +12,6 @@ namespace Framework.BuildProject
         private void Awake()
         {
             gridBuildSystem = this.GetSystem<IGridBuildSystem>();
-            gridBuildSystem.CreatGrid(10, 10, 10f);
         }
 
         void Start()
@@ -29,6 +28,11 @@ namespace Framework.BuildProject
                 bullet.Shoot(Vector3.zero, transform);
             }
 
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                this.GetSystem<IArchiveSystem>().SaveGameData();
+            }
+            
             switch (gridBuildSystem.m_State.Value)
             {
                 case PlayerState.Normal:

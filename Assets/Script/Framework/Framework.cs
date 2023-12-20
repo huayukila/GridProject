@@ -1,10 +1,13 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace Framework
 {
     #region Architecture
+
     public interface IArchitecture
     {
         void RegisterSystem<T>(T system) where T : ISystem;
@@ -15,9 +18,9 @@ namespace Framework
         T GetUtility<T>() where T : class, IUtility;
         void SendCommand<T>() where T : ICommand, new();
         void SendCommand<T>(T command) where T : ICommand;
-        TResult SendQury<TResult>(IQuery<TResult> query);
-        void SendEvnet<T>() where T : new();
-        void SendEvnet<T>(T e);
+        TResult SendQuery<TResult>(IQuery<TResult> query);
+        void SendEvent<T>() where T : new();
+        void SendEvent<T>(T e);
         IUnregister RegisterEvent<T>(Action<T> onEvent);
         void UnregisterEvent<T>(Action<T> onEvent);
     }
@@ -29,14 +32,18 @@ namespace Framework
         /// フレイム初期化完成フラグ
         /// </summary>
         private bool mInited = false;
+
         //システム初期化用のリスト
         private List<ISystem> mSystems = new List<ISystem>();
+
         //Model初期化リスト
         private List<IModel> mModels = new List<IModel>();
+
         //初期化用delegate
         public static Action<T> OnRegisterPatch = architecture => { };
 
         private static T mArchitecture;
+
         /// <summary>
         /// インタフェース形のインスタンス
         /// </summary>
@@ -48,6 +55,7 @@ namespace Framework
                 {
                     MakeSureArchitecture();
                 }
+
                 return mArchitecture;
             }
         }
@@ -68,6 +76,7 @@ namespace Framework
                 {
                     architectureModel.Init();
                 }
+
                 //初期化完成した後、も使えなかったリストを解放
                 mArchitecture.mModels.Clear();
                 //system初期化
@@ -75,13 +84,16 @@ namespace Framework
                 {
                     architectureSystem.Init();
                 }
+
                 mArchitecture.mSystems.Clear();
                 //フレイム初期化完成
                 mArchitecture.mInited = true;
             }
         }
+
         //一般的各systemとmodelの初期化がこのoverriderの中に書きます
         protected abstract void Init();
+
         //IOC容器実体化
         private IOCContainer mContainer = new IOCContainer();
 
@@ -96,6 +108,7 @@ namespace Framework
             MakeSureArchitecture();
             return mArchitecture.mContainer.Get<TContainer>();
         }
+
         /// <summary>
         ///IOC自身登録
         /// </summary>
@@ -106,6 +119,7 @@ namespace Framework
             MakeSureArchitecture();
             mArchitecture.mContainer.Register<TContainer>(instance);
         }
+
         /// <summary>
         /// 使えるツールの登録
         /// </summary>
@@ -115,6 +129,7 @@ namespace Framework
         {
             mContainer.Register<TUtility>(utility);
         }
+
         /// <summary>
         /// インタフェースによって、ツールの実体を獲得
         /// </summary>
@@ -124,6 +139,7 @@ namespace Framework
         {
             return mContainer.Get<TUtility>();
         }
+
         //modelの登録
         public void RegisterModel<TModel>(TModel model) where TModel : IModel
         {
@@ -141,6 +157,7 @@ namespace Framework
 
             mModels.Add(model);
         }
+
         /// <summary>
         /// インタフェースによって、modelを獲得
         /// </summary>
@@ -150,6 +167,7 @@ namespace Framework
         {
             return mContainer.Get<TModel>();
         }
+
         //system登録
         public void RegisterSystem<TSystem>(TSystem system) where TSystem : ISystem
         {
@@ -165,6 +183,7 @@ namespace Framework
                 system.Init();
             }
         }
+
         /// <summary>
         /// インタフェースによって、systemを獲得
         /// </summary>
@@ -174,6 +193,7 @@ namespace Framework
         {
             return mContainer.Get<TSystem>();
         }
+
         /// <summary>
         /// コントローラーからsystemまたはmodelへの操作
         /// </summary>
@@ -185,6 +205,7 @@ namespace Framework
             command.Execute();
             command.SetArchitecture(null);
         }
+
         /// <summary>
         /// コントローラーからsystemまたはmodelへの操作
         /// </summary>
@@ -203,19 +224,21 @@ namespace Framework
         /// 事件発送
         /// </summary>
         /// <typeparam name="TEvent"></typeparam>
-        public void SendEvnet<TEvent>() where TEvent : new()
+        public void SendEvent<TEvent>() where TEvent : new()
         {
             mTypeEventSystem.Send<TEvent>();
         }
+
         /// <summary>
         /// 事件発送
         /// </summary>
         /// <typeparam name="TEvent"></typeparam>
         /// <param name="e"></param>
-        public void SendEvnet<TEvent>(TEvent e)
+        public void SendEvent<TEvent>(TEvent e)
         {
             mTypeEventSystem.Send<TEvent>(e);
         }
+
         /// <summary>
         /// 事件登録
         /// </summary>
@@ -226,6 +249,7 @@ namespace Framework
         {
             return mTypeEventSystem.Register<TEvent>(onEvent);
         }
+
         /// <summary>
         /// 事件除外
         /// </summary>
@@ -234,147 +258,183 @@ namespace Framework
         public void UnregisterEvent<TEvent>(Action<TEvent> onEvent)
         {
             mTypeEventSystem.Unregister<TEvent>(onEvent);
-
         }
+
         /// <summary>
         /// modelにデータサーチ
         /// </summary>
         /// <typeparam name="TResult">リターンのデータのタイプ</typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public TResult SendQury<TResult>(IQuery<TResult> query)
+        public TResult SendQuery<TResult>(IQuery<TResult> query)
         {
             query.SetArchitecture(this);
             return query.Do();
         }
     }
+
     #endregion
 
     #region Controller
-    public interface IController : IBelongToArchitecture, ICanSendCommand, ICanGetSystem, ICanGetModel, ICanRegisterEvent, ICanSendQuery
-    {
 
+    public interface IController : IBelongToArchitecture, ICanSendCommand, ICanGetSystem, ICanGetModel,
+        ICanRegisterEvent, ICanSendQuery
+    {
     }
+
     #endregion
 
     #region System
+
     public interface ISystem : IBelongToArchitecture, ICanSetArchitecture, ICanGetModel, ICanGetUtility,
-        ICanSendEvent, ICanRegisterEvent,ICanGetSystem
+        ICanSendEvent, ICanRegisterEvent, ICanGetSystem
     {
         void Init();
     }
+
     public abstract class AbstractSystem : ISystem
     {
         private IArchitecture mArchitecture;
+
         IArchitecture IBelongToArchitecture.GetArchitecture()
         {
             return mArchitecture;
         }
+
         void ISystem.Init()
         {
             OnInit();
         }
+
         void ICanSetArchitecture.SetArchitecture(IArchitecture architecture)
         {
             mArchitecture = architecture;
         }
+
         protected abstract void OnInit();
     }
+
     #endregion
 
     #region Model
+
     public interface IModel : IBelongToArchitecture, ICanSetArchitecture, ICanGetUtility, ICanSendEvent
     {
         void Init();
     }
+
     public abstract class AbstractModel : IModel
     {
         private IArchitecture mArchitecture;
+
         IArchitecture IBelongToArchitecture.GetArchitecture()
         {
             return mArchitecture;
         }
+
         void ICanSetArchitecture.SetArchitecture(IArchitecture architecture)
         {
             mArchitecture = architecture;
         }
+
         void IModel.Init()
         {
             OnInit();
         }
+
         protected abstract void OnInit();
     }
+
     #endregion
 
     #region Utility
+
     public interface IUtility
     {
-
     }
+
     #endregion
 
     #region Command
-    public interface ICommand : IBelongToArchitecture, ICanSetArchitecture, ICanGetModel, ICanGetSystem, ICanGetUtility, ICanSendEvent, ICanSendCommand, ICanSendQuery
+
+    public interface ICommand : IBelongToArchitecture, ICanSetArchitecture, ICanGetModel, ICanGetSystem, ICanGetUtility,
+        ICanSendEvent, ICanSendCommand, ICanSendQuery
     {
         void Execute();
     }
+
     public abstract class AbstractCommand : ICommand
     {
         private IArchitecture mArchitecture;
+
         IArchitecture IBelongToArchitecture.GetArchitecture()
         {
             return mArchitecture;
         }
+
         void ICanSetArchitecture.SetArchitecture(IArchitecture architecture)
         {
             mArchitecture = architecture;
         }
+
         void ICommand.Execute()
         {
             OnExecute();
         }
+
         protected abstract void OnExecute();
     }
+
     #endregion
 
     #region IQuery
-    public interface IQuery<TResult> : IBelongToArchitecture, ICanSetArchitecture, ICanGetModel, ICanGetSystem, ICanSendQuery
+
+    public interface IQuery<TResult> : IBelongToArchitecture, ICanSetArchitecture, ICanGetModel, ICanGetSystem,
+        ICanSendQuery
     {
         TResult Do();
     }
+
     public abstract class AbstractQuery<T> : IQuery<T>
     {
         public T Do()
         {
             return OnDo();
         }
+
         protected abstract T OnDo();
         private IArchitecture mArchitecture;
+
         public IArchitecture GetArchitecture()
         {
             return mArchitecture;
         }
+
         public void SetArchitecture(IArchitecture architecture)
         {
             mArchitecture = architecture;
         }
     }
+
     #endregion
 
     #region Rule
+
     //Architectureに所属するの記号
     public interface IBelongToArchitecture
     {
         IArchitecture GetArchitecture();
     }
+
     public interface ICanSetArchitecture
     {
         void SetArchitecture(IArchitecture architecture);
     }
+
     public interface ICanGetModel : IBelongToArchitecture
     {
-
     }
+
     public static class CanGetModelExtension
     {
         public static T GetModel<T>(this ICanGetModel self) where T : class, IModel
@@ -382,10 +442,11 @@ namespace Framework
             return self.GetArchitecture().GetModel<T>();
         }
     }
+
     public interface ICanGetSystem : IBelongToArchitecture
     {
-
     }
+
     public static class CanGetSystemExtension
     {
         public static T GetSystem<T>(this ICanGetSystem self) where T : class, ISystem
@@ -393,9 +454,11 @@ namespace Framework
             return self.GetArchitecture().GetSystem<T>();
         }
     }
+
     public interface ICanGetUtility : IBelongToArchitecture
     {
     }
+
     public static class CanGetUtilityExtension
     {
         public static T GetUtility<T>(this ICanGetUtility self) where T : class, IUtility
@@ -403,25 +466,28 @@ namespace Framework
             return self.GetArchitecture().GetUtility<T>();
         }
     }
+
     public interface ICanRegisterEvent : IBelongToArchitecture
     {
-
     }
+
     public static class CanRegisterEventExtension
     {
         public static IUnregister RegisterEvent<T>(this ICanRegisterEvent self, Action<T> onEvent)
         {
             return self.GetArchitecture().RegisterEvent<T>(onEvent);
         }
+
         public static void UnregisterEvent<T>(this ICanRegisterEvent self, Action<T> onEvent)
         {
             self.GetArchitecture().UnregisterEvent<T>(onEvent);
         }
     }
+
     public interface ICanSendCommand : IBelongToArchitecture
     {
-
     }
+
     public static class CanSendCommandExtension
     {
         public static void SendCommand<T>(this ICanSendCommand self) where T : ICommand, new()
@@ -434,36 +500,40 @@ namespace Framework
             self.GetArchitecture().SendCommand<T>(command);
         }
     }
+
     public interface ICanSendEvent : IBelongToArchitecture
     {
-
     }
+
     public static class CanSendEventExtension
     {
         public static void SendEvent<T>(this ICanSendEvent self) where T : new()
         {
-            self.GetArchitecture().SendEvnet<T>();
+            self.GetArchitecture().SendEvent<T>();
         }
 
         public static void SendEvent<T>(this ICanSendEvent self, T e)
         {
-            self.GetArchitecture().SendEvnet<T>(e);
+            self.GetArchitecture().SendEvent<T>(e);
         }
     }
+
     public interface ICanSendQuery : IBelongToArchitecture
     {
-
     }
+
     public static class CanSendQueryExtension
     {
         public static TResult SendQuery<TResult>(this ICanSendQuery self, IQuery<TResult> query)
         {
-            return self.GetArchitecture().SendQury(query);
+            return self.GetArchitecture().SendQuery(query);
         }
     }
+
     #endregion
 
     #region TypeEventSystem
+
     public interface ITypeEventSystem
     {
         void Send<T>() where T : new();
@@ -472,14 +542,17 @@ namespace Framework
         IUnregister Register<T>(Action<T> onEvent);
         void Unregister<T>(Action<T> onEvent);
     }
+
     public interface IUnregister
     {
         void Unregister();
     }
+
     public struct TypeEventSystemUnregister<T> : IUnregister
     {
         public ITypeEventSystem TypeEventSystem;
         public Action<T> OnEvent;
+
         public void Unregister()
         {
             TypeEventSystem.Unregister<T>(OnEvent);
@@ -487,6 +560,7 @@ namespace Framework
             OnEvent = null;
         }
     }
+
     /// <summary>
     /// MonoBehaviourの生命周期によって、自動的に事件解除
     /// </summary>
@@ -509,6 +583,7 @@ namespace Framework
             mUnregistered.Clear();
         }
     }
+
     /// <summary>
     /// 事件解除静的エクステンション
     /// </summary>
@@ -521,20 +596,24 @@ namespace Framework
             {
                 trigger = gameObject.AddComponent<UnregisterOnDestroyTrigger>();
             }
+
             trigger.AddUnregister(unRegister);
         }
     }
+
     public class TypeEventSystem : ITypeEventSystem
     {
         public interface IRegistrations
         {
-
         }
+
         public class Registrations<T> : IRegistrations
         {
             public Action<T> OnEvent = e => { };
         }
+
         Dictionary<Type, IRegistrations> mEventRegistration = new Dictionary<Type, IRegistrations>();
+
         public IUnregister Register<TEvent>(Action<TEvent> onEvent)
         {
             var type = typeof(TEvent);
@@ -542,13 +621,13 @@ namespace Framework
 
             if (mEventRegistration.TryGetValue(type, out registrations))
             {
-
             }
             else
             {
                 registrations = new Registrations<TEvent>();
                 mEventRegistration.Add(type, registrations);
             }
+
             (registrations as Registrations<TEvent>).OnEvent += onEvent;
             return new TypeEventSystemUnregister<TEvent>()
             {
@@ -556,11 +635,13 @@ namespace Framework
                 TypeEventSystem = this
             };
         }
+
         public void Send<T>() where T : new()
         {
             var e = new T();
             Send<T>(e);
         }
+
         public void Send<T>(T e)
         {
             var type = typeof(T);
@@ -571,6 +652,7 @@ namespace Framework
                 (registrations as Registrations<T>).OnEvent(e);
             }
         }
+
         public void Unregister<T>(Action<T> onEvent)
         {
             var type = typeof(T);
@@ -581,9 +663,11 @@ namespace Framework
             }
         }
     }
+
     #endregion
 
     #region IOC
+
     public class IOCContainer
     {
         private Dictionary<Type, object> mInstances = new Dictionary<Type, object>();
@@ -600,6 +684,7 @@ namespace Framework
                 mInstances.Add(key, instance);
             }
         }
+
         public T Get<T>() where T : class
         {
             var key = typeof(T);
@@ -607,12 +692,15 @@ namespace Framework
             {
                 return reinstance as T;
             }
+
             return null;
         }
     }
+
     #endregion
 
     #region BindableProperty
+
     /// <summary>
     /// 事件つける属性
     /// </summary>
@@ -623,6 +711,7 @@ namespace Framework
         {
             mValue = defaultValue;
         }
+
         private T mValue = default(T);
 
         public T Value
@@ -637,7 +726,9 @@ namespace Framework
                 mOnValueChanged?.Invoke(value);
             }
         }
+
         public Action<T> mOnValueChanged = (v) => { };
+
         public IUnregister Register(Action<T> onValueChanged)
         {
             mOnValueChanged += onValueChanged;
@@ -647,6 +738,7 @@ namespace Framework
                 onValueChanged = onValueChanged
             };
         }
+
         /// <summary>
         /// 初期化with値
         /// </summary>
@@ -657,6 +749,7 @@ namespace Framework
             onValueChanged(mValue);
             return Register(onValueChanged);
         }
+
         /// <summary>
         /// 属性のvalueを隠蔽的に形転換
         /// </summary>
@@ -665,19 +758,23 @@ namespace Framework
         {
             return property.Value;
         }
+
         public override string ToString()
         {
             return Value.ToString();
         }
+
         public void Unregister(Action<T> onValueChanged)
         {
             mOnValueChanged -= onValueChanged;
         }
     }
+
     public class BindablePropertyUnregister<T> : IUnregister
     {
         public BindableProperty<T> BindableProperty { get; set; }
         public Action<T> onValueChanged { get; set; }
+
         public void Unregister()
         {
             BindableProperty.Unregister(onValueChanged);
@@ -686,5 +783,48 @@ namespace Framework
             onValueChanged = null;
         }
     }
+
     #endregion
-}　
+
+    #region CreatFolder
+
+    public static class CreatFiles
+    {
+        [MenuItem("Tools/CreateFolder")]
+        public static void CreateFolder()
+        {
+            string path = Application.dataPath;
+            string script = Path.Combine(path, "Script");
+            if (!Directory.Exists(script))
+            {
+                Directory.CreateDirectory(script);
+            }
+
+            string[] folderNames =
+            {
+                "Framework",
+                "System",
+                "Model",
+                "Utils",
+                "UI",
+                "Game",
+                "Command",
+                "Editor",
+                "Event",
+            };
+
+            foreach (var folderName in folderNames)
+            {
+                string tempStr = Path.Combine(script, folderName);
+                if (!Directory.Exists(tempStr))
+                {
+                    Directory.CreateDirectory(tempStr);
+                }
+            }
+
+            AssetDatabase.Refresh();
+        }
+    }
+
+    #endregion
+}

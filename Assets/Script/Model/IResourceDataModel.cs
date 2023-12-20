@@ -1,20 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
 namespace Framework.BuildProject
 {
     public interface IResourceDataModel : IModel
     {
         void MinusRes(ResourceCost[] costList);
         void MinusRes(ResourceCost buildingCost);
-        void MinusRes(ResourceType resourceType,int value);
-        
-        void AddRes(ResourceType resourceType,int value);
+        void MinusRes(ResourceType resourceType, int value);
+
+        void AddRes(ResourceType resourceType, int value);
         bool IsResEnough(ResourceCost[] costList);
         bool IsResEnough(ResourceCost buildingCost);
         int GetRes(ResourceType resourceType);
-        int MaxWorkerNum { get; set;}
+        int MaxWorkerNum { get; set; }
+
+        ResourceCost[] GetResourceDatasForArchiveSystem();
     }
+
     public class ResourceDataModel : AbstractModel, IResourceDataModel
     {
         Dictionary<ResourceType, int> resDic;
@@ -33,6 +38,21 @@ namespace Framework.BuildProject
             };
             MaxWorkerNum = 0;
         }
+
+        public ResourceCost[] GetResourceDatasForArchiveSystem()
+        {
+            int index = 0;
+            ResourceCost[] tempArray = new ResourceCost[resDic.Count];
+            foreach (var res in resDic)
+            {
+                tempArray[index].resType = res.Key;
+                tempArray[index].Cost = res.Value;
+                index++;
+            }
+
+            return tempArray;
+        }
+
         public void MinusRes(ResourceCost[] costList)
         {
             if (IsResEnough(costList))
@@ -58,9 +78,10 @@ namespace Framework.BuildProject
             {
                 return value;
             }
+
             return 0;
         }
-        
+
         public bool IsResEnough(ResourceCost[] costList)
         {
             foreach (ResourceCost buildingCost in costList)
@@ -70,30 +91,32 @@ namespace Framework.BuildProject
                     return false;
                 }
             }
+
             return true;
         }
 
         public bool IsResEnough(ResourceCost buildingCost)
         {
-            if (!resDic.ContainsKey(buildingCost.resType)|| resDic[buildingCost.resType] < buildingCost.Cost)
+            if (!resDic.ContainsKey(buildingCost.resType) || resDic[buildingCost.resType] < buildingCost.Cost)
             {
                 Debug.Log("Ž‘Œ¹•s‘«");
                 return false;
             }
+
             return true;
         }
 
         public void MinusRes(ResourceType resourceType, int value)
         {
-            if (resDic.TryGetValue(resourceType,out int resValue))
+            if (resDic.TryGetValue(resourceType, out int resValue))
             {
-                if(value>resValue)
+                if (value > resValue)
                 {
-                    Debug.Log(resourceType+"•s‘«");
+                    Debug.Log(resourceType + "•s‘«");
                 }
                 else
                 {
-                    resDic[resourceType]-=value;
+                    resDic[resourceType] -= value;
                 }
             }
             else
@@ -104,7 +127,7 @@ namespace Framework.BuildProject
 
         public void AddRes(ResourceType resourceType, int value)
         {
-            if(resDic.ContainsKey(resourceType))
+            if (resDic.ContainsKey(resourceType))
             {
                 resDic[resourceType] += value;
             }

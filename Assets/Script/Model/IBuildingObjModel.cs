@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Framework.BuildProject
 {
@@ -9,6 +10,8 @@ namespace Framework.BuildProject
         BuildingObj GetBuildData(int ID);
         void UpdateBuildings();
         List<BuildingObj> GetBuildDataList(BuildingType type);
+
+        BuildingObj[] GetBuildingObjsDataForArchiveSystem();
     }
 
     public class BuildingObjModel : AbstractModel, IBuildingObjModel
@@ -57,6 +60,11 @@ namespace Framework.BuildProject
             }
 
             return tempList;
+        }
+
+        public BuildingObj[] GetBuildingObjsDataForArchiveSystem()
+        {
+            return m_BuildingDic.Values.ToArray();
         }
 
         public void RegisterBuild(int ID, BuildingObj buildingObj)

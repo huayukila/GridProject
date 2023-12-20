@@ -25,6 +25,7 @@ public enum BuildingType
     House,
     Factory,
     Wall,
+    Core,
 }
 public enum Terrain
 {

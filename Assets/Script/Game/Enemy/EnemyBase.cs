@@ -7,6 +7,14 @@ namespace Framework.BuildProject
         bool GetDamage(int damage);
     }
 
+    public enum EnemyState
+    {
+        Idled,
+        Attack,
+        Move,
+        Dead
+    }
+
     public class EnemyBase : BuildController, iGetHurt
     {
         public EnemyType m_Type;
@@ -17,22 +25,46 @@ namespace Framework.BuildProject
 
         protected float m_Speed;
 
+        protected float m_AttackCD;
+
+        
+        private float m_DurationTime;
+        private float m_StartTime;
+
+        protected EnemyState m_State;
         // Start is called before the first frame update
         void Start()
         {
+            m_Speed = 0.1f;
         }
 
-        // Update is called once per frame
-        void Update()
+        private void OnEnable()
         {
+            m_StartTime = Time.time;
+        }
+
+        private void FixedUpdate()
+        {
+            if (Time.time - m_StartTime < m_AttackCD)
+                return;
+            m_StartTime = Time.time;
+            OnAttack();
+            transform.localPosition += transform.forward * m_Speed;
         }
 
         public void ResetObj()
         {
-            m_Hp = 10;
+            m_Hp = 1;
             m_Target = null;
             m_Speed = 0f;
+            m_AttackCD = 0;
+
             gameObject.SetActive(false);
+        }
+
+        protected void OnAttack()
+        {
+            
         }
 
         public bool GetDamage(int damage)

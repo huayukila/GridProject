@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Kit;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -6,7 +7,7 @@ namespace Framework.BuildProject
     interface IEnemySystem : ISystem
     {
         GameObject GetEnemy(EnemyType type_);
-        void SpawnEnemy(int stage_);
+        void SpawnEnemy(int stage_, MonoBehaviour managerMono_);
         void RecycleEnemy(GameObject obj_);
 
         void SetSpawnPoint(Transform[] points_);
@@ -37,7 +38,7 @@ namespace Framework.BuildProject
                     obj.transform.parent = m_EnemyPool.transform;
                     obj.SetActive(false);
                     return obj;
-                }, e => { e.GetComponent<EnemyBase>().ResetObj(); }, 10);
+                }, e => { e.GetComponent<EnemyBase>().ResetObj(); }, 100);
                 m_EnemyDic.Add(enemyData.enemyType, temp);
             }
 
@@ -54,22 +55,45 @@ namespace Framework.BuildProject
             return obj;
         }
 
-        public void SpawnEnemy(int stage_)
+        public void SpawnEnemy(int stage_, MonoBehaviour managerMono_)
         {
+            ISequence sequence = ActionKit.Sequence();
             foreach (var wave in m_StageData.Stages[stage_].Waves)
             {
-                foreach (var monster in wave.Monsters)
+                sequence.Delay(wave.IntervalTime).Callback(() =>
                 {
-                    Transform spawnPoint = m_SpawnPoint[monster.SwapPoint];
-                    for (int i = 0; i < monster.Amount; i++)
+                    foreach (var monster in wave.Monsters)
                     {
-                        GameObject temp = GetEnemy(monster.MonsterType);
-                        temp.transform.position = spawnPoint.position;
-                    }
-                }
-            }
-        }
+                        if (monster.SwapPoint is 1 or 3)
+                        {
+                            for (int i = 0; i < monster.Amount; i++)
+                            {
+                                Vector3 tempVec = RandomPosition(monster.SwapPoint);
+                                float tempValue = tempVec.x;
+                                tempVec = new Vector3(tempVec.z, 1, tempValue);
+                                tempVec += m_SpawnPoint[monster.SwapPoint].transform.position;
+                                GameObject obj = GetEnemy(monster.MonsterType);
+                                obj.transform.position = tempVec;
+                                obj.transform.LookAt(new Vector3(50, 1, 50));
+                            }
 
+                            continue;
+                        }
+
+                        for (int i = 0; i < monster.Amount; i++)
+                        {
+                            Vector3 tempVec = RandomPosition(monster.SwapPoint);
+                            tempVec += m_SpawnPoint[monster.SwapPoint].transform.position;
+                            GameObject obj = GetEnemy(monster.MonsterType);
+                            obj.transform.position = tempVec;
+                            obj.transform.LookAt(new Vector3(50, 1, 50));
+                        }
+                    }
+                });
+            }
+
+            sequence.Start(managerMono_);
+        }
 
         public void RecycleEnemy(GameObject obj_)
         {
@@ -82,6 +106,13 @@ namespace Framework.BuildProject
         public void SetSpawnPoint(Transform[] points_)
         {
             m_SpawnPoint = points_;
+        }
+
+        Vector3 RandomPosition(int spawnPoint)
+        {
+            float randX = Random.Range(-60, 60);
+            float randZ = Random.Range(-10, 10);
+            return new Vector3(randX, 1, randZ);
         }
     }
 }

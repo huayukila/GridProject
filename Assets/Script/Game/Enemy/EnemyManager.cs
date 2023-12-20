@@ -1,6 +1,4 @@
-using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
@@ -28,7 +26,7 @@ namespace Framework.BuildProject
 
         void SpawnEnemy(int stageLevel_)
         {
-            m_EnemySystem.SpawnEnemy(stageLevel_);
+            m_EnemySystem.SpawnEnemy(stageLevel_, this);
         }
     }
 }

@@ -13,9 +13,10 @@ namespace Framework.BuildProject
         void SetBuilding();
         void DestroyBuilding(GameObject gameObj);
         void BuildingRota();
-        void CreatGrid(int gridWidth, int gridHeight, float cellSize);
         void SelectBuilding<T>(BuildingData buildingData) where T : BuildingObj;
         void VisualBuildingFollowMouse();
+
+        bool CreatMapByArchive();
     }
 
     public class GridBuildSystem : AbstractSystem, IGridBuildSystem
@@ -39,17 +40,9 @@ namespace Framework.BuildProject
         protected override void OnInit()
         {
             m_State.Register(e => { Debug.Log("モード変更" + m_State.Value); });
+            CreatGrid(Global.GRID_SIZE_WIDTH, Global.GRID_SIZE_HEIGHT, Global.GRID_SIZE_CELL);
         }
 
-        public void CreatGrid(int gridWidth, int gridHeight, float cellSize)
-        {
-            m_Grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
-                (GridUtils<GridObject> g, int x, int z) => new GridObject(g, x, z)
-            );
-            //地形設定ファイルからグリッドマップを設定する
-            //...
-            // m_Grid.GetGridObjectByXY(1, 1).TerrainData.resType = ResourceType.Gold;
-        }
 
         public void CancelSelect()
         {
@@ -95,7 +88,7 @@ namespace Framework.BuildProject
                     foreach (Vector2Int gridPosition in gridPositionList)
                     {
                         GridObject gObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
-                        if (gObj.isNull && gObj.TerrainData.resType == m_BuildingData.m_NeedResource) continue;
+                        if (gObj.IsEmpty && gObj.TerrainData.resType == m_BuildingData.m_NeedResource) continue;
                         Debug.Log("ここに築くことはできません");
                         isCanBuild = false;
                         break;
@@ -138,7 +131,7 @@ namespace Framework.BuildProject
                         tempGridObjList.Add(gridObj);
                     }
 
-                    buildingObj.Init(m_BuildingData, tempGridObjList);
+                    buildingObj.Init(m_BuildingData, tempGridObjList, new Vector2Int(x, z),m_Dir);
                     this.GetModel<IBuildingObjModel>()
                         .RegisterBuild(buildTransform.gameObject.GetInstanceID(), buildingObj);
                 }
@@ -190,6 +183,7 @@ namespace Framework.BuildProject
                             removeWorkerNums -= buildingObj.m_WorkerNum;
                             buildingObj.m_WorkerNum = 0;
                         }
+
                         if (removeWorkerNums == 0)
                         {
                             break;
@@ -266,6 +260,10 @@ namespace Framework.BuildProject
             }
         }
 
+        public bool CreatMapByArchive()
+        {
+            return false;
+        }
 
         #region 内部用関数
 
@@ -347,6 +345,22 @@ namespace Framework.BuildProject
         bool CheckInMap(int x, int y)
         {
             return x >= 0 && y >= 0 && x <= m_Grid.GetGridSize().x && y <= m_Grid.GetGridSize().y;
+        }
+
+        void CreatGrid(int gridWidth, int gridHeight, float cellSize)
+        {
+            m_Grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
+                (GridUtils<GridObject> g, int x, int z) => new GridObject(g, x, z)
+            );
+            //地形設定ファイルからグリッドマップを設定する
+            //...
+            // m_Grid.GetGridObjectByXY(1, 1).TerrainData.resType = ResourceType.Gold;
+            GameObject.Instantiate(this.GetModel<IBuilDataModel>().GetBuildingConfig("CentreCore").m_Prefab,
+                m_Grid.GetWorldPosition3D(5, 5), Quaternion.Euler(0, GetRotationAngle(Dir.Down), 0));
+        }
+
+        void CreatBuilding()
+        {
         }
 
         #endregion

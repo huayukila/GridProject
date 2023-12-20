@@ -29,7 +29,8 @@ namespace Framework.BuildProject
             BuildingConfigDic = new Dictionary<string, BuildingData>()
             {
                 {"House",Resources.Load<BuildingData>("BuildData/House")},
-                {"Factory",Resources.Load<BuildingData>("BuildData/Factory")}
+                {"Factory",Resources.Load<BuildingData>("BuildData/Factory")},
+                {"CentreCore",Resources.Load<BuildingData>("BuildData/CentreCore")}
             };
         }
     }
