@@ -1,3 +1,5 @@
+using System;
+
 public enum ResourceType
 {
     None,
@@ -32,5 +34,11 @@ public enum Terrain
     Normal,
     Goldmine,
     Forests,
-    Stonemine,
+    StoneMine,
+}
+[Serializable]
+public struct ResourceCost
+{
+    public ResourceType resType;
+    public int Cost;
 }

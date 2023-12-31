@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NameString: Factory
   m_BuildingType: 2
-  m_Visual: {fileID: 5418684679506296960, guid: 1aef52de246f16c459eaeccdbf8d6345, type: 3}
-  m_Prefab: {fileID: 6501529897645314109, guid: d1edb15d6012f7148b67b95b29ae4b59, type: 3}
+  m_Visual: {fileID: 6571849674230009625, guid: 2fe7c1f5bb2f0084fb907f7a6dc2ac7f, type: 3}
+  m_Prefab: {fileID: 7446116758712094278, guid: 68934c8286a221f4f8c4c627b72e865c, type: 3}
   m_Width: 2
   m_Height: 2
   m_NeedResource: 0

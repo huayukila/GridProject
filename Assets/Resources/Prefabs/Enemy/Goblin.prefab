@@ -120,4 +120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ed067081c58b34aa9eac2b223dca63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Type: 0
+  Type: 0
+  ClaimsRadius: 20
+  AttackRadius: 5

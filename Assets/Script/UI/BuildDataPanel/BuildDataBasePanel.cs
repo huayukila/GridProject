@@ -7,7 +7,7 @@ namespace Framework.BuildProject
     {
         public Button DeletButton;
         public Text DataText;
-        protected BuildingObj m_BuildObj;
+        protected BuildingBase MBuildBase;
         protected IBuildingObjModel m_DataModel;
 
         // Start is called before the first frame update
@@ -29,7 +29,7 @@ namespace Framework.BuildProject
 
         void DeleteBuilding()
         {
-            this.SendCommand(new DeleteBuildingCmd(m_BuildObj.GetGameObj()));
+            this.SendCommand(new DeleteBuildingCmd(MBuildBase.GetGameObj()));
             gameObject.SetActive(false);
         }
 
@@ -39,8 +39,8 @@ namespace Framework.BuildProject
 
         public void OpenLabe(GameObject obj)
         {
-            m_BuildObj = m_DataModel.GetBuildData(obj.GetInstanceID());
-            if (m_BuildObj == null)
+            MBuildBase = m_DataModel.GetBuildData(obj.GetInstanceID());
+            if (MBuildBase == null)
                 return;
             gameObject.SetActive(true);
             ShowData();
@@ -49,7 +49,7 @@ namespace Framework.BuildProject
         public void CloseLabe()
         {
             gameObject.SetActive(false);
-            m_BuildObj = null;
+            MBuildBase = null;
         }
 
         protected virtual void OnDestroy()

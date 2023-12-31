@@ -16,21 +16,21 @@ namespace Framework.BuildProject
 
         public void AddWorker(int buildingID)
         {
-            BuildingObj obj = this.GetModel<IBuildingObjModel>().GetBuildData(buildingID);
+            BuildingBase @base = this.GetModel<IBuildingObjModel>().GetBuildData(buildingID);
             int resWorker=this.GetModel<IResourceDataModel>().GetRes(ResourceType.Worker);
-            if (obj.m_WorkerNum < obj.m_MaxWorkerNum &&  resWorker> 0)
+            if (@base.m_WorkerNum < @base.m_MaxWorkerNum &&  resWorker> 0)
             {
-                obj.m_WorkerNum++;
+                @base.m_WorkerNum++;
                 this.GetModel<IResourceDataModel>().MinusRes(ResourceType.Worker, 1);
             }
         }
 
         public void RemoveWorker(int buildingID)
         {
-            BuildingObj obj = this.GetModel<IBuildingObjModel>().GetBuildData(buildingID);
-            if (obj.m_WorkerNum > 0)
+            BuildingBase @base = this.GetModel<IBuildingObjModel>().GetBuildData(buildingID);
+            if (@base.m_WorkerNum > 0)
             {
-                obj.m_WorkerNum--;
+                @base.m_WorkerNum--;
                 this.GetModel<IResourceDataModel>().AddRes(ResourceType.Worker, 1);
             }
         }

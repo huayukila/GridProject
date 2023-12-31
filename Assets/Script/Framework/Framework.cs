@@ -34,10 +34,10 @@ namespace Framework
         private bool mInited = false;
 
         //システム初期化用のリスト
-        private List<ISystem> mSystems = new List<ISystem>();
+        private HashSet<ISystem> mSystems = new HashSet<ISystem>();
 
         //Model初期化リスト
-        private List<IModel> mModels = new List<IModel>();
+        private HashSet<IModel> mModels = new HashSet<IModel>();
 
         //初期化用delegate
         public static Action<T> OnRegisterPatch = architecture => { };

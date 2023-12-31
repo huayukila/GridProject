@@ -32,7 +32,7 @@ namespace Framework.BuildProject
             {
                 this.GetSystem<IArchiveSystem>().SaveGameData();
             }
-            
+
             switch (gridBuildSystem.m_State.Value)
             {
                 case PlayerState.Normal:
@@ -41,10 +41,11 @@ namespace Framework.BuildProject
                         if (!UtilsClass.Instance.IsMouseOverUI())
                         {
                             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                            RaycastHit hit;
-                            if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Building")
+
+                            if (Physics.Raycast(ray, out var hit, 1000, LayerMask.GetMask("Building"))
+                               )
                             {
-                                m_BuildDataPanelManager.OpenPanel(hit.transform.gameObject);
+                                m_BuildDataPanelManager.OpenPanel(hit.transform.parent.gameObject);
                             }
                         }
                     }

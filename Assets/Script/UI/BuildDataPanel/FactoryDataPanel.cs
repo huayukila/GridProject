@@ -24,18 +24,18 @@ namespace Framework.BuildProject
         protected override void ShowData()
         {
             DataText.text =
-                $"Name:{m_BuildObj.m_BuildingName}\nLevel:{m_BuildObj.m_BuildingLevel}\nHP:{m_BuildObj.m_BuildingHp}\nWorkerNums:{m_BuildObj.m_WorkerNum}/{m_BuildObj.m_MaxWorkerNum}";
+                $"Name:{MBuildBase.BuildingName}\nLevel:{MBuildBase.BuildingLevel}\nHP:{MBuildBase.BuildingHp}\nWorkerNums:{MBuildBase.m_WorkerNum}/{MBuildBase.m_MaxWorkerNum}";
         }
 
         void AddWorker()
         {
-            this.SendCommand(new AddWorker(m_BuildObj.GetGameObj().GetInstanceID()));
+            this.SendCommand(new AddWorker(MBuildBase.GetGameObj().GetInstanceID()));
             ShowData();
         }
 
         void RemoveWorker()
         {
-            this.SendCommand(new RemoveWorker(m_BuildObj.GetGameObj().GetInstanceID()));
+            this.SendCommand(new RemoveWorker(MBuildBase.GetGameObj().GetInstanceID()));
             ShowData();
         }
 

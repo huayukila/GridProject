@@ -18,7 +18,7 @@ namespace Framework.BuildProject
             }
 
             BuildingType tempType = this.GetModel<IBuildingObjModel>().GetBuildData(gameObject.GetInstanceID())
-                .m_BuildingType;
+                .BuildingType;
             switch (tempType)
             {
                 case BuildingType.Factory:

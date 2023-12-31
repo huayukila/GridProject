@@ -5,37 +5,37 @@ namespace Framework.BuildProject
 {
     public interface IBuildingObjModel : IModel
     {
-        void RegisterBuild(int ID, BuildingObj buildingObj);
+        void RegisterBuild(int ID, BuildingBase buildingBase);
         void UnregisterBuild(int ID);
-        BuildingObj GetBuildData(int ID);
+        BuildingBase GetBuildData(int ID);
         void UpdateBuildings();
-        List<BuildingObj> GetBuildDataList(BuildingType type);
+        List<BuildingBase> GetBuildDataList(BuildingType type);
 
-        BuildingObj[] GetBuildingObjsDataForArchiveSystem();
+        BuildingBase[] GetBuildingObjsDataForArchiveSystem();
     }
 
     public class BuildingObjModel : AbstractModel, IBuildingObjModel
     {
-        Dictionary<int, BuildingObj> m_BuildingDic;
+        Dictionary<int, BuildingBase> m_BuildingDic;
 
         protected override void OnInit()
         {
-            m_BuildingDic = new Dictionary<int, BuildingObj>();
+            m_BuildingDic = new Dictionary<int, BuildingBase>();
         }
 
 
         public void UnregisterBuild(int ID)
         {
-            if (m_BuildingDic.TryGetValue(ID, out BuildingObj obj))
+            if (m_BuildingDic.TryGetValue(ID, out BuildingBase obj))
             {
                 obj.Reset();
                 m_BuildingDic.Remove(ID);
             }
         }
 
-        public BuildingObj GetBuildData(int ID)
+        public BuildingBase GetBuildData(int ID)
         {
-            m_BuildingDic.TryGetValue(ID, out BuildingObj data);
+            m_BuildingDic.TryGetValue(ID, out BuildingBase data);
             return data;
         }
 
@@ -48,12 +48,12 @@ namespace Framework.BuildProject
             }
         }
 
-        public List<BuildingObj> GetBuildDataList(BuildingType type)
+        public List<BuildingBase> GetBuildDataList(BuildingType type)
         {
-            List<BuildingObj> tempList = new List<BuildingObj>();
-            foreach (BuildingObj buildingObj in m_BuildingDic.Values)
+            List<BuildingBase> tempList = new List<BuildingBase>();
+            foreach (BuildingBase buildingObj in m_BuildingDic.Values)
             {
-                if (buildingObj.m_BuildingType == type)
+                if (buildingObj.BuildingType == type)
                 {
                     tempList.Add(buildingObj);
                 }
@@ -62,16 +62,16 @@ namespace Framework.BuildProject
             return tempList;
         }
 
-        public BuildingObj[] GetBuildingObjsDataForArchiveSystem()
+        public BuildingBase[] GetBuildingObjsDataForArchiveSystem()
         {
             return m_BuildingDic.Values.ToArray();
         }
 
-        public void RegisterBuild(int ID, BuildingObj buildingObj)
+        public void RegisterBuild(int ID, BuildingBase buildingBase)
         {
             if (!m_BuildingDic.ContainsKey(ID))
             {
-                m_BuildingDic.Add(ID, buildingObj);
+                m_BuildingDic.Add(ID, buildingBase);
             }
         }
     }

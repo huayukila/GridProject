@@ -98,7 +98,7 @@ namespace Framework.BuildProject
         public void RecycleEnemy(GameObject obj_)
         {
             obj_.transform.parent = m_EnemyPool.transform;
-            m_EnemyDic.TryGetValue(obj_.GetComponent<EnemyBase>().m_Type, out SimpleObjectPool<GameObject> temp);
+            m_EnemyDic.TryGetValue(obj_.GetComponent<EnemyBase>().Type, out SimpleObjectPool<GameObject> temp);
             obj_.SetActive(false);
             temp.Recycle(obj_);
         }

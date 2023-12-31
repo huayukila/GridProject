@@ -1,6 +1,6 @@
 namespace Framework.BuildProject
 {
-    public class SelectBuildingCommand<T> : AbstractCommand where T : BuildingObj
+    public class SelectBuildingCommand<T> : AbstractCommand where T : BuildingBase
     {
         private BuildingData buildingData;
 

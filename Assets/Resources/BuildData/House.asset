@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NameString: House
   m_BuildingType: 1
-  m_Visual: {fileID: 1639077064690215285, guid: 3bd2284f7b090b24285d4f56c025df6d, type: 3}
-  m_Prefab: {fileID: 3801415977465005682, guid: b05cdd0d428136941b6b96cf79df6515, type: 3}
+  m_Visual: {fileID: 8440945524583659041, guid: d362646cffa26f14697f501201cb0b9c, type: 3}
+  m_Prefab: {fileID: 6014919589901450445, guid: e66a3c93f95db914091bb2b3a2d1596e, type: 3}
   m_Width: 1
   m_Height: 1
   m_NeedResource: 0

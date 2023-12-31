@@ -43,7 +43,7 @@ namespace Framework.BuildProject
             // m_SaveData.stageLevel=
 
 
-            BuildingObj[] buildsArray = this.GetModel<IBuildingObjModel>().GetBuildingObjsDataForArchiveSystem();
+            BuildingBase[] buildsArray = this.GetModel<IBuildingObjModel>().GetBuildingObjsDataForArchiveSystem();
             ResourceCost[] resourcesArray = this.GetModel<IResourceDataModel>().GetResourceDatasForArchiveSystem();
             
             m_SaveData.resDatas = resourcesArray;
@@ -52,10 +52,10 @@ namespace Framework.BuildProject
             {
                 m_SaveData.buildingSaveDatas[i].gridX = buildsArray[i].GridXY.x;
                 m_SaveData.buildingSaveDatas[i].gridZ = buildsArray[i].GridXY.x;
-                m_SaveData.buildingSaveDatas[i].buildingType = buildsArray[i].m_BuildingType;
+                m_SaveData.buildingSaveDatas[i].buildingType = buildsArray[i].BuildingType;
                 m_SaveData.buildingSaveDatas[i].dir = buildsArray[i].Dir;
                 m_SaveData.buildingSaveDatas[i].worker = buildsArray[i].m_WorkerNum;
-                m_SaveData.buildingSaveDatas[i].level = buildsArray[i].m_BuildingLevel;
+                m_SaveData.buildingSaveDatas[i].level = buildsArray[i].BuildingLevel;
             }
         }
 

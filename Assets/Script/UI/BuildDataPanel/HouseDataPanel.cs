@@ -4,8 +4,9 @@ namespace Framework.BuildProject
     {
         protected override void ShowData()
         {
+            House house=MBuildBase as House;
             DataText.text =
-                $"Name:{m_BuildObj.m_BuildingName}\nLevel:{m_BuildObj.m_BuildingLevel}\nHP:{m_BuildObj.m_BuildingHp}\nWorker:{m_BuildObj.m_MaxWorkerNum}";
+                $"Name:{house.BuildingName}\nLevel:{house.BuildingLevel}\nHP:{house.BuildingHp}\nWorker:{house.m_MaxWorkerNum}";
         }
     }
 }

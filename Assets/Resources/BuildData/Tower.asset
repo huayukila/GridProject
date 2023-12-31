@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
-  m_Name: Factory2
+  m_Name: Tower
   m_EditorClassIdentifier: 
-  nameString: Factory2
-  visual: {fileID: 1708816518203495477, guid: 636702e1467b4c0479291b8184087cb2, type: 3}
-  prefab: {fileID: 6184239876370062192, guid: e5505b6a67231384193ba80ad18eef2c, type: 3}
-  width: 2
-  height: 1
+  m_NameString: Tower
+  m_BuildingType: 0
+  m_Visual: {fileID: 7779539418670452904, guid: 872f956cfc897464091aa012185e613f, type: 3}
+  m_Prefab: {fileID: 4335343814985339109, guid: 1625d6cc0113364458ff2e461d68b07d, type: 3}
+  m_Width: 1
+  m_Height: 1
+  m_NeedResource: 0
+  m_LevelDatasList: []

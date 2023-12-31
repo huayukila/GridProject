@@ -22,14 +22,9 @@ MonoBehaviour:
       - SwapPoint: 1
         MonsterType: 0
         Amount: 10
+      - SwapPoint: 2
+        MonsterType: 0
+        Amount: 10
       - SwapPoint: 3
         MonsterType: 0
         Amount: 10
-    - IntervalTime: 5
-      Monsters:
-      - SwapPoint: 2
-        MonsterType: 0
-        Amount: 18
-      - SwapPoint: 0
-        MonsterType: 0
-        Amount: 21
