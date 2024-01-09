@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Framework.BuildProject
 {
-    public interface iGetHurt
+    public interface IGetHurt
     {
         bool GetDamage(int damage);
     }
@@ -18,7 +18,7 @@ namespace Framework.BuildProject
         Dead
     }
 
-    public class EnemyBase : BuildController, iGetHurt
+    public class EnemyBase : BuildController, IGetHurt
     {
         public EnemyType Type;
         public float ClaimsRadius;
@@ -33,11 +33,13 @@ namespace Framework.BuildProject
         protected Animator m_Animator;
         protected EnemyState m_State;
 
+        protected Rigidbody m_RB;
         Collider[] m_Target;
 
         // Start is called before the first frame update
         void Start()
         {
+            m_RB = GetComponent<Rigidbody>();
             m_Target = new Collider[1];
             m_Speed = 0.1f;
             m_ClaimsCD = 1f;
@@ -129,7 +131,7 @@ namespace Framework.BuildProject
         public void ResetObj()
         {
             m_Hp = 1;
-            m_Target[0]=null;
+            m_Target[0] = null;
             m_Speed = 0f;
             m_AttackCD = 0;
 

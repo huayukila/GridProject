@@ -30,7 +30,8 @@ namespace Framework.BuildProject
             {
                 {"House",Resources.Load<BuildingData>("BuildData/House")},
                 {"Factory",Resources.Load<BuildingData>("BuildData/Factory")},
-                {"CentreCore",Resources.Load<BuildingData>("BuildData/CentreCore")}
+                {"CentreCore",Resources.Load<BuildingData>("BuildData/CentreCore")},
+                {"DefendTower",Resources.Load<BuildingData>("BuildData/DefendTower")}
             };
         }
     }

@@ -12,11 +12,7 @@ namespace Framework.BuildProject
         {
             buttonList[0].onClick.AddListener(this.SendCommand<SelectBuildingCommand<House>>);
             buttonList[1].onClick.AddListener(this.SendCommand<SelectBuildingCommand<Factory>>);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
+            buttonList[2].onClick.AddListener(this.SendCommand<SelectBuildingCommand<DefendTower>>);
         }
 
         private void OnDestroy()
@@ -25,7 +21,6 @@ namespace Framework.BuildProject
             {
                 button.onClick.RemoveAllListeners();
             }
-
             buttonList.Clear();
         }
     }

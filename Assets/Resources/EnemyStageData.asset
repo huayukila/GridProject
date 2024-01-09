@@ -16,15 +16,15 @@ MonoBehaviour:
   - Waves:
     - IntervalTime: 0
       Monsters:
-      - SwapPoint: 0
+      - SwapPoint: 3
+        MonsterType: 0
+        Amount: 20
+      - SwapPoint: 2
         MonsterType: 0
         Amount: 10
       - SwapPoint: 1
         MonsterType: 0
-        Amount: 10
-      - SwapPoint: 2
+        Amount: 30
+      - SwapPoint: 0
         MonsterType: 0
-        Amount: 10
-      - SwapPoint: 3
-        MonsterType: 0
-        Amount: 10
+        Amount: 20

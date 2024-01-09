@@ -21,18 +21,6 @@ namespace Framework.BuildProject
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                BulletBase bullet = this.GetSystem<IBulletSystem>().GetBullet(BulletType.Arrow);
-                bullet.Set(0.3f, 10);
-                bullet.Shoot(Vector3.zero, transform);
-            }
-
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                this.GetSystem<IArchiveSystem>().SaveGameData();
-            }
-
             switch (gridBuildSystem.m_State.Value)
             {
                 case PlayerState.Normal:

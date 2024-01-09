@@ -1,49 +1,51 @@
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
     public class BulletBase : BuildController
     {
         public BulletType m_BulletType;
-        protected Transform m_Target;
+        protected Vector3 m_TargetPos;
         protected float m_Speed;
         public int m_Damage;
-        /// <summary>
-        /// 弾発射関数
-        /// </summary>
-        /// <param name="pos_">発射の位置</param>
-        /// <param name="target_">目標</param>
-        /// <param name="speed_">弾の飛行スピード</param>
-        public void Shoot(Vector3 pos_, Transform target_)
+        protected Collider[] m_Target = new Collider[1];
+
+        public void Shoot()
         {
-            transform.position = pos_;
-            m_Target = target_;
             gameObject.SetActive(true);
         }
 
-        public void Set(float speed_,int damage_)
+        /// <summary>
+        /// 弾設置関数
+        /// </summary>
+        /// <param name="speed_"></param>
+        /// <param name="damage_"></param>
+        /// <param name="pos_"></param>
+        /// <param name="targetPos_"></param>
+        /// <returns></returns>
+        public BulletBase Set(float speed_, int damage_, Vector3 pos_, Vector3 targetPos_)
         {
+            transform.localPosition = pos_;
+            m_TargetPos = targetPos_;
+            transform.LookAt(m_TargetPos);
             m_Speed = speed_;
             m_Damage = damage_;
+            return this;
         }
-        public void ResetObj()
+
+        public void ResetBulletObj()
         {
-            m_Target = null;
+            m_TargetPos = Vector3.zero;
             transform.position = Vector3.zero;
             m_Damage = 0;
             m_Speed = 0.0f;
             gameObject.SetActive(false);
+            m_Target[0] = null;
         }
 
 
-        private void OnTriggerEnter(Collider other_)
+        protected void RecycleBullet()
         {
-            if (!other_.CompareTag("Enemy")) return;
-            Debug.Log("hitEnemy");
-            other_.GetComponent<iGetHurt>().GetDamage(m_Damage);
             this.GetSystem<IBulletSystem>().RecycleBullet(gameObject);
         }
     }

@@ -10,13 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
-  m_Name: Tower
+  m_Name: DefendTower
   m_EditorClassIdentifier: 
-  m_NameString: Tower
-  m_BuildingType: 0
+  m_NameString: DefendTower
+  m_BuildingType: 5
   m_Visual: {fileID: 7779539418670452904, guid: 872f956cfc897464091aa012185e613f, type: 3}
   m_Prefab: {fileID: 4335343814985339109, guid: 1625d6cc0113364458ff2e461d68b07d, type: 3}
   m_Width: 1
   m_Height: 1
   m_NeedResource: 0
-  m_LevelDatasList: []
+  m_LevelDatasList:
+  - m_Level: 0
+    m_MaxWorker: 2
+    m_MaxHp: 100
+    m_UpdateTime: 2
+    m_CostList:
+    - resType: 1
+      Cost: 50
+    - resType: 2
+      Cost: 50
+    - resType: 3
+      Cost: 20

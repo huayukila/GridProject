@@ -28,6 +28,7 @@ public enum BuildingType
     Factory,
     Wall,
     Core,
+    DefendTower
 }
 public enum Terrain
 {
