@@ -1,19 +1,33 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Framework.BuildProject
 {
-
     public interface IBuilDataModel : IModel
     {
-        BuildingData GetBuildingConfig(string Name);
+        BuildingData GetBuildingConfig(BuildingType buildingType_);
     }
+
     public class BuildDataModel : AbstractModel, IBuilDataModel
     {
-        Dictionary<string, BuildingData> BuildingConfigDic;
+        Dictionary<BuildingType, BuildingData> m_BuildingConfigDic;
 
-        public BuildingData GetBuildingConfig(string Name)
+        protected override void OnInit()
         {
-            if (BuildingConfigDic.TryGetValue(Name, out BuildingData buildingData))
+            BuildingDatabase database = Resources.Load<BuildingDatabase>("BuildingDatabase");
+            m_BuildingConfigDic = new Dictionary<BuildingType, BuildingData>();
+
+            foreach (var data in database.BuildingDatas)
+            {
+                m_BuildingConfigDic.Add(data.m_BuildingType, data);
+            }
+
+            Resources.UnloadAsset(database);
+        }
+
+        public BuildingData GetBuildingConfig(BuildingType buildingType_)
+        {
+            if (m_BuildingConfigDic.TryGetValue(buildingType_, out BuildingData buildingData))
             {
                 return buildingData;
             }
@@ -22,17 +36,6 @@ namespace Framework.BuildProject
                 Debug.Log("íTÇµÇΩÇ¢åöï®ÇÕë∂ç›ÇµÇƒÇ¢Ç»Ç¢");
                 return null;
             }
-        }
-
-        protected override void OnInit()
-        {
-            BuildingConfigDic = new Dictionary<string, BuildingData>()
-            {
-                {"House",Resources.Load<BuildingData>("BuildData/House")},
-                {"Factory",Resources.Load<BuildingData>("BuildData/Factory")},
-                {"CentreCore",Resources.Load<BuildingData>("BuildData/CentreCore")},
-                {"DefendTower",Resources.Load<BuildingData>("BuildData/DefendTower")}
-            };
         }
     }
 }

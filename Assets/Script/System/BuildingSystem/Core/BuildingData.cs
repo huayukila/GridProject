@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Framework.BuildProject
 {
-    [CreateAssetMenu(fileName = "BuildingData")]
+    [CreateAssetMenu(menuName = "Buildings",fileName = "BuildingData")]
     public class BuildingData : ScriptableObject
     {
         public string m_NameString;

@@ -2,7 +2,7 @@ using UnityEngine.UI;
 
 namespace Framework.BuildProject
 {
-    public class FactoryDataPanel : BuildDataBasePanel
+    public class FactoryDataPanel : BuildDataPanelBase
     {
         public Button AddButton;
 
@@ -24,18 +24,18 @@ namespace Framework.BuildProject
         protected override void ShowData()
         {
             DataText.text =
-                $"Name:{MBuildBase.BuildingName}\nLevel:{MBuildBase.BuildingLevel}\nHP:{MBuildBase.BuildingHp}\nWorkerNums:{MBuildBase.m_WorkerNum}/{MBuildBase.m_MaxWorkerNum}";
+                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}\nWorkerNums:{m_BuildBase.m_WorkerNum}/{m_BuildBase.m_MaxWorkerNum}";
         }
 
         void AddWorker()
         {
-            this.SendCommand(new AddWorker(MBuildBase.GetGameObj().GetInstanceID()));
+            this.GetSystem<IBuildingSystem>().AddWorker(m_BuildBase.gameObject);
             ShowData();
         }
 
         void RemoveWorker()
         {
-            this.SendCommand(new RemoveWorker(MBuildBase.GetGameObj().GetInstanceID()));
+            this.GetSystem<IBuildingSystem>().RemoveWorker(m_BuildBase.gameObject);
             ShowData();
         }
 

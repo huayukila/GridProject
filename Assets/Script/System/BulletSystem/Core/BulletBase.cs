@@ -7,7 +7,7 @@ namespace Framework.BuildProject
         public BulletType m_BulletType;
         protected Vector3 m_TargetPos;
         protected float m_Speed;
-        public int m_Damage;
+        protected int m_Damage;
         protected Collider[] m_Target = new Collider[1];
 
         public void Shoot()
@@ -43,6 +43,26 @@ namespace Framework.BuildProject
             m_Target[0] = null;
         }
 
+        private void Update()
+        {
+            OnUpdate();
+        }
+
+        protected virtual void OnUpdate()
+        {
+            if (m_TargetPos == Vector3.zero)
+                return;
+            if (Physics.OverlapSphereNonAlloc(transform.position, 1, m_Target,
+                    LayerMask.GetMask(Global.TARGET_STRING_GROUND, Global.TARGET_STRING_ENEMY)) > 0)
+            {
+                if (m_Target[0].CompareTag(Global.TARGET_STRING_ENEMY))
+                {
+                    m_Target[0].GetComponent<IGetHurt>().GetDamage(m_Damage);
+                }
+
+                RecycleBullet();
+            }
+        }
 
         protected void RecycleBullet()
         {

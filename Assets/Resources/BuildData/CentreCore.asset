@@ -15,7 +15,7 @@ MonoBehaviour:
   m_NameString: CentreCore
   m_BuildingType: 4
   m_Visual: {fileID: 0}
-  m_Prefab: {fileID: 6976255131391901182, guid: ec4d548caf5d3684a91a3f290759026f, type: 3}
+  m_Prefab: {fileID: 3883655812242484271, guid: ec4d548caf5d3684a91a3f290759026f, type: 3}
   m_Width: 2
   m_Height: 2
   m_NeedResource: 0

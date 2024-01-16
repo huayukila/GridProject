@@ -8,20 +8,37 @@ namespace Framework.BuildProject
     {
         BulletBase GetBullet(BulletType bulletType_);
         void RecycleBullet(GameObject obj);
+        void InitByManager();
+        void Deinit();
     }
 
     public class BulletSystem : AbstractSystem, IBulletSystem
     {
         private GameObject m_BulletPool;
-        private Transform m_RootPoint;
         private Dictionary<BulletType, SimpleObjectPool<GameObject>> m_BulletDic;
 
         protected override void OnInit()
         {
-            m_RootPoint = GameObject.Find("GameManager").GetComponent<GameManager>().m_RootNode;
+        }
+
+        public BulletBase GetBullet(BulletType bulletType_)
+        {
+            m_BulletDic.TryGetValue(bulletType_, out SimpleObjectPool<GameObject> temp);
+            GameObject obj = temp.Allocate();
+            return obj.GetComponent<BulletBase>();
+        }
+
+        public void RecycleBullet(GameObject obj)
+        {
+            obj.transform.parent = m_BulletPool.transform;
+            m_BulletDic.TryGetValue(obj.GetComponent<BulletBase>().m_BulletType, out SimpleObjectPool<GameObject> temp);
+            temp.Recycle(obj);
+        }
+
+        public void InitByManager()
+        {
             m_BulletPool = new GameObject("BulletPool");
             m_BulletPool.transform.position = Vector3.zero;
-            GameObject.DontDestroyOnLoad(m_BulletPool);
             BulletDataBase m_BulletsData = Resources.Load<BulletDataBase>("BulletDatabase");
             m_BulletDic = new Dictionary<BulletType, SimpleObjectPool<GameObject>>();
             foreach (var bulletData in m_BulletsData.BulletDataList)
@@ -35,22 +52,19 @@ namespace Framework.BuildProject
                 }, obj => { obj.GetComponent<BulletBase>().ResetBulletObj(); }, 10);
                 m_BulletDic.Add(bulletData.bulletTyped, temp);
             }
+
             Resources.UnloadAsset(m_BulletsData);
         }
 
-        public BulletBase GetBullet(BulletType bulletType_)
+        public void Deinit()
         {
-            m_BulletDic.TryGetValue(bulletType_, out SimpleObjectPool<GameObject> temp);
-            GameObject obj = temp.Allocate();
-            obj.transform.parent = m_RootPoint.transform;
-            return obj.GetComponent<BulletBase>();
-        }
+            m_BulletPool = null;
+            foreach (var pool in m_BulletDic.Values)
+            {
+                pool.Clear();
+            }
 
-        public void RecycleBullet(GameObject obj)
-        {
-            obj.transform.parent = m_BulletPool.transform;
-            m_BulletDic.TryGetValue(obj.GetComponent<BulletBase>().m_BulletType, out SimpleObjectPool<GameObject> temp);
-            temp.Recycle(obj);
+            m_BulletDic.Clear();
         }
     }
 }

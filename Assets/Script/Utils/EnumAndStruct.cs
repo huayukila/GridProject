@@ -28,7 +28,7 @@ public enum BuildingType
     Factory,
     Wall,
     Core,
-    DefendTower
+    BallistaTower
 }
 public enum Terrain
 {

@@ -18,6 +18,7 @@ namespace Framework.BuildProject
         int MaxWorkerNum { get; set; }
 
         ResourceCost[] GetResourceDatasForArchiveSystem();
+        void Deinit();
     }
 
     public class ResourceDataModel : AbstractModel, IResourceDataModel
@@ -51,6 +52,18 @@ namespace Framework.BuildProject
             }
 
             return tempArray;
+        }
+
+        public void Deinit()
+        {
+            resDic = new Dictionary<ResourceType, int>
+            {
+                { ResourceType.Wood, 1000 },
+                { ResourceType.Stone, 1000 },
+                { ResourceType.Gold, 1000 },
+                { ResourceType.Worker, 0 }
+            };
+            MaxWorkerNum = 0;
         }
 
         public void MinusRes(ResourceCost[] costList)

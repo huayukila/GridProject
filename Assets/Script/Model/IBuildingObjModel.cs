@@ -8,10 +8,10 @@ namespace Framework.BuildProject
         void RegisterBuild(int ID, BuildingBase buildingBase);
         void UnregisterBuild(int ID);
         BuildingBase GetBuildData(int ID);
-        void UpdateBuildings();
         List<BuildingBase> GetBuildDataList(BuildingType type);
 
         BuildingBase[] GetBuildingObjsDataForArchiveSystem();
+        void Deinit();
     }
 
     public class BuildingObjModel : AbstractModel, IBuildingObjModel
@@ -38,16 +38,7 @@ namespace Framework.BuildProject
             m_BuildingDic.TryGetValue(ID, out BuildingBase data);
             return data;
         }
-
-        public void UpdateBuildings()
-        {
-            if (m_BuildingDic.Count <= 0) return;
-            foreach (IBuildingObj buildingObj in m_BuildingDic.Values)
-            {
-                buildingObj.Update();
-            }
-        }
-
+        
         public List<BuildingBase> GetBuildDataList(BuildingType type)
         {
             List<BuildingBase> tempList = new List<BuildingBase>();
@@ -65,6 +56,11 @@ namespace Framework.BuildProject
         public BuildingBase[] GetBuildingObjsDataForArchiveSystem()
         {
             return m_BuildingDic.Values.ToArray();
+        }
+
+        public void Deinit()
+        {
+            m_BuildingDic.Clear();
         }
 
         public void RegisterBuild(int ID, BuildingBase buildingBase)

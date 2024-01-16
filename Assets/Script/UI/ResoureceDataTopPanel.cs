@@ -9,7 +9,7 @@ namespace Framework.BuildProject
 
         private float m_DurationTime;
         IResourceDataModel dataModel;
-        
+
 
         // Start is called before the first frame update
         void Start()
@@ -28,6 +28,7 @@ namespace Framework.BuildProject
             {
                 return;
             }
+            m_DurationTime = Time.time;
             RefreshResPanel();
         }
 
@@ -36,7 +37,7 @@ namespace Framework.BuildProject
             resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" +
                                    dataModel.GetRes(ResourceType.Stone)
                                    + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Idle Population:" +
-                                   dataModel.GetRes(ResourceType.Worker)+"/Max Population:"+dataModel.MaxWorkerNum;
+                                   dataModel.GetRes(ResourceType.Worker) + "/Max Population:" + dataModel.MaxWorkerNum;
         }
     }
 }

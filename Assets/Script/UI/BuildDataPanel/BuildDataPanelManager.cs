@@ -1,45 +1,48 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
     public class BuildDataPanelManager : BuildController
     {
-        public BuildDataBasePanel FactoryPanel;
-        public BuildDataBasePanel HousePanel;
-
-        BuildDataBasePanel m_FocusPanel;
+        public BuildDataPanelBase factoryPanel;
+        public BuildDataPanelBase housePanel;
+        public BuildDataPanelBase centerCorePanel;
+        BuildDataPanelBase m_FocusPanelBase;
 
         public void OpenPanel(GameObject gameObject)
         {
-            if (m_FocusPanel != null && m_FocusPanel.gameObject.activeSelf)
+            if (m_FocusPanelBase != null && m_FocusPanelBase.gameObject.activeSelf)
             {
-                m_FocusPanel.CloseLabe();
-                m_FocusPanel = null;
+                m_FocusPanelBase.CloseLabe();
+                m_FocusPanelBase = null;
             }
 
             BuildingType tempType = this.GetModel<IBuildingObjModel>().GetBuildData(gameObject.GetInstanceID())
                 .BuildingType;
             switch (tempType)
             {
+                case BuildingType.BallistaTower:
                 case BuildingType.Factory:
-                    m_FocusPanel = FactoryPanel;
-                    m_FocusPanel.gameObject.SetActive(true);
-                    m_FocusPanel.OpenLabe(gameObject);
+                    m_FocusPanelBase = factoryPanel;
+                    break;
+                case BuildingType.Core:
+                    m_FocusPanelBase = centerCorePanel;
                     break;
                 case BuildingType.House:
-                    m_FocusPanel = HousePanel;
-                    m_FocusPanel.gameObject.SetActive(true);
-                    m_FocusPanel.OpenLabe(gameObject);
+                    m_FocusPanelBase = housePanel;
                     break;
             }
+            m_FocusPanelBase.gameObject.SetActive(true);
+            m_FocusPanelBase.OpenLabe(gameObject);
         }
 
         public void ClosePanel()
         {
-            if (m_FocusPanel == null)
+            if (m_FocusPanelBase == null)
                 return;
-            m_FocusPanel.CloseLabe();
-            m_FocusPanel = null;
+            m_FocusPanelBase.CloseLabe();
+            m_FocusPanelBase = null;
         }
     }
 }

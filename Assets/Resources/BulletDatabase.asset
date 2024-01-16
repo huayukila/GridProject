@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BulletDataList:
   - bulletTyped: 0
-    bulletPrefab: {fileID: 3552973531729592597, guid: 96789eb58c313af428eef23eb2976eed, type: 3}
+    bulletPrefab: {fileID: 3426027774883674920, guid: bee7715b57750ee47ba331175f8b594a, type: 3}

@@ -278,7 +278,7 @@ namespace Framework
     #region Controller
 
     public interface IController : IBelongToArchitecture, ICanSendCommand, ICanGetSystem, ICanGetModel,
-        ICanRegisterEvent, ICanSendQuery
+        ICanRegisterEvent, ICanSendQuery, ICanSendEvent
     {
     }
 

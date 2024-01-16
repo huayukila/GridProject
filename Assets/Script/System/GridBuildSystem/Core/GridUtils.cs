@@ -37,20 +37,20 @@ public class GridUtils<TGridObject>
         }
 
         //テスト用
-        GameObject TextRoot = new("TextRoot");
-        for (int x = 0; x < gridArray.GetLength(0); x++)
-        {
-            for (int z = 0; z < gridArray.GetLength(1); z++)
-            {
-                Debug.DrawLine(GetWorldPosition3D(x, z), GetWorldPosition3D(x, z + 1), Color.white, 100f);
-                Debug.DrawLine(GetWorldPosition3D(x, z), GetWorldPosition3D(x + 1, z), Color.white, 100f);
-
-                UtilsClass.Instance.DrawTextOnObjectHead(GetWorldPosition3D(x, z) + new Vector3(cellSize / 2, 0, cellSize / 2),
-                    new Vector3(0, 1, 0), "(" + x + "," + z + ")").transform.SetParent(TextRoot.transform);
-            }
-            Debug.DrawLine(GetWorldPosition3D(0, height), GetWorldPosition3D(width, height), Color.white, 100f);
-            Debug.DrawLine(GetWorldPosition3D(width, 0), GetWorldPosition3D(width, height), Color.white, 100f);
-        }
+        // GameObject TextRoot = new("TextRoot");
+        // for (int x = 0; x < gridArray.GetLength(0); x++)
+        // {
+        //     for (int z = 0; z < gridArray.GetLength(1); z++)
+        //     {
+        //         Debug.DrawLine(GetWorldPosition3D(x, z), GetWorldPosition3D(x, z + 1), Color.white, 100f);
+        //         Debug.DrawLine(GetWorldPosition3D(x, z), GetWorldPosition3D(x + 1, z), Color.white, 100f);
+        //
+        //         UtilsClass.Instance.DrawTextOnObjectHead(GetWorldPosition3D(x, z) + new Vector3(cellSize / 2, 0, cellSize / 2),
+        //             new Vector3(0, 1, 0), "(" + x + "," + z + ")").transform.SetParent(TextRoot.transform);
+        //     }
+        //     Debug.DrawLine(GetWorldPosition3D(0, height), GetWorldPosition3D(width, height), Color.white, 100f);
+        //     Debug.DrawLine(GetWorldPosition3D(width, 0), GetWorldPosition3D(width, height), Color.white, 100f);
+        // }
     }
 
     /// <summary>

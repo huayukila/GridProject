@@ -1,12 +1,11 @@
 namespace Framework.BuildProject
 {
-    public class HouseDataPanel : BuildDataBasePanel
+    public class HouseDataPanel : BuildDataPanelBase
     {
         protected override void ShowData()
         {
-            House house=MBuildBase as House;
             DataText.text =
-                $"Name:{house.BuildingName}\nLevel:{house.BuildingLevel}\nHP:{house.BuildingHp}\nWorker:{house.m_MaxWorkerNum}";
+                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}\nWorker:{m_BuildBase.m_MaxWorkerNum}";
         }
     }
 }

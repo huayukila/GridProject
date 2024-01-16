@@ -1,12 +1,14 @@
 // #define ISDEBUG
 
+using Kit;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
     public interface IGetHurt
     {
-        bool GetDamage(int damage);
+        void GetDamage(int damage);
     }
 
     public enum EnemyState
@@ -23,33 +25,37 @@ namespace Framework.BuildProject
         public EnemyType Type;
         public float ClaimsRadius;
         public float AttackRadius;
+        public int MaxHp;
+        public float Speed;
+        public float AttackCD;
+        public float ClaimsCD;
 
-        protected int m_Hp = 10;
-        protected float m_Speed;
-        protected float m_AttackCD;
-        protected float m_ClaimsCD;
         private float m_DurationTime;
         private float m_StartTime;
         protected Animator m_Animator;
         protected EnemyState m_State;
 
-        protected Rigidbody m_RB;
+        protected int CurrentHp;
         Collider[] m_Target;
+
+
+        private void Awake()
+        {
+            m_Animator = GetComponent<Animator>();
+            CurrentHp = MaxHp;
+        }
 
         // Start is called before the first frame update
         void Start()
         {
-            m_RB = GetComponent<Rigidbody>();
             m_Target = new Collider[1];
-            m_Speed = 0.1f;
-            m_ClaimsCD = 1f;
-            m_AttackCD = 2.0f;
         }
 
         private void OnEnable()
         {
             m_StartTime = Time.time;
             m_State = EnemyState.Move;
+            m_Animator.Play("Goblin_run");
         }
 #if ISDEBUG
         private void OnDrawGizmos()
@@ -61,16 +67,16 @@ namespace Framework.BuildProject
 #endif
 
 
-        private void FixedUpdate()
+        private void Update()
         {
             switch (m_State)
             {
                 case EnemyState.Idle:
                     break;
                 case EnemyState.Move:
-                    transform.localPosition += transform.forward * m_Speed;
-                    //í«ê’
-                    if (Time.time - m_StartTime < m_ClaimsCD)
+                    transform.localPosition += transform.forward * (Speed * Time.deltaTime);
+
+                    if (Time.time - m_StartTime < ClaimsCD)
                         return;
                     if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target,
                             LayerMask.GetMask("Building")) > 0)
@@ -84,7 +90,7 @@ namespace Framework.BuildProject
 
                     break;
                 case EnemyState.Trace:
-                    transform.localPosition += transform.forward * m_Speed;
+                    transform.localPosition += transform.forward * (Speed * Time.deltaTime);
 
                     if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target,
                             LayerMask.GetMask("Building")) == 0)
@@ -105,6 +111,7 @@ namespace Framework.BuildProject
                     {
                         m_State = EnemyState.Attack;
                         m_StartTime = Time.time;
+                        m_Animator.Play("Goblin_idle");
                     }
 
                     break;
@@ -114,10 +121,12 @@ namespace Framework.BuildProject
                     {
                         transform.LookAt(new Vector3(50, transform.localPosition.y, 50));
                         m_State = EnemyState.Move;
+                        m_Animator.Play("Goblin_run");
                     }
 
-                    if (Time.time - m_StartTime > m_AttackCD)
+                    if (Time.time - m_StartTime > AttackCD)
                     {
+                        m_Animator.Play("Goblin_attack");
                         m_StartTime = Time.time;
                         OnAttack();
                     }
@@ -130,32 +139,34 @@ namespace Framework.BuildProject
 
         public void ResetObj()
         {
-            m_Hp = 1;
+            tag = Global.TARGET_STRING_ENEMY;
+            CurrentHp = MaxHp;
             m_Target[0] = null;
-            m_Speed = 0f;
-            m_AttackCD = 0;
-
+            m_State = EnemyState.Move;
+            gameObject.layer = 7;
             gameObject.SetActive(false);
         }
 
         protected virtual void OnAttack()
         {
-            Debug.Log("attack");
         }
 
 
-        public bool GetDamage(int damage)
+        public void GetDamage(int damage)
         {
-            m_Hp -= damage;
-            if (m_Hp <= 0)
+            if (m_State == EnemyState.Dead)
+                return;
+            CurrentHp -= damage;
+            if (CurrentHp <= 0)
             {
+                tag = Global.TAG_STRING_DEAD;
+                m_Animator.Play("Goblin_death");
+                m_State = EnemyState.Dead;
+                gameObject.layer = 0;
+                this.SendEvent<EnemyGetKilledEvent>();
                 //pool recycle
-                Debug.Log("is dead");
-                this.GetSystem<IEnemySystem>().RecycleEnemy(gameObject);
-                return true;
+                ActionKit.Delay(3, () => this.GetSystem<IEnemySystem>().RecycleEnemy(gameObject)).Start(this);
             }
-
-            return false;
         }
     }
 }

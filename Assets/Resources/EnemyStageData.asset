@@ -14,17 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Stages:
   - Waves:
-    - IntervalTime: 0
+    - IntervalTime: 3
       Monsters:
       - SwapPoint: 3
+        MonsterType: 0
+        Amount: 10
+    - IntervalTime: 20
+      Monsters:
+      - SwapPoint: 1
+        MonsterType: 0
+        Amount: 20
+  - Waves:
+    - IntervalTime: 3
+      Monsters:
+      - SwapPoint: 0
+        MonsterType: 0
+        Amount: 5
+      - SwapPoint: 1
+        MonsterType: 0
+        Amount: 5
+      - SwapPoint: 2
+        MonsterType: 0
+        Amount: 5
+      - SwapPoint: 3
+        MonsterType: 0
+        Amount: 5
+    - IntervalTime: 20
+      Monsters:
+      - SwapPoint: 1
+        MonsterType: 0
+        Amount: 20
+      - SwapPoint: 3
+        MonsterType: 0
+        Amount: 20
+  - Waves:
+    - IntervalTime: 3
+      Monsters:
+      - SwapPoint: 0
+        MonsterType: 0
+        Amount: 13
+      - SwapPoint: 1
         MonsterType: 0
         Amount: 20
       - SwapPoint: 2
         MonsterType: 0
         Amount: 10
-      - SwapPoint: 1
+      - SwapPoint: 3
         MonsterType: 0
-        Amount: 30
-      - SwapPoint: 0
-        MonsterType: 0
-        Amount: 20
+        Amount: 18

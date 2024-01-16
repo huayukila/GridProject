@@ -4,24 +4,22 @@ namespace Framework.BuildProject
 {
     public class PlayerController : BuildController
     {
-        IGridBuildSystem gridBuildSystem;
+        IGridBuildSystem m_GridBuildSystem;
+        private IPlayerDataModel m_PlayerDataModel;
 
         public BuildDataPanelManager m_BuildDataPanelManager;
 
-        // Start is called before the first frame update
-        private void Awake()
-        {
-            gridBuildSystem = this.GetSystem<IGridBuildSystem>();
-        }
 
-        void Start()
+        private void Start()
         {
+            m_GridBuildSystem = this.GetSystem<IGridBuildSystem>();
+            m_PlayerDataModel = this.GetModel<IPlayerDataModel>();
         }
 
         // Update is called once per frame
         void Update()
         {
-            switch (gridBuildSystem.m_State.Value)
+            switch (m_PlayerDataModel.playerState)
             {
                 case PlayerState.Normal:
                     if (Input.GetMouseButton(0))
@@ -30,7 +28,8 @@ namespace Framework.BuildProject
                         {
                             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                            if (Physics.Raycast(ray, out var hit, 1000, LayerMask.GetMask("Building"))
+                            if (Physics.Raycast(ray, out var hit, 1000,
+                                    LayerMask.GetMask(Global.TARGET_STRING_BUILDING))
                                )
                             {
                                 m_BuildDataPanelManager.OpenPanel(hit.transform.parent.gameObject);
@@ -45,32 +44,27 @@ namespace Framework.BuildProject
 
                     break;
                 case PlayerState.Build:
-                    gridBuildSystem.VisualBuildingFollowMouse();
+                    m_GridBuildSystem.VisualBuildingFollowMouse();
                     if (Input.GetMouseButtonDown(0))
                     {
                         if (!UtilsClass.Instance.IsMouseOverUI())
                         {
-                            gridBuildSystem.SetBuilding();
+                            m_GridBuildSystem.SetBuilding();
                         }
                     }
 
                     if (Input.GetMouseButtonDown(1))
                     {
-                        gridBuildSystem.CancelSelect();
+                        m_GridBuildSystem.CancelSelect();
                     }
 
                     if (Input.GetKeyDown(KeyCode.R))
                     {
-                        gridBuildSystem.BuildingRota();
+                        m_GridBuildSystem.BuildingRota();
                     }
 
                     break;
             }
-        }
-
-        void OnDestroy()
-        {
-            gridBuildSystem.m_State.Unregister(e => { });
         }
     }
 }

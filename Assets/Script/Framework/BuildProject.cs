@@ -7,6 +7,7 @@ namespace Framework.BuildProject
             RegisterModel<IBuilDataModel>(new BuildDataModel());
             RegisterModel<IResourceDataModel>(new ResourceDataModel());
             RegisterModel<IBuildingObjModel>(new BuildingObjModel());
+            RegisterModel<IPlayerDataModel>(new PlayerDataModel());
             RegisterSystem<IArchiveSystem>(new ArchiveSystem());
             RegisterSystem<IGridBuildSystem>(new GridBuildSystem());
             RegisterSystem<IBuildingSystem>(new BuildingSystem());

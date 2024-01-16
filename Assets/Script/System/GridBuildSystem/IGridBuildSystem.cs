@@ -8,15 +8,23 @@ namespace Framework.BuildProject
 {
     public interface IGridBuildSystem : ISystem
     {
-        BindableProperty<PlayerState> m_State { get; }
         void CancelSelect();
         void SetBuilding();
         void DestroyBuilding(GameObject gameObj);
         void BuildingRota();
-        void SelectBuilding<T>(BuildingData buildingData) where T : BuildingBase;
+        void SelectBuilding(BuildingData buildingData);
         void VisualBuildingFollowMouse();
 
-        bool CreatMapByArchive();
+        /// <summary>
+        /// 建物構築
+        /// </summary>
+        /// <param name="buildingType_"></param>
+        /// <param name="gridPosition_"></param>
+        /// <param name="dir_"></param>
+        void CreatBuilding(BuildingType buildingType_, Vector2Int gridPosition_, Dir dir_);
+
+        void CreatGrid(int gridWidth_, int gridHeight_, float cellSize_);
+        void Deinit();
     }
 
     public class GridBuildSystem : AbstractSystem, IGridBuildSystem
@@ -30,27 +38,42 @@ namespace Framework.BuildProject
         Transform m_VisualBuilding;
         Dir m_Dir = Dir.Down;
 
-        private Type m_BuildingObjType;
+        private BuildingType m_buildingType;
 
-        public BindableProperty<PlayerState> m_State { get; } = new BindableProperty<PlayerState>()
-        {
-            Value = PlayerState.Normal
-        };
+        private IPlayerDataModel m_playerDataModel;
 
         protected override void OnInit()
         {
-            m_State.Register(e => { Debug.Log("モード変更" + m_State.Value); });
-            CreatGrid(Global.GRID_SIZE_WIDTH, Global.GRID_SIZE_HEIGHT, Global.GRID_SIZE_CELL);
+            m_playerDataModel = this.GetModel<IPlayerDataModel>();
         }
 
+        public void CreatGrid(int gridWidth, int gridHeight, float cellSize)
+        {
+            m_Grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
+                (GridUtils<GridObject> g, int x, int z) => new GridObject(g, x, z)
+            );
+        }
+
+        public void Deinit()
+        {
+            //グリッドマップ対象
+            m_Grid = null;
+
+            //建物データ
+            m_BuildingData = null;
+
+            m_VisualBuilding = null;
+            m_Dir = Dir.Down;
+            m_buildingType = BuildingType.Non;
+        }
 
         public void CancelSelect()
         {
             m_VisualBuilding.DOKill();
             Object.Destroy(m_VisualBuilding.gameObject);
             m_BuildingData = null;
-            m_BuildingObjType = null;
-            m_State.Value = PlayerState.Normal;
+            m_buildingType = BuildingType.Non;
+            m_playerDataModel.playerState = PlayerState.Normal;
         }
 
         public void SetBuilding()
@@ -65,38 +88,6 @@ namespace Framework.BuildProject
 
             if (CheckInMap(x, z))
             {
-                //建物の占有グリッドリスト
-                List<Vector2Int> gridPositionList = GetGridPositionList(m_BuildingData, new Vector2Int(x, z), m_Dir);
-                //マップ中フラグ
-                bool isInGridMap = true;
-                //築けるフラグ
-                bool isCanBuild = true;
-
-                //建物の毎グリッドはマップの中にあるのか
-                foreach (Vector2Int gridPosition in gridPositionList)
-                {
-                    if (!(gridPosition.x >= m_Grid.GetGridSize().x) &&
-                        !(gridPosition.y >= m_Grid.GetGridSize().y)) continue;
-                    isInGridMap = false;
-                    Debug.Log("ここに築くことはできません");
-                    break;
-                }
-
-                if (isInGridMap)
-                {
-                    //グリッドの中にも建物がありました
-                    foreach (Vector2Int gridPosition in gridPositionList)
-                    {
-                        GridObject gObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
-                        if (gObj.IsEmpty && gObj.TerrainData.resType == m_BuildingData.m_NeedResource) continue;
-                        Debug.Log("ここに築くことはできません");
-                        isCanBuild = false;
-                        break;
-                    }
-                }
-
-                if (!isCanBuild || !isInGridMap) return;
-
                 if (m_BuildingData.m_BuildingType == BuildingType.House)
                 {
                     this.GetModel<IResourceDataModel>().MaxWorkerNum +=
@@ -105,37 +96,7 @@ namespace Framework.BuildProject
                         m_BuildingData.m_LevelDatasList[0].m_MaxWorker);
                 }
 
-                //基準点偏移
-                Vector2Int rotationOffset = GetRotationOffset(m_Dir);
-                //正しいの世界座標を獲得
-                Vector3 buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(x, z) +
-                                                      new Vector3(rotationOffset.x, 0, rotationOffset.y) *
-                                                      m_Grid.GetCellSize;
-                //建物生成
-                Transform buildTransform = Object.Instantiate(
-                    m_BuildingData.m_Prefab,
-                    buildingObjectWorldPosition,
-                    Quaternion.Euler(0, GetRotationAngle(m_Dir), 0));
-
-
-                //runtime building obj構築
-                {
-                    var obj = Activator.CreateInstance(m_BuildingObjType);
-                    BuildingBase buildingBase = obj as BuildingBase;
-                    //建物の実体を相応のグリッドに中に打ち込み
-                    List<GridObject> tempGridObjList = new List<GridObject>();
-                    foreach (Vector2Int girdPosition in gridPositionList)
-                    {
-                        GridObject gridObj = m_Grid.GetGridObjectByXY(girdPosition.x, girdPosition.y);
-                        gridObj.IsEmpty = false;
-                        tempGridObjList.Add(gridObj);
-                    }
-
-                    buildingBase.Init(m_BuildingData, tempGridObjList, new Vector2Int(x, z), m_Dir,
-                        buildTransform.gameObject);
-                    this.GetModel<IBuildingObjModel>()
-                        .RegisterBuild(buildTransform.gameObject.GetInstanceID(), buildingBase);
-                }
+                CreatBuilding(m_BuildingData, m_buildingType, new Vector2Int(x, z), m_Dir);
                 //建物のデータから建造コーストによって、modelに指定された資源を減少する
                 this.GetModel<IResourceDataModel>()
                     .MinusRes(m_BuildingData.m_LevelDatasList[0].m_CostList);
@@ -143,7 +104,7 @@ namespace Framework.BuildProject
             }
             else
             {
-                Debug.Log("ここはマップの中ではない");
+                Debug.Log("ここは築けません");
             }
         }
 
@@ -152,7 +113,7 @@ namespace Framework.BuildProject
             IResourceDataModel resDataModel = this.GetModel<IResourceDataModel>();
             IBuildingObjModel buildObjModel = this.GetModel<IBuildingObjModel>();
 
-            BuildingBase buildingBase = buildObjModel.GetBuildData(gameObj.GetHashCode());
+            BuildingBase buildingBase = buildObjModel.GetBuildData(gameObj.GetInstanceID());
 
             if (buildingBase.BuildingType == BuildingType.House)
             {
@@ -202,15 +163,14 @@ namespace Framework.BuildProject
             }
 
             buildObjModel.UnregisterBuild(gameObj.GetInstanceID());
+            GameObject.Destroy(gameObj);
         }
 
-        public void SelectBuilding<T>(BuildingData buildingData) where T : BuildingBase
+        public void SelectBuilding(BuildingData buildingData)
         {
-            m_State.Value = PlayerState.Build;
+            m_playerDataModel.playerState = PlayerState.Build;
 
             m_BuildingData = buildingData;
-
-            m_BuildingObjType = typeof(T);
 
             m_Dir = Dir.Down;
             //マウス座標
@@ -258,9 +218,13 @@ namespace Framework.BuildProject
             }
         }
 
-        public bool CreatMapByArchive()
+
+        public void CreatBuilding(BuildingType buildingType_, Vector2Int gridPosition_, Dir dir_)
         {
-            return false;
+            BuildingData buildingData = this.GetModel<IBuilDataModel>().GetBuildingConfig(buildingType_);
+            if (buildingData == null)
+                return;
+            CreatBuilding(buildingData, m_buildingType, gridPosition_, dir_);
         }
 
         #region 内部用関数
@@ -342,30 +306,69 @@ namespace Framework.BuildProject
 
         bool CheckInMap(int x, int y)
         {
-            return x >= 0 && y >= 0 && x <= m_Grid.GetGridSize().x && y <= m_Grid.GetGridSize().y;
+            //クリックした場所はマップの中ではないか？
+            if (!(x >= 0 && y >= 0 && x <= m_Grid.GetGridSize().x && y <= m_Grid.GetGridSize().y))
+                return false;
+
+            //建物の占有グリッドリスト
+            List<Vector2Int> gridPositionList = GetGridPositionList(m_BuildingData, new Vector2Int(x, y), m_Dir);
+
+            //建物の毎グリッドはマップの中にあるのか
+            foreach (Vector2Int gridPosition in gridPositionList)
+            {
+                if (!(gridPosition.x >= m_Grid.GetGridSize().x) &&
+                    !(gridPosition.y >= m_Grid.GetGridSize().y)) continue;
+                return false;
+            }
+
+
+            //グリッドの中にも建物がありました
+            foreach (Vector2Int gridPosition in gridPositionList)
+            {
+                GridObject gObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
+                if (gObj.IsEmpty && gObj.TerrainData.resType == m_BuildingData.m_NeedResource) continue;
+                return false;
+            }
+
+            return true;
         }
 
-        void CreatGrid(int gridWidth, int gridHeight, float cellSize)
+
+        /// <summary>
+        /// runtime建物構築
+        /// </summary>
+        /// <param name="buildingData_"></param>
+        /// <param name="buildingType_"></param>
+        /// <param name="gridPosition_"></param>
+        /// <param name="dir_"></param>
+        void CreatBuilding(BuildingData buildingData_, BuildingType buildingType_, Vector2Int gridPosition_, Dir dir_)
         {
-            m_Grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
-                (GridUtils<GridObject> g, int x, int z) => new GridObject(g, x, z)
-            );
-            //地形設定ファイルからグリッドマップを設定する
-            //...
-            // m_Grid.GetGridObjectByXY(1, 1).TerrainData.resType = ResourceType.Gold;
-            BuildingData centreCoreData = this.GetModel<IBuilDataModel>().GetBuildingConfig("CentreCore");
-            GameObject.Instantiate(centreCoreData.m_Prefab,
-                m_Grid.GetWorldPosition3D(4, 4), Quaternion.Euler(0, GetRotationAngle(Dir.Down), 0));
-            List<Vector2Int> gridPositionList = GetGridPositionList(centreCoreData, new Vector2Int(4, 4), Dir.Down);
+            //基準点偏移
+            Vector2Int rotationOffset = GetRotationOffset(dir_);
+            //正しいの世界座標を獲得
+            Vector3 buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(gridPosition_.x, gridPosition_.y) +
+                                                  new Vector3(rotationOffset.x, 0, rotationOffset.y) *
+                                                  m_Grid.GetCellSize;
+
+
+            List<Vector2Int> gridPositionList = GetGridPositionList(buildingData_,
+                new Vector2Int(gridPosition_.x, gridPosition_.y), dir_);
+
+            List<GridObject> tempGridObjList = new List<GridObject>();
             foreach (Vector2Int girdPosition in gridPositionList)
             {
                 GridObject gridObj = m_Grid.GetGridObjectByXY(girdPosition.x, girdPosition.y);
                 gridObj.IsEmpty = false;
+                tempGridObjList.Add(gridObj);
             }
-        }
 
-        void CreatBuilding()
-        {
+            //建物実体生成
+            Transform tempBuilding = GameObject.Instantiate(buildingData_.m_Prefab,
+                buildingObjectWorldPosition,
+                Quaternion.Euler(0, GetRotationAngle(dir_), 0));
+            BuildingBase buildingBase = tempBuilding.GetComponent<BuildingBase>();
+            buildingBase.Init(buildingData_, tempGridObjList, gridPosition_, dir_);
+            this.GetModel<IBuildingObjModel>().RegisterBuild(tempBuilding.gameObject.GetInstanceID(), buildingBase);
         }
 
         #endregion
