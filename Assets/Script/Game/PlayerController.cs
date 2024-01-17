@@ -24,7 +24,7 @@ namespace Framework.BuildProject
                 case PlayerState.Normal:
                     if (Input.GetMouseButton(0))
                     {
-                        if (!UtilsClass.Instance.IsMouseOverUI())
+                        if (!Utils.IsMouseOverUI())
                         {
                             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -47,7 +47,7 @@ namespace Framework.BuildProject
                     m_GridBuildSystem.VisualBuildingFollowMouse();
                     if (Input.GetMouseButtonDown(0))
                     {
-                        if (!UtilsClass.Instance.IsMouseOverUI())
+                        if (!Utils.IsMouseOverUI())
                         {
                             m_GridBuildSystem.SetBuilding();
                         }

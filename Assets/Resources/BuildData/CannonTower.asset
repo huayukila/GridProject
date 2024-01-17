@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
+  m_Name: CannonTower
+  m_EditorClassIdentifier: 
+  m_NameString: CannonTower
+  m_BuildingType: 7
+  m_Visual: {fileID: 696528133786906404, guid: edf2967dd6450f34f982e348e56304da, type: 3}
+  m_Prefab: {fileID: 4692238192127038648, guid: a2e52f20fa2f7f64cb26795e0538d2af, type: 3}
+  m_Width: 1
+  m_Height: 1
+  m_NeedResource: 0
+  m_LevelDatasList: []

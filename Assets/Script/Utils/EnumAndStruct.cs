@@ -28,7 +28,9 @@ public enum BuildingType
     Factory,
     Wall,
     Core,
-    BallistaTower
+    BallistaTower,
+    MagicTower,
+    CannonTower,
 }
 public enum Terrain
 {

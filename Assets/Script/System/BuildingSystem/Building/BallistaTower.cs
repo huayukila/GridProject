@@ -23,12 +23,13 @@ namespace Framework.BuildProject
         public Transform StringTrans;
         public Transform LockTrans;
         public float LoadSpeed;
+        public ParticleSystem Particle;
 
         private Collider[] m_Target;
         private float m_AttackRadius = 50;
         private bool m_IsAmmoLoaded;
         private TowerState m_State;
-        private readonly float m_LockSpeed = 0.8f;
+        private readonly float m_LockSpeed = 3f;
 
         //ターゲットするとき、向き記録するため
         private float m_YDir;
@@ -43,8 +44,6 @@ namespace Framework.BuildProject
 
         private void Start()
         {
-            m_WorkerNum = 1;
-            m_Target = new Collider[1];
             m_State = TowerState.Idle;
             m_X = 0;
             m_YDir = 0;
@@ -81,12 +80,12 @@ namespace Framework.BuildProject
 
                     Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
 
-                    XRotationPoint.rotation = Quaternion.Lerp(XRotationPoint.rotation, rot, 3f * Time.deltaTime);
+                    XRotationPoint.rotation = Quaternion.Lerp(XRotationPoint.rotation, rot, m_LockSpeed * Time.deltaTime);
 
                     var rotationY = YRotationPoint.rotation;
                     rotationY =
                         Quaternion.Lerp(rotationY, Quaternion.LookRotation(targetDir),
-                            3f * Time.deltaTime);
+                            m_LockSpeed * Time.deltaTime);
 
                     YRotationPoint.rotation = rotationY;
 
@@ -127,8 +126,9 @@ namespace Framework.BuildProject
 
         void Fire()
         {
+            Particle.Play();
             BulletBase bullet = this.GetSystem<IBulletSystem>().GetBullet(BulletType.Arrow);
-            bullet.Set(100f, 10, FirePoint.position, m_Target[0].transform.position).Shoot();
+            bullet.Set(100f, 10, FirePoint.position, m_Target[0].transform).Shoot();
             bullet.transform.rotation = FirePoint.rotation;
             m_IsAmmoLoaded = false;
             StringTrans.position = StringStartPoint.position;

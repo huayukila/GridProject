@@ -22,6 +22,7 @@ namespace Framework.BuildProject
                 .BuildingType;
             switch (tempType)
             {
+                case BuildingType.MagicTower:
                 case BuildingType.BallistaTower:
                 case BuildingType.Factory:
                     m_FocusPanelBase = factoryPanel;

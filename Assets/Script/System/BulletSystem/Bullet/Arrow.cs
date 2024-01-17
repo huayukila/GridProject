@@ -6,8 +6,8 @@ namespace Framework.BuildProject
     {
         protected override void OnUpdate()
         {
+            transform.Translate(transform.up * (m_Speed * Time.deltaTime), Space.World);
             base.OnUpdate();
-            transform.Translate(transform.up*(m_Speed*Time.deltaTime), Space.World);
         }
     }
 }

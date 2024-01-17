@@ -82,7 +82,7 @@ namespace Framework.BuildProject
                 !this.GetModel<IResourceDataModel>().IsResEnough(m_BuildingData.m_LevelDatasList[0].m_CostList)) return;
 
             //マウスの世界座標を獲得
-            Vector3 mousePosition = UtilsClass.Instance.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
+            Vector3 mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             //マウスの座標をグリッド座標に変換
             m_Grid.GetXY3D(mousePosition, out int x, out int z);
 
@@ -174,7 +174,7 @@ namespace Framework.BuildProject
 
             m_Dir = Dir.Down;
             //マウス座標
-            Vector3 mousePosition = UtilsClass.Instance.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
+            Vector3 mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             //グリッド座標に変換
             m_Grid.GetXY3D(mousePosition, out int x, out int z);
             //ロール基点獲得
@@ -201,7 +201,7 @@ namespace Framework.BuildProject
         public void VisualBuildingFollowMouse()
         {
             //マウスの世界座標
-            Vector3 mousePosition = UtilsClass.Instance.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
+            Vector3 mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             //グリッド座標に変換
             m_Grid.GetXY3D(mousePosition, out int x, out int z);
             //ロール基点偏移

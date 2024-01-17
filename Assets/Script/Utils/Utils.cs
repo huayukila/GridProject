@@ -1,31 +1,10 @@
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-public class UtilsClass
+public static class Utils
 {
-    static UtilsClass instance;
-
-    private UtilsClass()
-    {
-    }
-
-    public static UtilsClass Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new UtilsClass();
-            }
-
-            return instance;
-        }
-    }
-
-    public Vector3 GetMouseWorldPosition3D(Vector3 mousePosition, string layerName)
+    public static Vector3 GetMouseWorldPosition3D(Vector3 mousePosition, string layerName)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -33,7 +12,7 @@ public class UtilsClass
         return hit.point;
     }
 
-    public Vector2 GetMouseWorldPosition2D(Vector3 mousePosition)
+    public static Vector2 GetMouseWorldPosition2D(Vector3 mousePosition)
     {
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         Vector2 mousePosition2D = new Vector2(mousePosition.x, mousePosition.y);
@@ -41,7 +20,7 @@ public class UtilsClass
         return hit.point;
     }
 
-    public GameObject DrawTextOnObjectHead(Vector3 position, Vector3 offset, string text)
+    public static GameObject DrawTextOnObjectHead(Vector3 position, Vector3 offset, string text)
     {
         GameObject textObject = new GameObject("TextObject");
         textObject.transform.position = position + offset;
@@ -52,7 +31,7 @@ public class UtilsClass
     }
 
 
-    public bool IsMouseOverUI()
+    public static bool IsMouseOverUI()
     {
         PointerEventData eventData = new PointerEventData(EventSystem.current);
         eventData.position = Input.mousePosition;
@@ -60,5 +39,24 @@ public class UtilsClass
         EventSystem.current.RaycastAll(eventData, results);
 
         return results.Count > 0;
+    }
+
+    public static Vector3 BezierCure(Vector3 start_, Transform end_, float t_)
+    {
+        Vector3 dir = (end_.position - start_).normalized;
+        Vector3 offSet = -dir * 20 + Vector3.up * 6;
+
+        Vector3 a = start_;
+        Vector3 b = start_ + offSet;
+        Vector3 c = end_.position + offSet;
+        Vector3 d = end_.position;
+
+        Vector3 aa = a + (b - a) * t_;
+        Vector3 bb = b + (c - b) * t_;
+        Vector3 cc = c + (d - c) * t_;
+
+        Vector3 aaa = aa + (bb - aa) * t_;
+        Vector3 bbb = bb + (cc - bb) * t_;
+        return aaa + (bbb - aaa) * t_;
     }
 }

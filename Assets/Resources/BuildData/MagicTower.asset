@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
+  m_Name: MagicTower
+  m_EditorClassIdentifier: 
+  m_NameString: MagicTower
+  m_BuildingType: 6
+  m_Visual: {fileID: 3054335046606035155, guid: 2872b8d17f188304894468d86ffa1d2c, type: 3}
+  m_Prefab: {fileID: 9217069322022633206, guid: 9a26027adb60fd8488266a768112cb05, type: 3}
+  m_Width: 1
+  m_Height: 1
+  m_NeedResource: 0
+  m_LevelDatasList:
+  - m_Level: 1
+    m_MaxWorker: 2
+    m_MaxHp: 50
+    m_UpdateTime: 1
+    m_CostList:
+    - resType: 1
+      Cost: 80
+    - resType: 2
+      Cost: 70
+    - resType: 3
+      Cost: 30

@@ -5,10 +5,12 @@ namespace Framework.BuildProject
     public class BulletBase : BuildController
     {
         public BulletType m_BulletType;
-        protected Vector3 m_TargetPos;
         protected float m_Speed;
         protected int m_Damage;
         protected Collider[] m_Target = new Collider[1];
+
+        protected Vector3 m_StartPos;
+        protected Transform m_TargetTrans;
 
         public void Shoot()
         {
@@ -20,22 +22,24 @@ namespace Framework.BuildProject
         /// </summary>
         /// <param name="speed_"></param>
         /// <param name="damage_"></param>
-        /// <param name="pos_"></param>
-        /// <param name="targetPos_"></param>
+        /// <param name="startPos_"></param>
+        /// <param name="targetTrans_"></param>
         /// <returns></returns>
-        public BulletBase Set(float speed_, int damage_, Vector3 pos_, Vector3 targetPos_)
+        public BulletBase Set(float speed_, int damage_, Vector3 startPos_, Transform targetTrans_)
         {
-            transform.localPosition = pos_;
-            m_TargetPos = targetPos_;
-            transform.LookAt(m_TargetPos);
+            m_StartPos = startPos_;
+            m_TargetTrans = targetTrans_;
+            transform.localPosition = m_StartPos;
+            transform.LookAt(m_TargetTrans.position);
             m_Speed = speed_;
             m_Damage = damage_;
             return this;
         }
 
-        public void ResetBulletObj()
+        public virtual void ResetBulletObj()
         {
-            m_TargetPos = Vector3.zero;
+            m_StartPos = Vector3.zero;
+            m_TargetTrans = null;
             transform.position = Vector3.zero;
             m_Damage = 0;
             m_Speed = 0.0f;
@@ -50,8 +54,6 @@ namespace Framework.BuildProject
 
         protected virtual void OnUpdate()
         {
-            if (m_TargetPos == Vector3.zero)
-                return;
             if (Physics.OverlapSphereNonAlloc(transform.position, 1, m_Target,
                     LayerMask.GetMask(Global.TARGET_STRING_GROUND, Global.TARGET_STRING_ENEMY)) > 0)
             {

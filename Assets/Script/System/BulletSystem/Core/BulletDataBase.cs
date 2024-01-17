@@ -19,6 +19,6 @@ public class BulletData
 public enum BulletType
 {
     Arrow,
-    FireBall,
+    Magic,
     Boom,
 }
