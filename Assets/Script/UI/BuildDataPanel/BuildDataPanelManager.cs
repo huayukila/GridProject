@@ -25,7 +25,9 @@ namespace Framework.BuildProject
                 case BuildingType.CannonTower:
                 case BuildingType.MagicTower:
                 case BuildingType.BallistaTower:
-                case BuildingType.Factory:
+                case BuildingType.Sawmill:
+                case BuildingType.StoneMine:
+                case BuildingType.GoldenMine:
                     m_FocusPanelBase = factoryPanel;
                     break;
                 case BuildingType.Core:

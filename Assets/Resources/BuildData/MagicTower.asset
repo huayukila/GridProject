@@ -21,8 +21,8 @@ MonoBehaviour:
   m_NeedResource: 0
   m_LevelDatasList:
   - m_Level: 1
-    m_MaxWorker: 2
-    m_MaxHp: 50
+    m_MaxWorker: 1
+    m_MaxHp: 70
     m_UpdateTime: 1
     m_CostList:
     - resType: 1

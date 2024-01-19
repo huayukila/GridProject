@@ -11,10 +11,12 @@ namespace Framework.BuildProject
         void Start()
         {
             buttonList[0].onClick.AddListener(() => SelectBuilding(BuildingType.House));
-            buttonList[1].onClick.AddListener(() => SelectBuilding(BuildingType.Factory));
-            buttonList[2].onClick.AddListener(() => SelectBuilding(BuildingType.BallistaTower));
-            buttonList[3].onClick.AddListener(() => SelectBuilding(BuildingType.MagicTower));
-            buttonList[4].onClick.AddListener(() => SelectBuilding(BuildingType.CannonTower));
+            buttonList[1].onClick.AddListener(() => SelectBuilding(BuildingType.Sawmill));
+            buttonList[2].onClick.AddListener(() => SelectBuilding(BuildingType.StoneMine));
+            buttonList[3].onClick.AddListener(() => SelectBuilding(BuildingType.GoldenMine));
+            buttonList[4].onClick.AddListener(() => SelectBuilding(BuildingType.BallistaTower));
+            buttonList[5].onClick.AddListener(() => SelectBuilding(BuildingType.MagicTower));
+            buttonList[6].onClick.AddListener(() => SelectBuilding(BuildingType.CannonTower));
         }
 
         private void OnDestroy()

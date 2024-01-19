@@ -15,7 +15,9 @@ MonoBehaviour:
   BuildingDatas:
   - {fileID: 11400000, guid: c71c518e1e57374468c0b3092708d6aa, type: 2}
   - {fileID: 11400000, guid: b1b35893bcc11404bb24edd356ca1f81, type: 2}
-  - {fileID: 11400000, guid: 403dafc1b7482f54bbd991044b46bc2b, type: 2}
   - {fileID: 11400000, guid: 871e989fb2fcb224fb14eb156830e6ed, type: 2}
   - {fileID: 11400000, guid: 5d2fa92d4fc299a45859a5f76804dd35, type: 2}
   - {fileID: 11400000, guid: 88a4c3f383442ba4aa06540619a661d7, type: 2}
+  - {fileID: 11400000, guid: 1dd81c71fe52a9d48a055173edcb5e3d, type: 2}
+  - {fileID: 11400000, guid: b20a67c270e58614db9521041f14c1bf, type: 2}
+  - {fileID: 11400000, guid: b7aa2226136cd2045a1ff2ecf7dfd567, type: 2}

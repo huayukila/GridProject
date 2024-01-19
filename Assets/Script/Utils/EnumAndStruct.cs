@@ -31,6 +31,9 @@ public enum BuildingType
     BallistaTower,
     MagicTower,
     CannonTower,
+    GoldenMine,
+    StoneMine,
+    Sawmill,
 }
 public enum Terrain
 {

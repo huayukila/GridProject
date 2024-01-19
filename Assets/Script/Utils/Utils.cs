@@ -7,8 +7,7 @@ public static class Utils
     public static Vector3 GetMouseWorldPosition3D(Vector3 mousePosition, string layerName)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        Physics.Raycast(ray, out hit, 1000, LayerMask.GetMask(layerName));
+        Physics.Raycast(ray, out var hit, 1000, LayerMask.GetMask(layerName));
         return hit.point;
     }
 
@@ -22,8 +21,13 @@ public static class Utils
 
     public static GameObject DrawTextOnObjectHead(Vector3 position, Vector3 offset, string text)
     {
-        GameObject textObject = new GameObject("TextObject");
-        textObject.transform.position = position + offset;
+        GameObject textObject = new GameObject("TextObject")
+        {
+            transform =
+            {
+                position = position + offset
+            }
+        };
         textObject.AddComponent<MeshRenderer>();
         TextMesh textMesh = textObject.AddComponent<TextMesh>();
         textMesh.text = text;
@@ -33,8 +37,10 @@ public static class Utils
 
     public static bool IsMouseOverUI()
     {
-        PointerEventData eventData = new PointerEventData(EventSystem.current);
-        eventData.position = Input.mousePosition;
+        PointerEventData eventData = new PointerEventData(EventSystem.current)
+        {
+            position = Input.mousePosition
+        };
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, results);
 
