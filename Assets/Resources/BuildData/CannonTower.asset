@@ -19,4 +19,15 @@ MonoBehaviour:
   m_Width: 1
   m_Height: 1
   m_NeedResource: 0
-  m_LevelDatasList: []
+  m_LevelDatasList:
+  - m_Level: 1
+    m_MaxWorker: 1
+    m_MaxHp: 50
+    m_UpdateTime: 1
+    m_CostList:
+    - resType: 1
+      Cost: 300
+    - resType: 2
+      Cost: 150
+    - resType: 3
+      Cost: 100

@@ -20,5 +20,5 @@ public enum BulletType
 {
     Arrow,
     Magic,
-    Boom,
+    Cannon,
 }

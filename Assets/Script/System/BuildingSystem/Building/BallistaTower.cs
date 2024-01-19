@@ -80,11 +80,11 @@ namespace Framework.BuildProject
 
                     Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
 
-                    XRotationPoint.rotation = Quaternion.Lerp(XRotationPoint.rotation, rot, m_LockSpeed * Time.deltaTime);
+                    XRotationPoint.rotation =
+                        Quaternion.Lerp(XRotationPoint.rotation, rot, m_LockSpeed * Time.deltaTime);
 
-                    var rotationY = YRotationPoint.rotation;
-                    rotationY =
-                        Quaternion.Lerp(rotationY, Quaternion.LookRotation(targetDir),
+                    var rotationY =
+                        Quaternion.Lerp(YRotationPoint.rotation, Quaternion.LookRotation(targetDir),
                             m_LockSpeed * Time.deltaTime);
 
                     YRotationPoint.rotation = rotationY;

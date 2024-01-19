@@ -17,3 +17,5 @@ MonoBehaviour:
     bulletPrefab: {fileID: 3426027774883674920, guid: bee7715b57750ee47ba331175f8b594a, type: 3}
   - bulletTyped: 1
     bulletPrefab: {fileID: 3702305710195138682, guid: 5b3df90a6b5e9c340afbe07a2dc061ac, type: 3}
+  - bulletTyped: 2
+    bulletPrefab: {fileID: 6969714290902159843, guid: 90abb88cbdbb0014e90641a417190777, type: 3}

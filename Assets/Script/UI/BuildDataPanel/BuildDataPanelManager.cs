@@ -22,6 +22,7 @@ namespace Framework.BuildProject
                 .BuildingType;
             switch (tempType)
             {
+                case BuildingType.CannonTower:
                 case BuildingType.MagicTower:
                 case BuildingType.BallistaTower:
                 case BuildingType.Factory:
@@ -34,6 +35,7 @@ namespace Framework.BuildProject
                     m_FocusPanelBase = housePanel;
                     break;
             }
+
             m_FocusPanelBase.gameObject.SetActive(true);
             m_FocusPanelBase.OpenLabe(gameObject);
         }

@@ -14,6 +14,7 @@ namespace Framework.BuildProject
             buttonList[1].onClick.AddListener(() => SelectBuilding(BuildingType.Factory));
             buttonList[2].onClick.AddListener(() => SelectBuilding(BuildingType.BallistaTower));
             buttonList[3].onClick.AddListener(() => SelectBuilding(BuildingType.MagicTower));
+            buttonList[4].onClick.AddListener(() => SelectBuilding(BuildingType.CannonTower));
         }
 
         private void OnDestroy()
