@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
   m_Name: House
   m_EditorClassIdentifier: 
-  m_NameString: House
-  m_BuildingType: 1
-  m_Visual: {fileID: 8440945524583659041, guid: d362646cffa26f14697f501201cb0b9c, type: 3}
-  m_Prefab: {fileID: 6014919589901450445, guid: e66a3c93f95db914091bb2b3a2d1596e, type: 3}
-  m_Width: 1
-  m_Height: 1
-  m_NeedResource: 0
-  m_LevelDatasList:
-  - m_Level: 1
-    m_MaxWorker: 4
-    m_MaxHp: 100
-    m_UpdateTime: 5
-    m_CostList:
+  NameString: House
+  BuildingType: 1
+  Visual: {fileID: 8440945524583659041, guid: d362646cffa26f14697f501201cb0b9c, type: 3}
+  Prefab: {fileID: 6014919589901450445, guid: e66a3c93f95db914091bb2b3a2d1596e, type: 3}
+  Width: 1
+  Height: 1
+  NeedResource: 0
+  LevelDatasList:
+  - Level: 1
+    MaxWorker: 4
+    MaxHp: 30
+    UpdateTime: 0
+    CostList:
     - resType: 1
-      Cost: 20
+      Cost: 30
     - resType: 2
       Cost: 10

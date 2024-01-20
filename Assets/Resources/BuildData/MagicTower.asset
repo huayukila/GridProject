@@ -12,22 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
   m_Name: MagicTower
   m_EditorClassIdentifier: 
-  m_NameString: MagicTower
-  m_BuildingType: 6
-  m_Visual: {fileID: 3054335046606035155, guid: 2872b8d17f188304894468d86ffa1d2c, type: 3}
-  m_Prefab: {fileID: 9217069322022633206, guid: 9a26027adb60fd8488266a768112cb05, type: 3}
-  m_Width: 1
-  m_Height: 1
-  m_NeedResource: 0
-  m_LevelDatasList:
-  - m_Level: 1
-    m_MaxWorker: 1
-    m_MaxHp: 70
-    m_UpdateTime: 1
-    m_CostList:
+  NameString: MagicTower
+  BuildingType: 2
+  Visual: {fileID: 3054335046606035155, guid: 2872b8d17f188304894468d86ffa1d2c, type: 3}
+  Prefab: {fileID: 9217069322022633206, guid: 9a26027adb60fd8488266a768112cb05, type: 3}
+  Width: 1
+  Height: 1
+  NeedResource: 0
+  LevelDatasList:
+  - Level: 1
+    MaxWorker: 1
+    MaxHp: 70
+    UpdateTime: 2
+    CostList:
     - resType: 1
-      Cost: 80
-    - resType: 2
       Cost: 70
+    - resType: 2
+      Cost: 50
     - resType: 3
-      Cost: 30
+      Cost: 40

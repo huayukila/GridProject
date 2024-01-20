@@ -12,7 +12,7 @@ public class BulletDataBase : ScriptableObject
 [Serializable]
 public class BulletData
 {
-    public BulletType bulletTyped;
+    public BulletType bulletType;
     public GameObject bulletPrefab;
 }
 

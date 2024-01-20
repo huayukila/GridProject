@@ -10,13 +10,13 @@ namespace Framework.BuildProject
         // Start is called before the first frame update
         void Start()
         {
-            buttonList[0].onClick.AddListener(() => SelectBuilding(BuildingType.House));
-            buttonList[1].onClick.AddListener(() => SelectBuilding(BuildingType.Sawmill));
-            buttonList[2].onClick.AddListener(() => SelectBuilding(BuildingType.StoneMine));
-            buttonList[3].onClick.AddListener(() => SelectBuilding(BuildingType.GoldenMine));
-            buttonList[4].onClick.AddListener(() => SelectBuilding(BuildingType.BallistaTower));
-            buttonList[5].onClick.AddListener(() => SelectBuilding(BuildingType.MagicTower));
-            buttonList[6].onClick.AddListener(() => SelectBuilding(BuildingType.CannonTower));
+            buttonList[0].onClick.AddListener(() => SelectBuilding("House"));
+            buttonList[1].onClick.AddListener(() => SelectBuilding("Sawmill"));
+            buttonList[2].onClick.AddListener(() => SelectBuilding("StoneMine"));
+            buttonList[3].onClick.AddListener(() => SelectBuilding("GoldenMine"));
+            buttonList[4].onClick.AddListener(() => SelectBuilding("BallistaTower"));
+            buttonList[5].onClick.AddListener(() => SelectBuilding("MagicTower"));
+            buttonList[6].onClick.AddListener(() => SelectBuilding("CannonTower"));
         }
 
         private void OnDestroy()
@@ -29,13 +29,13 @@ namespace Framework.BuildProject
             buttonList.Clear();
         }
 
-        void SelectBuilding(BuildingType buildingType_)
+        void SelectBuilding(string name_)
         {
             this.GetModel<IPlayerDataModel>().playerState = PlayerState.Build;
             BuildingData buildingData =
-                this.GetModel<IBuilDataModel>().GetBuildingConfig(buildingType_);
+                this.GetModel<IBuilDataModel>().GetBuildingConfig(name_);
 
-            if (this.GetModel<IResourceDataModel>().IsResEnough(buildingData.m_LevelDatasList[0].m_CostList))
+            if (this.GetModel<IResourceDataModel>().IsResEnough(buildingData.LevelDatasList[0].CostList))
                 this.GetSystem<IGridBuildSystem>().SelectBuilding(buildingData);
         }
     }

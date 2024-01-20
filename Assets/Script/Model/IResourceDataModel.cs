@@ -7,14 +7,14 @@ namespace Framework.BuildProject
 {
     public interface IResourceDataModel : IModel
     {
-        void MinusRes(ResourceCost[] costList);
-        void MinusRes(ResourceCost buildingCost);
-        void MinusRes(ResourceType resourceType, int value);
+        void MinusRes(ResourceCost[] costList_);
+        void MinusRes(ResourceCost buildingCost_);
+        void MinusRes(ResourceType resourceType_, int value_);
 
-        void AddRes(ResourceType resourceType, int value);
-        bool IsResEnough(ResourceCost[] costList);
-        bool IsResEnough(ResourceCost buildingCost);
-        int GetRes(ResourceType resourceType);
+        void AddRes(ResourceType resourceType_, int value_);
+        bool IsResEnough(ResourceCost[] costList_);
+        bool IsResEnough(ResourceCost buildingCost_);
+        int GetRes(ResourceType resourceType_);
         int MaxWorkerNum { get; set; }
 
         ResourceCost[] GetResourceDatasForArchiveSystem();
@@ -26,10 +26,15 @@ namespace Framework.BuildProject
         Dictionary<ResourceType, int> resDic;
         public int MaxWorkerNum { get; set; }
 
+        // 初期化処理
         protected override void OnInit()
         {
-            //全部のデータは今後セーフデータから読み込み
-            //今は一応固定的な数値にして
+            // ここでリソースデータを初期化
+            InitializeResources();
+        }
+
+        private void InitializeResources()
+        {
             resDic = new Dictionary<ResourceType, int>
             {
                 { ResourceType.Wood, 1000 },
@@ -40,113 +45,75 @@ namespace Framework.BuildProject
             MaxWorkerNum = 0;
         }
 
+        // アーカイブシステム用のリソースデータ取得
         public ResourceCost[] GetResourceDatasForArchiveSystem()
         {
-            int index = 0;
-            ResourceCost[] tempArray = new ResourceCost[resDic.Count];
-            foreach (var res in resDic)
-            {
-                tempArray[index].resType = res.Key;
-                tempArray[index].Cost = res.Value;
-                index++;
-            }
-
-            return tempArray;
+            return resDic.Select(res => new ResourceCost { resType = res.Key, Cost = res.Value }).ToArray();
         }
 
+        // リソース削除
         public void Deinit()
         {
-            resDic = new Dictionary<ResourceType, int>
-            {
-                { ResourceType.Wood, 1000 },
-                { ResourceType.Stone, 1000 },
-                { ResourceType.Gold, 1000 },
-                { ResourceType.Worker, 0 }
-            };
-            MaxWorkerNum = 0;
+            InitializeResources();
         }
 
-        public void MinusRes(ResourceCost[] costList)
+        // リソース消費
+        public void MinusRes(ResourceCost[] costList_)
         {
-            if (IsResEnough(costList))
+            if (!IsResEnough(costList_)) return;
+
+            foreach (ResourceCost cost in costList_)
             {
-                foreach (ResourceCost buildingCost in costList)
-                {
-                    MinusRes(buildingCost);
-                }
+                MinusRes(cost);
             }
         }
 
-        public void MinusRes(ResourceCost buildingCost)
+        public void MinusRes(ResourceCost buildingCost_)
         {
-            if (resDic.ContainsKey(buildingCost.resType))
+            if (resDic.TryGetValue(buildingCost_.resType, out int currentValue))
             {
-                resDic[buildingCost.resType] -= buildingCost.Cost;
+                resDic[buildingCost_.resType] = Mathf.Max(0, currentValue - buildingCost_.Cost);
             }
         }
 
-        public int GetRes(ResourceType resourceType)
+        // リソース取得
+        public int GetRes(ResourceType resourceType_)
         {
-            if (resDic.TryGetValue((resourceType), out int value))
-            {
-                return value;
-            }
-
-            return 0;
+            return resDic.TryGetValue(resourceType_, out int value) ? value : 0;
         }
 
-        public bool IsResEnough(ResourceCost[] costList)
+        // リソース足りるかチェック
+        public bool IsResEnough(ResourceCost[] costList_)
         {
-            foreach (ResourceCost buildingCost in costList)
-            {
-                if (!IsResEnough(buildingCost))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return costList_.All(IsResEnough);
         }
 
-        public bool IsResEnough(ResourceCost buildingCost)
+        public bool IsResEnough(ResourceCost buildingCost_)
         {
-            if (!resDic.ContainsKey(buildingCost.resType) || resDic[buildingCost.resType] < buildingCost.Cost)
-            {
-                Debug.Log("資源不足");
-                return false;
-            }
-
-            return true;
+            return resDic.TryGetValue(buildingCost_.resType, out int currentValue) && currentValue >= buildingCost_.Cost;
         }
 
-        public void MinusRes(ResourceType resourceType, int value)
+        // リソース減少
+        public void MinusRes(ResourceType resourceType_, int value_)
         {
-            if (resDic.TryGetValue(resourceType, out int resValue))
+            if (!resDic.TryGetValue(resourceType_, out int currentValue) || currentValue < value_)
             {
-                if (value > resValue)
-                {
-                    Debug.Log(resourceType + "不足");
-                }
-                else
-                {
-                    resDic[resourceType] -= value;
-                }
+                Debug.LogWarning($"{resourceType_} のリソースが足りません");
+                return;
+            }
+            resDic[resourceType_] = Mathf.Max(0, currentValue - value_);
+        }
+
+        // リソース追加
+        public void AddRes(ResourceType resourceType_, int value_)
+        {
+            if (resDic.ContainsKey(resourceType_))
+            {
+                resDic[resourceType_] += value_;
             }
             else
             {
-                Debug.Log("この資源がまだ持っていません");
-            }
-        }
-
-        public void AddRes(ResourceType resourceType, int value)
-        {
-            if (resDic.ContainsKey(resourceType))
-            {
-                resDic[resourceType] += value;
-            }
-            else
-            {
-                resDic.Add(resourceType, value);
+                resDic.Add(resourceType_, value_);
             }
         }
     }

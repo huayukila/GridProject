@@ -9,46 +9,47 @@ namespace Framework.BuildProject
         public int BuildingMaxHp;
         public int BuildingHp;
         public int BuildingLevel;
-        public int m_WorkerNum;
-        public int m_MaxWorkerNum;
+        public int WorkerNum;
+        public int MaxWorkerNum;
         public BuildingType BuildingType;
-        
-        public Vector2Int GridXY;
 
+        public Vector2Int GridXY;
         public Dir Dir;
 
-        //public int m_MaxLevel; todo...
-        protected List<GridObject> m_BuildingOccupancyGrids { get; set; }
+        protected List<GridObject> BuildingOccupancyGrids { get; set; }
 
+        // 建物のデータ初期化
         public virtual void Reset()
         {
-            SetInitData(this.GetModel<IBuilDataModel>().GetBuildingConfig(BuildingType));
+            SetInitData(this.GetModel<IBuilDataModel>().GetBuildingConfig(BuildingName));
             GridXY = Vector2Int.zero;
             Dir = Dir.Down;
 
-            foreach (var gridObject in m_BuildingOccupancyGrids)
+            foreach (var gridObject in BuildingOccupancyGrids)
             {
                 gridObject.IsEmpty = true;
             }
 
-            m_BuildingOccupancyGrids.Clear();
+            BuildingOccupancyGrids.Clear();
         }
 
-        //ほかの建物データ
+        // 別の建物データの初期化
         public virtual void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_, Dir dir_)
         {
             SetInitData(data_);
             GridXY = gridXY_;
             Dir = dir_;
-            m_BuildingOccupancyGrids = gridObjList_;
+            BuildingOccupancyGrids = gridObjList_;
         }
+
+        // 建物データ設定
         void SetInitData(BuildingData data_)
         {
-            BuildingName = data_.m_NameString;
-            BuildingMaxHp = data_.m_LevelDatasList[0].m_MaxHp;
+            BuildingName = data_.NameString;
+            BuildingMaxHp = data_.LevelDatasList[0].MaxHp;
             BuildingHp = BuildingMaxHp;
-            BuildingLevel = data_.m_LevelDatasList[0].m_Level;
-            BuildingType = data_.m_BuildingType;
+            BuildingLevel = data_.LevelDatasList[0].Level;
+            BuildingType = data_.BuildingType;
         }
     }
 }

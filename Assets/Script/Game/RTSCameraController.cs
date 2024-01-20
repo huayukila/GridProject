@@ -52,6 +52,7 @@ namespace Framework.BuildProject
             this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
         }
 
+
         private void Update()
         {
             switch (m_State)
@@ -59,24 +60,7 @@ namespace Framework.BuildProject
                 case CameraState.Idle:
                     break;
                 case CameraState.OnGameSceneEnter:
-                    if (m_Brightness.brightness - m_TargetBrightness < 0.01f)
-                    {
-                        m_Brightness.brightness += Time.deltaTime * 0.3f;
-                        break;
-                    }
-
-                    m_CameraTrans.localPosition =
-                        Vector3.Lerp(m_CameraTrans.localPosition, m_TargetPos, Time.deltaTime * 0.8f);
-                    m_CameraTrans.localRotation = Quaternion.Lerp(m_CameraTrans.localRotation,
-                        Quaternion.Euler(m_TargetAngle, 0, 0), 0.8f * Time.deltaTime);
-                    if (Vector3.Distance(m_CameraTrans.localPosition, m_TargetPos) < 0.1f)
-                    {
-                        m_CameraTrans.localPosition = m_TargetPos;
-                        m_State = CameraState.OnGaming;
-                        m_NewZoom = m_TargetPos;
-                        this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
-                    }
-
+                    HandleGameSceneEnter();
                     break;
                 case CameraState.OnGaming:
                     HandleMouseInput();
@@ -88,6 +72,30 @@ namespace Framework.BuildProject
                     break;
                 case CameraState.OnEnd:
                     break;
+            }
+        }
+
+
+        #region “à•”—p
+
+        void HandleGameSceneEnter()
+        {
+            if (m_Brightness.brightness - m_TargetBrightness < 0.01f)
+            {
+                m_Brightness.brightness += Time.deltaTime * 0.3f;
+                return;
+            }
+
+            m_CameraTrans.localPosition =
+                Vector3.Lerp(m_CameraTrans.localPosition, m_TargetPos, Time.deltaTime * 0.8f);
+            m_CameraTrans.localRotation = Quaternion.Lerp(m_CameraTrans.localRotation,
+                Quaternion.Euler(m_TargetAngle, 0, 0), 0.8f * Time.deltaTime);
+            if (Vector3.Distance(m_CameraTrans.localPosition, m_TargetPos) < 0.1f)
+            {
+                m_CameraTrans.localPosition = m_TargetPos;
+                m_State = CameraState.OnGaming;
+                m_NewZoom = m_TargetPos;
+                this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
             }
         }
 
@@ -183,9 +191,6 @@ namespace Framework.BuildProject
             m_TargetAngle = targetAngle_;
         }
 
-        public void OnGaming()
-        {
-            m_State = CameraState.OnGaming;
-        }
+        #endregion
     }
 }

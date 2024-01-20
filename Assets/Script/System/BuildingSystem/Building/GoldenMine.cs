@@ -4,7 +4,7 @@ namespace Framework.BuildProject
     {
         protected override void OnExecute()
         {
-            this.GetModel<IResourceDataModel>().AddRes(ResourceType.Gold, m_WorkerNum * 20);
+            this.GetModel<IResourceDataModel>().AddRes(ResourceType.Gold, WorkerNum * 20);
         }
     }
 }

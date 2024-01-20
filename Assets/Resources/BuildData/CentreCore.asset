@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
   m_Name: CentreCore
   m_EditorClassIdentifier: 
-  m_NameString: CentreCore
-  m_BuildingType: 4
-  m_Visual: {fileID: 0}
-  m_Prefab: {fileID: 3883655812242484271, guid: ec4d548caf5d3684a91a3f290759026f, type: 3}
-  m_Width: 2
-  m_Height: 2
-  m_NeedResource: 0
-  m_LevelDatasList:
-  - m_Level: 1
-    m_MaxWorker: 0
-    m_MaxHp: 1000
-    m_UpdateTime: 0
-    m_CostList: []
+  NameString: Core
+  BuildingType: 4
+  Visual: {fileID: 0}
+  Prefab: {fileID: 3883655812242484271, guid: ec4d548caf5d3684a91a3f290759026f, type: 3}
+  Width: 2
+  Height: 2
+  NeedResource: 0
+  LevelDatasList:
+  - Level: 1
+    MaxWorker: 0
+    MaxHp: 1000
+    UpdateTime: 0
+    CostList: []

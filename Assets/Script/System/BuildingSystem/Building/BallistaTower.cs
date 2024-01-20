@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
@@ -14,7 +12,7 @@ namespace Framework.BuildProject
 
     public class BallistaTower : UpdateBuilding
     {
-        [Header("")] public Transform FirePoint;
+        [Header("設定")] public Transform FirePoint;
         public Transform YRotationPoint;
         public Transform XRotationPoint;
         public Transform RootTrans;
@@ -31,24 +29,18 @@ namespace Framework.BuildProject
         private TowerState m_State;
         private readonly float m_LockSpeed = 3f;
 
-        //ターゲットするとき、向き記録するため
+        // ターゲット時の方向記録用変数
         private float m_YDir;
-
         private float m_X;
 
         public override void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_, Dir dir_)
         {
             base.Init(data_, gridObjList_, gridXY_, dir_);
             m_Target = new Collider[1];
-        }
-
-        private void Start()
-        {
             m_State = TowerState.Idle;
             m_X = 0;
             m_YDir = 0;
         }
-
 
         protected override void OnUpdate()
         {
@@ -58,64 +50,21 @@ namespace Framework.BuildProject
                 case TowerState.Reloading:
                     if (!m_IsAmmoLoaded)
                         break;
-
-                    if (m_Target[0] == null)
-                    {
-                        m_State = TowerState.Idle;
-                        break;
-                    }
-
-                    m_State = TowerState.LockTarget;
+                    m_State = TowerState.Idle;
                     break;
 
                 case TowerState.Idle:
-                    m_X += Time.deltaTime;
-                    float rotAngles = Mathf.Sin(m_X) * 20;
-                    YRotationPoint.rotation =
-                        Quaternion.Lerp(YRotationPoint.rotation, Quaternion.Euler(0, rotAngles + m_YDir, 0), 0.8f);
+                    IdleRotation();
                     break;
 
                 case TowerState.LockTarget:
-                    Vector3 targetDir = -(m_Target[0].transform.position - LockTrans.position);
-
-                    Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
-
-                    XRotationPoint.rotation =
-                        Quaternion.Lerp(XRotationPoint.rotation, rot, m_LockSpeed * Time.deltaTime);
-
-                    var rotationY =
-                        Quaternion.Lerp(YRotationPoint.rotation, Quaternion.LookRotation(targetDir),
-                            m_LockSpeed * Time.deltaTime);
-
-                    YRotationPoint.rotation = rotationY;
-
-                    m_YDir = rotationY.eulerAngles.y;
-
-                    float angle = Vector3.SignedAngle(FirePoint.up, m_Target[0].transform.position - FirePoint.position,
-                        Vector3.up);
-
-                    if (!m_Target[0].CompareTag(Global.TAG_STRING_DEAD))
-                    {
-                        if (Mathf.Abs(angle) < 3f && m_IsAmmoLoaded)
-                        {
-                            Fire();
-                            m_State = TowerState.Reloading;
-                        }
-                    }
-                    else
-                    {
-                        m_Target[0] = null;
-                        m_State = TowerState.Idle;
-                    }
-
+                    LockOnTarget();
                     break;
             }
         }
 
         protected override void OnExecute()
         {
-            if (m_Target[0] != null)
-                return;
             if (Physics.OverlapSphereNonAlloc(FirePoint.position, m_AttackRadius, m_Target,
                     LayerMask.GetMask(Global.TARGET_STRING_ENEMY)) > 0)
             {
@@ -147,6 +96,36 @@ namespace Framework.BuildProject
 
             StringTrans.Translate(Vector3.up * (LoadSpeed * Time.deltaTime), Space.Self);
             RootTrans.Rotate(Vector3.right, (LoadSpeed * Time.deltaTime) * 70);
+        }
+
+        void IdleRotation()
+        {
+            m_X += Time.deltaTime;
+            float rotAngles = Mathf.Sin(m_X) * 20;
+            YRotationPoint.rotation =
+                Quaternion.Lerp(YRotationPoint.rotation, Quaternion.Euler(0, rotAngles + m_YDir, 0), 0.8f);
+        }
+
+        void LockOnTarget()
+        {
+            Vector3 targetDir = -(m_Target[0].transform.position - LockTrans.position);
+            Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
+            XRotationPoint.rotation = Quaternion.Lerp(XRotationPoint.rotation, rot, m_LockSpeed * Time.deltaTime);
+
+            var rotationY = Quaternion.Lerp(YRotationPoint.rotation, Quaternion.LookRotation(targetDir),
+                m_LockSpeed * Time.deltaTime);
+            YRotationPoint.rotation = rotationY;
+            m_YDir = rotationY.eulerAngles.y;
+
+            float angle = Vector3.SignedAngle(FirePoint.up, m_Target[0].transform.position - FirePoint.position,
+                Vector3.up);
+
+            if (Mathf.Abs(angle) < 3f && m_IsAmmoLoaded)
+            {
+                Fire();
+                m_Target[0] = null;
+                m_State = TowerState.Reloading;
+            }
         }
     }
 }

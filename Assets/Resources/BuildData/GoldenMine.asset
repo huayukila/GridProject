@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
   m_Name: GoldenMine
   m_EditorClassIdentifier: 
-  m_NameString: GoldenMine
-  m_BuildingType: 8
-  m_Visual: {fileID: 6874883173574411350, guid: ac3b952b6c12f8444a6d0b8a313ad75c, type: 3}
-  m_Prefab: {fileID: 9108682433853552964, guid: 810ad5221678e1f4eb93f6c6020c7a11, type: 3}
-  m_Width: 2
-  m_Height: 2
-  m_NeedResource: 0
-  m_LevelDatasList:
-  - m_Level: 1
-    m_MaxWorker: 2
-    m_MaxHp: 50
-    m_UpdateTime: 10
-    m_CostList:
+  NameString: GoldenMine
+  BuildingType: 2
+  Visual: {fileID: 6874883173574411350, guid: ac3b952b6c12f8444a6d0b8a313ad75c, type: 3}
+  Prefab: {fileID: 9108682433853552964, guid: 810ad5221678e1f4eb93f6c6020c7a11, type: 3}
+  Width: 2
+  Height: 2
+  NeedResource: 0
+  LevelDatasList:
+  - Level: 1
+    MaxWorker: 2
+    MaxHp: 30
+    UpdateTime: 20
+    CostList:
     - resType: 1
       Cost: 100
     - resType: 2
-      Cost: 50
+      Cost: 60

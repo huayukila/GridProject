@@ -1,17 +1,15 @@
 public class GridObject
 {
-    GridUtils<GridObject> grid;
-    int x;
-    int z;
+    int m_X;
+    int m_Z;
     public bool IsEmpty;
     public ResourceCost TerrainData;
 
-    public GridObject(GridUtils<GridObject> grid, int x, int z)
+    public GridObject(int x_, int z_)
     {
         IsEmpty = true;
-        this.grid = grid;
-        this.x = x;
-        this.z = z;
+        m_X = x_;
+        m_Z = z_;
         TerrainData = new ResourceCost()
         {
             resType = ResourceType.None,

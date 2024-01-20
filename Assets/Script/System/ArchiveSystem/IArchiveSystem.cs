@@ -54,7 +54,7 @@ namespace Framework.BuildProject
                 m_SaveData.buildingSaveDatas[i].gridZ = buildsArray[i].GridXY.x;
                 m_SaveData.buildingSaveDatas[i].buildingType = buildsArray[i].BuildingType;
                 m_SaveData.buildingSaveDatas[i].dir = buildsArray[i].Dir;
-                m_SaveData.buildingSaveDatas[i].worker = buildsArray[i].m_WorkerNum;
+                m_SaveData.buildingSaveDatas[i].worker = buildsArray[i].WorkerNum;
                 m_SaveData.buildingSaveDatas[i].level = buildsArray[i].BuildingLevel;
             }
         }

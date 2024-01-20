@@ -17,14 +17,14 @@ namespace Framework.BuildProject
         SerializedProperty NeedResource;
         private void OnEnable()
         {
-            BuildingLevelTable = serializedObject.FindProperty("m_LevelDatasList");
-            BuildingType = serializedObject.FindProperty("m_BuildingType");
-            NameString = serializedObject.FindProperty("m_NameString");
-            Height=serializedObject.FindProperty("m_Height");
-            Width = serializedObject.FindProperty("m_Width");
-            Prefab = serializedObject.FindProperty("m_Prefab");
-            Visual = serializedObject.FindProperty("m_Visual");
-            NeedResource = serializedObject.FindProperty("m_NeedResource");
+            BuildingLevelTable = serializedObject.FindProperty("LevelDatasList");
+            BuildingType = serializedObject.FindProperty("BuildingType");
+            NameString = serializedObject.FindProperty("NameString");
+            Height=serializedObject.FindProperty("Height");
+            Width = serializedObject.FindProperty("Width");
+            Prefab = serializedObject.FindProperty("Prefab");
+            Visual = serializedObject.FindProperty("Visual");
+            NeedResource = serializedObject.FindProperty("NeedResource");
         }
         public override void OnInspectorGUI()
         {

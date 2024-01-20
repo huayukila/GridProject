@@ -5,11 +5,10 @@ namespace Framework.BuildProject
 {
     public interface IBuildingObjModel : IModel
     {
-        void RegisterBuild(int ID, BuildingBase buildingBase);
-        void UnregisterBuild(int ID);
-        BuildingBase GetBuildData(int ID);
-        List<BuildingBase> GetBuildDataList(BuildingType type);
-
+        void RegisterBuild(int id_, BuildingBase buildingBase_);
+        void UnregisterBuild(int id_);
+        BuildingBase GetBuildData(int id_);
+        List<BuildingBase> GetBuildDataList(BuildingType type_);
         BuildingBase[] GetBuildingObjsDataForArchiveSystem();
         void Deinit();
     }
@@ -18,57 +17,54 @@ namespace Framework.BuildProject
     {
         Dictionary<int, BuildingBase> m_BuildingDic;
 
+        // 初期化処理
         protected override void OnInit()
         {
             m_BuildingDic = new Dictionary<int, BuildingBase>();
         }
 
-
-        public void UnregisterBuild(int ID)
+        // 建物の登録
+        public void RegisterBuild(int id_, BuildingBase buildingBase_)
         {
-            if (m_BuildingDic.TryGetValue(ID, out BuildingBase obj))
+            if (!m_BuildingDic.ContainsKey(id_))
             {
-                obj.Reset();
-                m_BuildingDic.Remove(ID);
+                m_BuildingDic.Add(id_, buildingBase_);
             }
         }
 
-        public BuildingBase GetBuildData(int ID)
+        // 建物の登録解除
+        public void UnregisterBuild(int id_)
         {
-            m_BuildingDic.TryGetValue(ID, out BuildingBase data);
+            if (m_BuildingDic.TryGetValue(id_, out BuildingBase obj))
+            {
+                obj.Reset();
+                m_BuildingDic.Remove(id_);
+            }
+        }
+
+        // 建物データの取得
+        public BuildingBase GetBuildData(int id_)
+        {
+            m_BuildingDic.TryGetValue(id_, out BuildingBase data);
             return data;
         }
         
-        public List<BuildingBase> GetBuildDataList(BuildingType type)
+        // 特定タイプの建物データリストを取得
+        public List<BuildingBase> GetBuildDataList(BuildingType type_)
         {
-            List<BuildingBase> tempList = new List<BuildingBase>();
-            foreach (BuildingBase buildingObj in m_BuildingDic.Values)
-            {
-                if (buildingObj.BuildingType == type)
-                {
-                    tempList.Add(buildingObj);
-                }
-            }
-
-            return tempList;
+            return m_BuildingDic.Values.Where(buildingObj => buildingObj.BuildingType == type_).ToList();
         }
 
+        // アーカイブシステム用の建物データを取得
         public BuildingBase[] GetBuildingObjsDataForArchiveSystem()
         {
             return m_BuildingDic.Values.ToArray();
         }
 
+        // 終了処理
         public void Deinit()
         {
             m_BuildingDic.Clear();
-        }
-
-        public void RegisterBuild(int ID, BuildingBase buildingBase)
-        {
-            if (!m_BuildingDic.ContainsKey(ID))
-            {
-                m_BuildingDic.Add(ID, buildingBase);
-            }
         }
     }
 }

@@ -1,16 +1,9 @@
-// #define ISDEBUG
-
-using Kit;
 using UnityEngine;
-using UnityEngine.Serialization;
+using System;
+using Kit;
 
 namespace Framework.BuildProject
 {
-    public interface IGetHurt
-    {
-        void GetDamage(int damage);
-    }
-
     public enum EnemyState
     {
         Idle,
@@ -20,153 +13,166 @@ namespace Framework.BuildProject
         Dead
     }
 
+    public interface IGetHurt
+    {
+        void GetDamage(int damage);
+    }
+
     public class EnemyBase : BuildController, IGetHurt
     {
-        public EnemyType Type;
-        public float ClaimsRadius;
-        public float AttackRadius;
-        public int MaxHp;
-        public float Speed;
-        public float AttackCD;
-        public float ClaimsCD;
+        public EnemyType Type; // 敵のタイプ
+        public float ClaimsRadius; // 攻撃範囲
+        public float AttackRadius; // 攻撃範囲
+        public int MaxHp; // 最大HP
+        public float Speed; // 移動速度
+        public float AttackCD; // 攻撃クールダウン
+        public float ClaimsCD; // 攻撃クールダウン
+        public int Damage;//攻撃ダメージ
 
         private float m_DurationTime;
         private float m_StartTime;
-        protected Animator m_Animator;
-        protected EnemyState m_State;
-
-        protected int CurrentHp;
-        Collider[] m_Target;
-
+        private Animator m_Animator;
+        private EnemyState m_State;
+        private int m_CurrentHp;
+        private Collider[] m_Target;
+        private int m_LayerMask; // レイヤーマスクをキャッシュ
+        private Collider m_Collider;
+        private static readonly int m_AnimRun = Animator.StringToHash("Goblin_run");
+        private static readonly int m_AnimIdle = Animator.StringToHash("Goblin_idle");
+        private static readonly int m_AnimAttack = Animator.StringToHash("Goblin_attack");
+        private static readonly int m_AnimDeath = Animator.StringToHash("Goblin_death");
 
         private void Awake()
         {
+            m_Collider = GetComponent<SphereCollider>();
             m_Animator = GetComponent<Animator>();
-            CurrentHp = MaxHp;
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
+            m_CurrentHp = MaxHp;
             m_Target = new Collider[1];
+            m_LayerMask = LayerMask.GetMask(Global.TARGET_STRING_BUILDING);
         }
-
         private void OnEnable()
         {
             m_StartTime = Time.time;
             m_State = EnemyState.Move;
-            m_Animator.Play("Goblin_run");
+            m_Animator.Play(m_AnimRun);
         }
-#if ISDEBUG
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = new Color(1, 0, 0, 0.1f);
-            Gizmos.DrawSphere(transform.localPosition, AttackRadius);
-            Gizmos.DrawSphere(transform.localPosition, ClaimsRadius);
-        }
-#endif
-
 
         private void Update()
         {
             switch (m_State)
             {
                 case EnemyState.Idle:
+                    // アイドル状態の処理
                     break;
                 case EnemyState.Move:
-                    transform.localPosition += transform.forward * (Speed * Time.deltaTime);
-
-                    if (Time.time - m_StartTime < ClaimsCD)
-                        return;
-                    if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target,
-                            LayerMask.GetMask("Building")) > 0)
-                    {
-                        transform.LookAt(new Vector3(
-                            m_Target[0].transform.position.x,
-                            transform.localPosition.y,
-                            m_Target[0].transform.position.z));
-                        m_State = EnemyState.Trace;
-                    }
-
+                    Move();
+                    CheckForClaim();
                     break;
                 case EnemyState.Trace:
-                    transform.localPosition += transform.forward * (Speed * Time.deltaTime);
-
-                    if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target,
-                            LayerMask.GetMask("Building")) == 0)
-                    {
-                        transform.LookAt(new Vector3(50, transform.localPosition.y, 50));
-                        m_State = EnemyState.Move;
-                    }
-                    else
-                    {
-                        transform.LookAt(new Vector3(
-                            m_Target[0].transform.position.x,
-                            transform.localPosition.y,
-                            m_Target[0].transform.position.z));
-                    }
-
-                    if (Physics.OverlapSphereNonAlloc(transform.localPosition, AttackRadius, m_Target,
-                            LayerMask.GetMask("Building")) > 0)
-                    {
-                        m_State = EnemyState.Attack;
-                        m_StartTime = Time.time;
-                        m_Animator.Play("Goblin_idle");
-                    }
-
+                    Trace();
+                    CheckForAttack();
                     break;
                 case EnemyState.Attack:
-                    if (Physics.OverlapSphereNonAlloc(transform.localPosition, AttackRadius, m_Target,
-                            LayerMask.GetMask("Building")) == 0)
-                    {
-                        transform.LookAt(new Vector3(50, transform.localPosition.y, 50));
-                        m_State = EnemyState.Move;
-                        m_Animator.Play("Goblin_run");
-                    }
-
-                    if (Time.time - m_StartTime > AttackCD)
-                    {
-                        m_Animator.Play("Goblin_attack");
-                        m_StartTime = Time.time;
-                        OnAttack();
-                    }
-
+                    Attack();
                     break;
                 case EnemyState.Dead:
+                    // 死亡状態の処理
                     break;
             }
         }
 
-        public void ResetObj()
+        private void Move()
         {
-            tag = Global.TARGET_STRING_ENEMY;
-            CurrentHp = MaxHp;
-            m_Target[0] = null;
+            transform.localPosition += transform.forward * (Speed * Time.deltaTime);
+        }
+
+        private void CheckForClaim()
+        {
+            if (Time.time - m_StartTime < ClaimsCD) return;
+            if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target, m_LayerMask) > 0)
+            {
+                UpdateRotation(m_Target[0].transform.position);
+                m_State = EnemyState.Trace;
+            }
+        }
+
+        private void Trace()
+        {
+            transform.localPosition += transform.forward * (Speed * Time.deltaTime);
+            UpdateRotation(m_Target[0].transform.position);
+            if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target, m_LayerMask) == 0)
+            {
+                ResetToMoveState();
+            }
+        }
+
+        private void CheckForAttack()
+        {
+            if (Physics.OverlapSphereNonAlloc(transform.localPosition, AttackRadius, m_Target, m_LayerMask) > 0)
+            {
+                m_State = EnemyState.Attack;
+                m_StartTime = Time.time;
+                m_Animator.Play(m_AnimIdle);
+            }
+        }
+
+        private void Attack()
+        {
+            if (Physics.OverlapSphereNonAlloc(transform.localPosition, AttackRadius, m_Target, m_LayerMask) == 0)
+            {
+                ResetToMoveState();
+                return;
+            }
+
+            if (Time.time - m_StartTime > AttackCD)
+            {
+                m_Animator.Play(m_AnimAttack);
+                m_StartTime = Time.time;
+                OnAttack();
+            }
+        }
+
+        private void ResetToMoveState()
+        {
+            transform.LookAt(new Vector3(50, transform.localPosition.y, 50));
             m_State = EnemyState.Move;
-            gameObject.layer = 7;
-            gameObject.SetActive(false);
+            m_Animator.Play(m_AnimRun);
+        }
+
+        private void UpdateRotation(Vector3 targetPosition)
+        {
+            Vector3 direction = targetPosition - transform.position;
+            transform.rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        }
+
+        public void GetDamage(int damage)
+        {
+            if (m_State == EnemyState.Dead) return;
+            m_CurrentHp -= damage;
+            if (m_CurrentHp <= 0)
+            {
+                m_State = EnemyState.Dead;
+                m_Collider.enabled = false;
+                m_Animator.Play(m_AnimDeath);
+                // 死亡処理
+                this.SendEvent<EnemyGetKilledEvent>();
+                ActionKit.Delay(3, () => this.GetSystem<IEnemySystem>().RecycleEnemy(gameObject)).Start(this);
+            }
         }
 
         protected virtual void OnAttack()
         {
+            // 攻撃処理
         }
 
-
-        public void GetDamage(int damage)
+        // リセット処理
+        public void ResetObj()
         {
-            if (m_State == EnemyState.Dead)
-                return;
-            CurrentHp -= damage;
-            if (CurrentHp <= 0)
-            {
-                tag = Global.TAG_STRING_DEAD;
-                m_Animator.Play("Goblin_death");
-                m_State = EnemyState.Dead;
-                gameObject.layer = 0;
-                this.SendEvent<EnemyGetKilledEvent>();
-                //pool recycle
-                ActionKit.Delay(3, () => this.GetSystem<IEnemySystem>().RecycleEnemy(gameObject)).Start(this);
-            }
+            m_Collider.enabled = true;
+            m_CurrentHp = MaxHp;
+            m_Target[0] = null;
+            m_State = EnemyState.Move;
+            gameObject.SetActive(false);
         }
     }
 }

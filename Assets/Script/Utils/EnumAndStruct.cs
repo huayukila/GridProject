@@ -28,12 +28,6 @@ public enum BuildingType
     Factory,
     Wall,
     Core,
-    BallistaTower,
-    MagicTower,
-    CannonTower,
-    GoldenMine,
-    StoneMine,
-    Sawmill,
 }
 public enum Terrain
 {

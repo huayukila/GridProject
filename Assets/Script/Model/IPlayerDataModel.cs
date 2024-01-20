@@ -9,15 +9,15 @@ namespace Framework.BuildProject
     public class PlayerDataModel : AbstractModel, IPlayerDataModel
     {
         public PlayerState playerState { get; set; }
+
         public void InitByManager()
         {
-            playerState = playerState = PlayerState.Normal;
+            playerState = PlayerState.Normal;
         }
 
         protected override void OnInit()
         {
             playerState = PlayerState.Normal;
         }
-        
     }
 }

@@ -12,22 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28a5bf60ab7498543a7c8d8e68e9223e, type: 3}
   m_Name: BallistaTower
   m_EditorClassIdentifier: 
-  m_NameString: BallistaTower
-  m_BuildingType: 5
-  m_Visual: {fileID: 7779539418670452904, guid: 872f956cfc897464091aa012185e613f, type: 3}
-  m_Prefab: {fileID: 3273105505408775166, guid: 92271d2276a5f484e81701cc71f25f2f, type: 3}
-  m_Width: 1
-  m_Height: 1
-  m_NeedResource: 0
-  m_LevelDatasList:
-  - m_Level: 1
-    m_MaxWorker: 1
-    m_MaxHp: 100
-    m_UpdateTime: 1
-    m_CostList:
+  NameString: BallistaTower
+  BuildingType: 2
+  Visual: {fileID: 7779539418670452904, guid: 872f956cfc897464091aa012185e613f, type: 3}
+  Prefab: {fileID: 3273105505408775166, guid: 92271d2276a5f484e81701cc71f25f2f, type: 3}
+  Width: 1
+  Height: 1
+  NeedResource: 0
+  LevelDatasList:
+  - Level: 1
+    MaxWorker: 1
+    MaxHp: 100
+    UpdateTime: 1
+    CostList:
     - resType: 1
-      Cost: 50
+      Cost: 80
     - resType: 2
-      Cost: 50
-    - resType: 3
-      Cost: 20
+      Cost: 40

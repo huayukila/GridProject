@@ -22,12 +22,7 @@ namespace Framework.BuildProject
                 .BuildingType;
             switch (tempType)
             {
-                case BuildingType.CannonTower:
-                case BuildingType.MagicTower:
-                case BuildingType.BallistaTower:
-                case BuildingType.Sawmill:
-                case BuildingType.StoneMine:
-                case BuildingType.GoldenMine:
+                case BuildingType.Factory:
                     m_FocusPanelBase = factoryPanel;
                     break;
                 case BuildingType.Core:

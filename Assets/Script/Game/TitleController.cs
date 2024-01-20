@@ -19,6 +19,7 @@ namespace Framework.BuildProject
 
         private bool m_GameStart = false;
 
+        // スタート時の初期化
         private void Start()
         {
             m_IsRay = false;
@@ -27,28 +28,48 @@ namespace Framework.BuildProject
             m_Brightness = m_MainCamera.GetComponent<BrightnessSaturationAndContrast>();
         }
 
+        // 毎フレームの更新
         private void Update()
         {
             if (m_GameStart)
             {
-                m_Brightness.brightness -= Time.deltaTime * 0.3f;
-                if (m_Brightness.brightness <= 0f)
-                {
-                    this.SendEvent<GameStartEvent>();
-                }
-                else
-                {
-                    return;
-                }
+                HandleGameStart();
+                return;
             }
 
-            RayCast();
+            HandleRayCast();
+            UpdateMaterial();
+        }
+
+        // ゲームスタート時の処理
+        private void HandleGameStart()
+        {
+            m_Brightness.brightness -= Time.deltaTime * 0.3f;
+            if (m_Brightness.brightness <= 0f)
+            {
+                m_Material.SetColor("_EmissionColor", 0.66f * Color.white);
+                this.SendEvent<GameStartEvent>();
+            }
+        }
+
+        // レイキャストの処理
+        private void HandleRayCast()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            m_IsRay = Physics.Raycast(ray, out var hit, 1000, LayerMask.GetMask("Default")) &&
+                      hit.transform.CompareTag("Building");
+        }
+
+        // 材料の更新
+        private void UpdateMaterial()
+        {
             if (m_IsRay)
             {
                 m_Time += Time.deltaTime;
                 float intensity = (-Mathf.Cos(m_Time * speed) + 1) / 3;
                 Color emissionColor = baseEmissionColor + intensity * intensityMultiplier * Color.white;
                 m_Material.SetColor("_EmissionColor", emissionColor);
+
                 if (Input.GetMouseButtonDown(0))
                 {
                     m_GameStart = true;
@@ -56,22 +77,16 @@ namespace Framework.BuildProject
             }
             else
             {
-                m_Time = 0;
-                baseEmissionColor = Color.black;
-                m_Material.SetColor("_EmissionColor", baseEmissionColor);
+                ResetMaterial();
             }
         }
 
-        void RayCast()
+        // 材料をリセット
+        private void ResetMaterial()
         {
-            m_IsRay = false;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out var hit, 1000, LayerMask.GetMask("Default")))
-                return;
-            if (hit.transform.CompareTag("Building"))
-            {
-                m_IsRay = true;
-            }
+            m_Time = 0;
+            baseEmissionColor = Color.black;
+            m_Material.SetColor("_EmissionColor", baseEmissionColor);
         }
     }
 }

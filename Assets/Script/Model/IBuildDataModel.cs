@@ -5,35 +5,43 @@ namespace Framework.BuildProject
 {
     public interface IBuilDataModel : IModel
     {
-        BuildingData GetBuildingConfig(BuildingType buildingType_);
+        BuildingData GetBuildingConfig(string name_);
     }
 
     public class BuildDataModel : AbstractModel, IBuilDataModel
     {
-        Dictionary<BuildingType, BuildingData> m_BuildingConfigDic;
+        Dictionary<string, BuildingData> m_BuildingConfigDic;
 
+        // モデルの初期化
         protected override void OnInit()
         {
+            LoadBuildingData();
+        }
+
+        // 建築データの読み込み
+        private void LoadBuildingData()
+        {
+            m_BuildingConfigDic = new Dictionary<string, BuildingData>();
             BuildingDatabase database = Resources.Load<BuildingDatabase>("BuildingDatabase");
-            m_BuildingConfigDic = new Dictionary<BuildingType, BuildingData>();
 
             foreach (var data in database.BuildingDatas)
             {
-                m_BuildingConfigDic.Add(data.m_BuildingType, data);
+                m_BuildingConfigDic.Add(data.name, data);
             }
 
             Resources.UnloadAsset(database);
         }
 
-        public BuildingData GetBuildingConfig(BuildingType buildingType_)
+        // 建築の設定を取得
+        public BuildingData GetBuildingConfig(string name_)
         {
-            if (m_BuildingConfigDic.TryGetValue(buildingType_, out BuildingData buildingData))
+            if (m_BuildingConfigDic.TryGetValue(name_, out BuildingData buildingData))
             {
                 return buildingData;
             }
             else
             {
-                Debug.Log("探したい建物は存在していない");
+                Debug.LogWarning($"探している建物のタイプ ({name_}) は存在していない");
                 return null;
             }
         }

@@ -24,7 +24,7 @@ namespace Framework.BuildProject
         protected override void ShowData()
         {
             DataText.text =
-                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}\nWorkerNums:{m_BuildBase.m_WorkerNum}/{m_BuildBase.m_MaxWorkerNum}";
+                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}\nWorkerNums:{m_BuildBase.WorkerNum}/{m_BuildBase.MaxWorkerNum}";
         }
 
         void AddWorker()
