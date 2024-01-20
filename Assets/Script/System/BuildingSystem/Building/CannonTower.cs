@@ -11,7 +11,6 @@ namespace Framework.BuildProject
         public ParticleSystem FirePointParticle;
         public float LockSpeed;
 
-        //point light todo...
         //cannon
         public float m_ElevationAngle;
 
@@ -70,6 +69,7 @@ namespace Framework.BuildProject
                         FirePointParticle.Play();
                         this.GetSystem<IBulletSystem>().GetBullet(BulletType.Cannon).Set(200, 10,
                             m_Target[0].transform.position + Vector3.up * 100f, m_Target[0].transform).Shoot();
+                        
                         m_State = TowerState.Reloading;
                         ActionKit.Delay(5, () => { m_State = TowerState.Idle; }).Start(this);
                     }

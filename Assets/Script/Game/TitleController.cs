@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -13,14 +14,34 @@ namespace Framework.BuildProject
         private Color baseEmissionColor;
         private float m_Time;
 
+        private Camera m_MainCamera;
+        private BrightnessSaturationAndContrast m_Brightness;
+
+        private bool m_GameStart = false;
+
         private void Start()
         {
             m_IsRay = false;
             m_Material = renderer.sharedMaterial;
+            m_MainCamera = Camera.main;
+            m_Brightness = m_MainCamera.GetComponent<BrightnessSaturationAndContrast>();
         }
 
         private void Update()
         {
+            if (m_GameStart)
+            {
+                m_Brightness.brightness -= Time.deltaTime * 0.3f;
+                if (m_Brightness.brightness <= 0f)
+                {
+                    this.SendEvent<GameStartEvent>();
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             RayCast();
             if (m_IsRay)
             {
@@ -28,6 +49,10 @@ namespace Framework.BuildProject
                 float intensity = (-Mathf.Cos(m_Time * speed) + 1) / 3;
                 Color emissionColor = baseEmissionColor + intensity * intensityMultiplier * Color.white;
                 m_Material.SetColor("_EmissionColor", emissionColor);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    m_GameStart = true;
+                }
             }
             else
             {

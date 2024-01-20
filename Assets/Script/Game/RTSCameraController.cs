@@ -2,6 +2,14 @@ using UnityEngine;
 
 namespace Framework.BuildProject
 {
+    public enum CameraState
+    {
+        Idle,
+        OnGameSceneEnter,
+        OnGaming,
+        OnEnd,
+    }
+
     public class RTSCameraController : BuildController
     {
         public float movementAmount;
@@ -20,25 +28,67 @@ namespace Framework.BuildProject
         private Vector3 m_RotateStartPosition;
         private Vector3 m_RotateCurrentPosition;
         private Plane m_DragPlane;
+        private BrightnessSaturationAndContrast m_Brightness;
+        private CameraState m_State = CameraState.Idle;
+
+        //スクリーン処理用
+        private float m_TargetBrightness;
+        private Vector3 m_TargetPos;
+        private float m_TargetAngle;
 
         private void Start()
         {
+            m_CameraTrans = Camera.main.transform;
+            m_Brightness = m_CameraTrans.GetComponent<BrightnessSaturationAndContrast>();
             var transform1 = transform;
             m_NewPosition = transform1.position;
             m_NewRotation = transform1.rotation;
-            m_CameraTrans = Camera.main.transform;
             m_NewZoom = m_CameraTrans.localPosition;
             m_DragPlane = new Plane(Vector3.up, Vector3.zero);
+
+            m_TargetAngle = 0;
+            m_TargetBrightness = 0;
+            m_TargetPos = m_CameraTrans.localPosition;
+            this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
         }
 
         private void Update()
         {
-            HandleMouseInput();
-            HandleMovemtInput();
-            transform.position = Vector3.Lerp(transform.position, m_NewPosition, Time.deltaTime * lerpT);
-            transform.rotation = Quaternion.Lerp(transform.rotation, m_NewRotation, Time.deltaTime * lerpT);
-            m_CameraTrans.localPosition =
-                Vector3.Lerp(m_CameraTrans.localPosition, m_NewZoom, Time.deltaTime * lerpT);
+            switch (m_State)
+            {
+                case CameraState.Idle:
+                    break;
+                case CameraState.OnGameSceneEnter:
+                    if (m_Brightness.brightness - m_TargetBrightness < 0.01f)
+                    {
+                        m_Brightness.brightness += Time.deltaTime * 0.3f;
+                        break;
+                    }
+
+                    m_CameraTrans.localPosition =
+                        Vector3.Lerp(m_CameraTrans.localPosition, m_TargetPos, Time.deltaTime * 0.8f);
+                    m_CameraTrans.localRotation = Quaternion.Lerp(m_CameraTrans.localRotation,
+                        Quaternion.Euler(m_TargetAngle, 0, 0), 0.8f * Time.deltaTime);
+                    if (Vector3.Distance(m_CameraTrans.localPosition, m_TargetPos) < 0.1f)
+                    {
+                        m_CameraTrans.localPosition = m_TargetPos;
+                        m_State = CameraState.OnGaming;
+                        m_NewZoom = m_TargetPos;
+                        this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
+                    }
+
+                    break;
+                case CameraState.OnGaming:
+                    HandleMouseInput();
+                    HandleMovemtInput();
+                    transform.position = Vector3.Lerp(transform.position, m_NewPosition, Time.deltaTime * lerpT);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, m_NewRotation, Time.deltaTime * lerpT);
+                    m_CameraTrans.localPosition =
+                        Vector3.Lerp(m_CameraTrans.localPosition, m_NewZoom, Time.deltaTime * lerpT);
+                    break;
+                case CameraState.OnEnd:
+                    break;
+            }
         }
 
         void HandleMovemtInput()
@@ -123,6 +173,19 @@ namespace Framework.BuildProject
 
                 m_NewRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
             }
+        }
+
+        public void GameSceneEnter(float targetBrightness_, Vector3 targetPos_, float targetAngle_)
+        {
+            m_State = CameraState.OnGameSceneEnter;
+            m_TargetBrightness = targetBrightness_;
+            m_TargetPos = targetPos_;
+            m_TargetAngle = targetAngle_;
+        }
+
+        public void OnGaming()
+        {
+            m_State = CameraState.OnGaming;
         }
     }
 }

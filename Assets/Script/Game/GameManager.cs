@@ -53,6 +53,8 @@ namespace Framework.BuildProject
         {
             if (scene.name == "Gaming")
             {
+                GameObject canvas = GameObject.Find("Canvas");
+                
                 m_GridBuildSystem.CreatGrid(Global.GRID_SIZE_WIDTH, Global.GRID_SIZE_HEIGHT, Global.GRID_SIZE_CELL);
                 m_GridBuildSystem.CreatBuilding(BuildingType.Core, new Vector2Int(4, 4), Dir.Down);
                 m_BulletSystem.InitByManager();
