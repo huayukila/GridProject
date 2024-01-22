@@ -67,7 +67,7 @@ namespace Framework.BuildProject
                             {
                                 Vector3 tempVec = RandomPosition(monster.SwapPoint);
                                 float tempValue = tempVec.x;
-                                tempVec = new Vector3(tempVec.z, 1, tempValue);
+                                tempVec = new Vector3(tempVec.z, 0, tempValue);
                                 tempVec += m_SpawnPoint[monster.SwapPoint].transform.position;
                                 GameObject obj = GetEnemy(monster.MonsterType);
                                 m_ActiveEnemysList.Add(obj);

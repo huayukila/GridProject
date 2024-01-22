@@ -6,7 +6,8 @@ namespace Framework.BuildProject
     public class GamingDirector : BuildController
     {
         public RTSCameraController cameraCtrl;
-        public GameObject canvas;
+        public GameObject mainCanvas;
+        public GameObject subCanvas;
         public Vector3 targetPos;
         public float targetAngle;
         public float targetBrightness;
@@ -21,15 +22,32 @@ namespace Framework.BuildProject
                         cameraCtrl.GameSceneEnter(targetBrightness, targetPos, targetAngle);
                         break;
                     case CameraState.OnGaming:
-                        canvas.SetActive(true);
+                        mainCanvas.SetActive(true);
+                        break;
+                    case CameraState.OnEnd:
+                        subCanvas.SetActive(true);
                         break;
                 }
             }).UnregisterWhenGameObjectDestroyed(gameObject);
+
+            this.RegisterEvent<GameOverEvent>(e => OnGameEnd())
+                .UnregisterWhenGameObjectDestroyed(gameObject);
+            this.RegisterEvent<GameClearEvent>(e => OnGameEnd())
+                .UnregisterWhenGameObjectDestroyed(gameObject);
         }
 
         private void Start()
         {
-            canvas.SetActive(false);
+            mainCanvas.SetActive(false);
+            subCanvas.SetActive(false);
+        }
+
+        void OnGameEnd()
+        {
+            this.GetModel<IPlayerDataModel>().playerState = PlayerState.Win;
+            mainCanvas.SetActive(false);
+            cameraCtrl.ChangeToEnd();
+            Time.timeScale = 0;
         }
     }
 }

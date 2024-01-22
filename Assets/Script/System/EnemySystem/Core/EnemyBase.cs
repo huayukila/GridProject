@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 using Kit;
 
 namespace Framework.BuildProject
@@ -27,7 +26,7 @@ namespace Framework.BuildProject
         public float Speed; // 移動速度
         public float AttackCD; // 攻撃クールダウン
         public float ClaimsCD; // 攻撃クールダウン
-        public int Damage;//攻撃ダメージ
+        public int Damage; //攻撃ダメージ
 
         private float m_DurationTime;
         private float m_StartTime;
@@ -50,6 +49,7 @@ namespace Framework.BuildProject
             m_Target = new Collider[1];
             m_LayerMask = LayerMask.GetMask(Global.TARGET_STRING_BUILDING);
         }
+
         private void OnEnable()
         {
             m_StartTime = Time.time;
@@ -99,11 +99,12 @@ namespace Framework.BuildProject
         private void Trace()
         {
             transform.localPosition += transform.forward * (Speed * Time.deltaTime);
-            UpdateRotation(m_Target[0].transform.position);
-            if (Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target, m_LayerMask) == 0)
+            if (m_Target[0] == null||Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target, m_LayerMask) == 0)
             {
                 ResetToMoveState();
+                return;
             }
+            UpdateRotation(m_Target[0].transform.position);
         }
 
         private void CheckForAttack()

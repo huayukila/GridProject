@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -28,18 +29,23 @@ namespace Framework.BuildProject
         private Vector3 m_RotateStartPosition;
         private Vector3 m_RotateCurrentPosition;
         private Plane m_DragPlane;
-        private BrightnessSaturationAndContrast m_Brightness;
         private CameraState m_State = CameraState.Idle;
 
         //スクリーン処理用
+        private BrightnessSaturationAndContrast m_Brightness;
+        private GaussianBlur m_GBlur;
         private float m_TargetBrightness;
+        private Vector3 CenterPos = new Vector3(50, 10, 50);
         private Vector3 m_TargetPos;
         private float m_TargetAngle;
+        private float m_StartTime;
+        private float m_DurationTime = 6f;
 
         private void Start()
         {
             m_CameraTrans = Camera.main.transform;
             m_Brightness = m_CameraTrans.GetComponent<BrightnessSaturationAndContrast>();
+            m_GBlur = m_CameraTrans.GetComponent<GaussianBlur>();
             var transform1 = transform;
             m_NewPosition = transform1.position;
             m_NewRotation = transform1.rotation;
@@ -71,10 +77,33 @@ namespace Framework.BuildProject
                         Vector3.Lerp(m_CameraTrans.localPosition, m_NewZoom, Time.deltaTime * lerpT);
                     break;
                 case CameraState.OnEnd:
+                    transform.position = Vector3.Lerp(transform.position, CenterPos,
+                        Time.unscaledDeltaTime * lerpT);
+                    transform.rotation = transform.rotation = Quaternion.Lerp(transform.rotation,
+                        Quaternion.Euler(0, 0, 0), Time.unscaledDeltaTime * lerpT);
+                    m_CameraTrans.localPosition = Vector3.Lerp(m_CameraTrans.localPosition, m_CameraTrans.forward * -45,
+                        Time.unscaledDeltaTime * lerpT);
+                    if (Vector3.Distance(CenterPos, transform.position) > 0.1f)
+                        break;
+                    if (Time.unscaledTime - m_StartTime < m_DurationTime)
+                        break;
+                    m_GBlur.enabled = true;
+                    m_GBlur.blurSpread += Time.unscaledDeltaTime;
+                    if (m_GBlur.blurSpread >= 3f)
+                    {
+                        this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
+                        m_State = CameraState.Idle;
+                    }
+
                     break;
             }
         }
 
+        public void ChangeToEnd()
+        {
+            m_StartTime = Time.time;
+            m_State = CameraState.OnEnd;
+        }
 
         #region 内部用
 

@@ -19,7 +19,9 @@ public enum Dir
 public enum PlayerState
 {
     Normal,
-    Build
+    Build,
+    Win,
+    Fail
 }
 public enum BuildingType
 {

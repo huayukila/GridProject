@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Framework.BuildProject
 {
-    public class BuildingBase : BuildController
+    public class BuildingBase : BuildController, IGetHurt
     {
         public string BuildingName;
         public int BuildingMaxHp;
@@ -33,6 +33,11 @@ namespace Framework.BuildProject
             BuildingOccupancyGrids.Clear();
         }
 
+        protected virtual void OnDead()
+        {
+            this.GetSystem<IGridBuildSystem>().DestroyBuilding(gameObject);
+        }
+
         // ï ÇÃåöï®ÉfÅ[É^ÇÃèâä˙âª
         public virtual void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_, Dir dir_)
         {
@@ -50,6 +55,15 @@ namespace Framework.BuildProject
             BuildingHp = BuildingMaxHp;
             BuildingLevel = data_.LevelDatasList[0].Level;
             BuildingType = data_.BuildingType;
+        }
+
+        public void GetDamage(int damage)
+        {
+            BuildingHp -= damage;
+            if (BuildingHp <= 0)
+            {
+                OnDead();
+            }
         }
     }
 }

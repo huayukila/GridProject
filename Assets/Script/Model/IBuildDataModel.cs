@@ -26,7 +26,7 @@ namespace Framework.BuildProject
 
             foreach (var data in database.BuildingDatas)
             {
-                m_BuildingConfigDic.Add(data.name, data);
+                m_BuildingConfigDic.Add(data.NameString, data);
             }
 
             Resources.UnloadAsset(database);

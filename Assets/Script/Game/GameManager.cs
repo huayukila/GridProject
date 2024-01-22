@@ -35,14 +35,15 @@ namespace Framework.BuildProject
         private void RegisterEvents()
         {
             // イベントリスナーを登録し、必要に応じて削除する
-            this.RegisterEvent<ReStartEvent>(e => Restart()).UnregisterWhenGameObjectDestroyed(gameObject);
+            this.RegisterEvent<ReStartEvent>(e => Restart())
+                .UnregisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<GameStartEvent>(e => LoadScene(GameScene.Gaming))
                 .UnregisterWhenGameObjectDestroyed(gameObject);
-            this.RegisterEvent<StopOrContinueGameEvent>(e => SetGamePause(e.Switch))
-                .UnregisterWhenGameObjectDestroyed(gameObject);
-            this.RegisterEvent<GameClearEvent>(e => LoadScene(GameScene.GameClear))
-                .UnregisterWhenGameObjectDestroyed(gameObject);
-            this.RegisterEvent<BackToTitleEvent>(e => LoadScene(GameScene.Title))
+            this.RegisterEvent<BackToTitleEvent>(e =>
+                {
+                    Time.timeScale = 1.0f;
+                    LoadScene(GameScene.Title);
+                })
                 .UnregisterWhenGameObjectDestroyed(gameObject);
 
             SceneManager.sceneLoaded += OnSceneLoaded;
@@ -59,12 +60,6 @@ namespace Framework.BuildProject
         private void LoadInitialScene()
         {
             LoadScene(GameScene.Title);
-        }
-
-        // ゲームの一時停止と再開
-        private void SetGamePause(bool pause)
-        {
-            Time.timeScale = pause ? 1.0f : 0;
         }
 
         // シーンが読み込まれたときの処理
@@ -124,6 +119,5 @@ namespace Framework.BuildProject
     {
         Title,
         Gaming,
-        GameClear
     }
 }
