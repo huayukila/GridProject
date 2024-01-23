@@ -36,12 +36,14 @@ namespace Framework.BuildProject
         {
             this.GetSystem<IBuildingSystem>().AddWorker(m_BuildBase.gameObject);
             ShowData();
+            this.SendEvent<RefreshResPanel>();
         }
 
         private void RemoveWorker()
         {
             this.GetSystem<IBuildingSystem>().RemoveWorker(m_BuildBase.gameObject);
             ShowData();
+            this.SendEvent<RefreshResPanel>();
         }
     }
 }

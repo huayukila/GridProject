@@ -5,6 +5,7 @@ namespace Framework.BuildProject
         protected override void OnExecute()
         {
             this.GetModel<IResourceDataModel>().AddRes(ResourceType.Stone, WorkerNum * 30);
+            this.SendEvent<RefreshResPanel>();
         }
     }
 }

@@ -53,8 +53,7 @@ namespace Framework.BuildProject
             if (!m_IsCountDownStart)
                 return;
             m_PreCD -= Time.deltaTime;
-            if (m_PreCD % 1 == 0) CounterText.text = m_PreCD.ToString();
-
+            
             if (m_PreCD <= 0)
             {
                 ShowObj.SetActive(false);

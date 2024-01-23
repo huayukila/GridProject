@@ -5,6 +5,7 @@ namespace Framework.BuildProject
         protected override void OnExecute()
         {
             this.GetModel<IResourceDataModel>().AddRes(ResourceType.Gold, WorkerNum * 20);
+            this.SendEvent<RefreshResPanel>();
         }
     }
 }

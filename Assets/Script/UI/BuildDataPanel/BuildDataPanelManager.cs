@@ -14,6 +14,8 @@ namespace Framework.BuildProject
         {
             this.RegisterEvent<BuildingHasBeenDestroyEvent>(e =>
             {
+                if (m_FocusPanelBase == null)
+                    return;
                 if (e.id == m_CurrentBuilding.GetInstanceID())
                 {
                     ClosePanel();

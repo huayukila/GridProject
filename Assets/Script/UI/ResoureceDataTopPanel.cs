@@ -12,9 +12,6 @@ namespace Framework.BuildProject
         public Text MaxWorkerTxt;
         private IResourceDataModel dataModel;
 
-        private float m_DurationTime;
-
-
         // Start is called before the first frame update
         private void Start()
         {
@@ -22,18 +19,7 @@ namespace Framework.BuildProject
             RefreshResPanel();
             this.RegisterEvent<RefreshResPanel>(e => RefreshResPanel()
             ).UnregisterWhenGameObjectDestroyed(gameObject);
-            m_DurationTime = Time.time;
         }
-
-
-        private void Update()
-        {
-            if (Time.time - m_DurationTime < 1.0f) return;
-
-            m_DurationTime = Time.time;
-            RefreshResPanel();
-        }
-
         private void RefreshResPanel()
         {
             MaxWorkerTxt.text = dataModel.MaxWorkerNum.ToString();

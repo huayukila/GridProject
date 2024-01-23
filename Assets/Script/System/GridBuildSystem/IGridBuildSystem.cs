@@ -122,6 +122,7 @@ namespace Framework.BuildProject
             }
 
             buildObjModel.UnregisterBuild(gameObj.GetInstanceID());
+            this.SendEvent<RefreshResPanel>();
             Object.Destroy(gameObj);
         }
 
