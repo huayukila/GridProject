@@ -6,9 +6,9 @@ namespace Framework.BuildProject
     public class MagicTower : UpdateBuilding
     {
         public Transform FirePos; // 発射位置
+        private readonly float m_AttackRadius = 100; // 攻撃範囲
 
         private Collider[] m_Target; // ターゲットリスト
-        private float m_AttackRadius = 100; // 攻撃範囲
 
         // 建物の初期化処理
         public override void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_, Dir dir_)

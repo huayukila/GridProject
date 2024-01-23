@@ -1,12 +1,11 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum ActionStatus
 {
     NotStart,
     Started,
-    Finished,
+    Finished
 }
 
 public interface IActionController
@@ -22,13 +21,13 @@ public interface IAction<TStatus>
 {
     ulong ActionID { get; set; }
     TStatus Status { get; set; }
-    void OnStart();
-    void OnExecute(float deltaTime);
-    void OnFinish();
 
     bool Deinited { get; set; }
 
     bool Paused { get; set; }
+    void OnStart();
+    void OnExecute(float deltaTime);
+    void OnFinish();
     void Reset();
     void Deinit();
 }
@@ -46,55 +45,51 @@ public struct ActionController : IActionController
 
     public void Deinit()
     {
-        if(Action.ActionID==ActionID)
-        {
-            Action.Reset();
-        }
+        if (Action.ActionID == ActionID) Action.Reset();
     }
 
     public void Rest()
     {
-        if(Action.ActionID == ActionID)
-        {
-            Action.Deinit();
-        }
+        if (Action.ActionID == ActionID) Action.Deinit();
     }
 }
+
 public static class IActionExtensions
 {
     public static IActionController Start(this IAction self,
         MonoBehaviour monoBehaviour, Action<IActionController> onFinish = null)
     {
         monoBehaviour.ExecuteByUpdate(self, onFinish);
-        return new ActionController()
+        return new ActionController
         {
             ActionID = self.ActionID,
-            Action = self,
+            Action = self
         };
     }
 
     public static IActionController Start(this IAction self,
-        MonoBehaviour monoBehaviour,Action onFinish)
+        MonoBehaviour monoBehaviour, Action onFinish)
     {
         monoBehaviour.ExecuteByUpdate(self, _ => onFinish());
-        return new ActionController()
+        return new ActionController
         {
             Action = self,
-            ActionID = self.ActionID,
+            ActionID = self.ActionID
         };
     }
 
     public static void Finish(this IAction self)
     {
-        self.Status= ActionStatus.Finished;
+        self.Status = ActionStatus.Finished;
     }
-    public static bool Execute(this IAction self,float deltaTime)
+
+    public static bool Execute(this IAction self, float deltaTime)
     {
         if (self.Status == ActionStatus.NotStart)
         {
             self.OnStart();
 
-            if(self.Status== ActionStatus.Finished)
+            if (self.Status == ActionStatus.Finished)
             {
                 self.OnFinish();
                 return true;
@@ -102,25 +97,23 @@ public static class IActionExtensions
 
             self.Status = ActionStatus.Started;
         }
-        else if(self.Status == ActionStatus.Started)
+        else if (self.Status == ActionStatus.Started)
         {
-            if(self.Paused)
-            {
-                return false;
-            }
+            if (self.Paused) return false;
             self.OnExecute(deltaTime);
 
-            if(self.Status==ActionStatus.Finished)
+            if (self.Status == ActionStatus.Finished)
             {
                 self.OnFinish();
                 return true;
             }
         }
-        else if(self.Status == ActionStatus.Finished)
+        else if (self.Status == ActionStatus.Finished)
         {
             self.OnFinish();
             return true;
         }
+
         return false;
     }
 }

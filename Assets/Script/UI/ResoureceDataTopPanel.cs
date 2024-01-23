@@ -5,14 +5,18 @@ namespace Framework.BuildProject
 {
     public class ResoureceDataTopPanel : BuildController
     {
-        public Text resoreceDataTxt;
+        public Text WoodTxt;
+        public Text StoneTxt;
+        public Text GoldTxt;
+        public Text IdleWorkerTxt;
+        public Text MaxWorkerTxt;
+        private IResourceDataModel dataModel;
 
         private float m_DurationTime;
-        IResourceDataModel dataModel;
 
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             dataModel = this.GetModel<IResourceDataModel>();
             RefreshResPanel();
@@ -24,20 +28,19 @@ namespace Framework.BuildProject
 
         private void Update()
         {
-            if (Time.time - m_DurationTime < 1.0f)
-            {
-                return;
-            }
+            if (Time.time - m_DurationTime < 1.0f) return;
+
             m_DurationTime = Time.time;
             RefreshResPanel();
         }
 
-        void RefreshResPanel()
+        private void RefreshResPanel()
         {
-            resoreceDataTxt.text = "Mood:" + dataModel.GetRes(ResourceType.Wood) + " Stone:" +
-                                   dataModel.GetRes(ResourceType.Stone)
-                                   + " Gold:" + dataModel.GetRes(ResourceType.Gold) + " Idle Population:" +
-                                   dataModel.GetRes(ResourceType.Worker) + "/Max Population:" + dataModel.MaxWorkerNum;
+            MaxWorkerTxt.text = dataModel.MaxWorkerNum.ToString();
+            WoodTxt.text = dataModel.GetRes(ResourceType.Wood).ToString();
+            StoneTxt.text = dataModel.GetRes(ResourceType.Stone).ToString();
+            GoldTxt.text = dataModel.GetRes(ResourceType.Gold).ToString();
+            IdleWorkerTxt.text = dataModel.GetRes(ResourceType.Worker).ToString();
         }
     }
 }

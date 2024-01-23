@@ -16,16 +16,6 @@ namespace Framework.BuildProject
     {
         private GameSaveData m_SaveData;
 
-        protected override void OnInit()
-        {
-            string defaultPath = Application.dataPath;
-            string saveDataFolderPath = Path.Combine(defaultPath, "SaveData");
-            if (!Directory.Exists(saveDataFolderPath))
-            {
-                Directory.CreateDirectory(saveDataFolderPath);
-            }
-        }
-
 
         public void CreatSaveData()
         {
@@ -43,12 +33,12 @@ namespace Framework.BuildProject
             // m_SaveData.stageLevel=
 
 
-            BuildingBase[] buildsArray = this.GetModel<IBuildingObjModel>().GetBuildingObjsDataForArchiveSystem();
-            ResourceCost[] resourcesArray = this.GetModel<IResourceDataModel>().GetResourceDatasForArchiveSystem();
-            
+            var buildsArray = this.GetModel<IBuildingObjModel>().GetBuildingObjsDataForArchiveSystem();
+            var resourcesArray = this.GetModel<IResourceDataModel>().GetResourceDatasForArchiveSystem();
+
             m_SaveData.resDatas = resourcesArray;
             m_SaveData.buildingSaveDatas = new BuildingSaveData[buildsArray.Length];
-            for (int i = 0; i < buildsArray.Length; i++)
+            for (var i = 0; i < buildsArray.Length; i++)
             {
                 m_SaveData.buildingSaveDatas[i].gridX = buildsArray[i].GridXY.x;
                 m_SaveData.buildingSaveDatas[i].gridZ = buildsArray[i].GridXY.x;
@@ -63,9 +53,16 @@ namespace Framework.BuildProject
         {
         }
 
+        protected override void OnInit()
+        {
+            var defaultPath = Application.dataPath;
+            var saveDataFolderPath = Path.Combine(defaultPath, "SaveData");
+            if (!Directory.Exists(saveDataFolderPath)) Directory.CreateDirectory(saveDataFolderPath);
+        }
+
         #region “à•”—pŠÖ”
 
-        void LoadGameData()
+        private void LoadGameData()
         {
         }
 

@@ -1,14 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace NaughtyAttributes.Test
 {
     public class LayerTest : MonoBehaviour
     {
-        [Layer]
-        public int layerNumber0;
+        [Layer] public int layerNumber0;
 
-        [Layer]
-        public string layerName0;
+        [Layer] public string layerName0;
 
         public LayerNest1 nest1;
 
@@ -22,25 +21,21 @@ namespace NaughtyAttributes.Test
         }
     }
 
-    [System.Serializable]
+    [Serializable]
     public class LayerNest1
     {
-        [Layer]
-        public int layerNumber1;
+        [Layer] public int layerNumber1;
 
-        [Layer]
-        public string layerName1;
+        [Layer] public string layerName1;
 
         public LayerNest2 nest2;
     }
 
-    [System.Serializable]
+    [Serializable]
     public struct LayerNest2
     {
-        [Layer]
-        public int layerNumber2;
+        [Layer] public int layerNumber2;
 
-        [Layer]
-        public string layerName2;
+        [Layer] public string layerName2;
     }
 }

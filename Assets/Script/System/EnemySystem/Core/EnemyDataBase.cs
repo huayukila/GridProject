@@ -20,6 +20,6 @@ namespace Framework.BuildProject
     public enum EnemyType
     {
         Goblin,
-        LargeGoblin,
+        LargeGoblin
     }
 }

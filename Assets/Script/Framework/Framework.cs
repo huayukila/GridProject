@@ -1,6 +1,6 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,110 +28,53 @@ namespace Framework
     //子供クラスに継承されるための存在だから、抽象クラスになる
     public abstract class Architecture<T> : IArchitecture where T : Architecture<T>, new()
     {
-        /// <summary>
-        /// フレイム初期化完成フラグ
-        /// </summary>
-        private bool mInited = false;
-
-        //システム初期化用のリスト
-        private HashSet<ISystem> mSystems = new HashSet<ISystem>();
-
-        //Model初期化リスト
-        private HashSet<IModel> mModels = new HashSet<IModel>();
-
         //初期化用delegate
         public static Action<T> OnRegisterPatch = architecture => { };
 
         private static T mArchitecture;
 
+        //IOC容器実体化
+        private readonly IOCContainer mContainer = new();
+
         /// <summary>
-        /// インタフェース形のインスタンス
+        ///     フレイム初期化完成フラグ
+        /// </summary>
+        private bool mInited;
+
+        //Model初期化リスト
+        private readonly HashSet<IModel> mModels = new();
+
+        //システム初期化用のリスト
+        private readonly HashSet<ISystem> mSystems = new();
+
+        //事件system実体化
+        private readonly ITypeEventSystem mTypeEventSystem = new TypeEventSystem();
+
+        /// <summary>
+        ///     インタフェース形のインスタンス
         /// </summary>
         public static IArchitecture Interface
         {
             get
             {
-                if (mArchitecture == null)
-                {
-                    MakeSureArchitecture();
-                }
+                if (mArchitecture == null) MakeSureArchitecture();
 
                 return mArchitecture;
             }
         }
 
         /// <summary>
-        /// フレイムがヌルじゃないを確保関数
-        /// </summary>
-        static void MakeSureArchitecture()
-        {
-            if (mArchitecture == null)
-            {
-                mArchitecture = new T();
-                //フレイム初期化関数、initは子供クラスに実現される
-                mArchitecture.Init();
-                OnRegisterPatch?.Invoke(mArchitecture);
-                //modle初期化
-                foreach (var architectureModel in mArchitecture.mModels)
-                {
-                    architectureModel.Init();
-                }
-
-                //初期化完成した後、も使えなかったリストを解放
-                mArchitecture.mModels.Clear();
-                //system初期化
-                foreach (var architectureSystem in mArchitecture.mSystems)
-                {
-                    architectureSystem.Init();
-                }
-
-                mArchitecture.mSystems.Clear();
-                //フレイム初期化完成
-                mArchitecture.mInited = true;
-            }
-        }
-
-        //一般的各systemとmodelの初期化がこのoverriderの中に書きます
-        protected abstract void Init();
-
-        //IOC容器実体化
-        private IOCContainer mContainer = new IOCContainer();
-
-        /// <summary>
-        /// 外部からIOCを獲得の方法
-        /// </summary>
-        /// <typeparam name="TContainer"></typeparam>
-        /// <returns></returns>
-        //一般的にはそうしませんですが、一応API提供する
-        public static TContainer Get<TContainer>() where TContainer : class
-        {
-            MakeSureArchitecture();
-            return mArchitecture.mContainer.Get<TContainer>();
-        }
-
-        /// <summary>
-        ///IOC自身登録
-        /// </summary>
-        /// <typeparam name="TContainer"></typeparam>
-        /// <param name="instance"></param>
-        public static void Register<TContainer>(TContainer instance)
-        {
-            MakeSureArchitecture();
-            mArchitecture.mContainer.Register<TContainer>(instance);
-        }
-
-        /// <summary>
-        /// 使えるツールの登録
+        ///     使えるツールの登録
         /// </summary>
         /// <typeparam name="TUtility"></typeparam>
         /// <param name="utility"></param>
         public void RegisterUtility<TUtility>(TUtility utility) where TUtility : IUtility
         {
-            mContainer.Register<TUtility>(utility);
+            mContainer.Register(utility);
         }
 
         /// <summary>
-        /// インタフェースによって、ツールの実体を獲得
+        ///     インタフェースによって、ツールの実体を獲得
         /// </summary>
         /// <typeparam name="TUtility"></typeparam>
         /// <returns></returns>
@@ -144,22 +87,18 @@ namespace Framework
         public void RegisterModel<TModel>(TModel model) where TModel : IModel
         {
             model.SetArchitecture(this);
-            mContainer.Register<TModel>(model);
+            mContainer.Register(model);
 
             if (!mInited)
-            {
                 mModels.Add(model);
-            }
             else
-            {
                 model.Init();
-            }
 
             mModels.Add(model);
         }
 
         /// <summary>
-        /// インタフェースによって、modelを獲得
+        ///     インタフェースによって、modelを獲得
         /// </summary>
         /// <typeparam name="TModel"></typeparam>
         /// <returns></returns>
@@ -172,20 +111,16 @@ namespace Framework
         public void RegisterSystem<TSystem>(TSystem system) where TSystem : ISystem
         {
             system.SetArchitecture(this);
-            mContainer.Register<TSystem>(system);
+            mContainer.Register(system);
 
             if (!mInited)
-            {
                 mSystems.Add(system);
-            }
             else
-            {
                 system.Init();
-            }
         }
 
         /// <summary>
-        /// インタフェースによって、systemを獲得
+        ///     インタフェースによって、systemを獲得
         /// </summary>
         /// <typeparam name="TSystem"></typeparam>
         /// <returns></returns>
@@ -195,7 +130,7 @@ namespace Framework
         }
 
         /// <summary>
-        /// コントローラーからsystemまたはmodelへの操作
+        ///     コントローラーからsystemまたはmodelへの操作
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
         public void SendCommand<TCommand>() where TCommand : ICommand, new()
@@ -207,7 +142,7 @@ namespace Framework
         }
 
         /// <summary>
-        /// コントローラーからsystemまたはmodelへの操作
+        ///     コントローラーからsystemまたはmodelへの操作
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
         public void SendCommand<TCommand>(TCommand command) where TCommand : ICommand
@@ -217,11 +152,8 @@ namespace Framework
             command.SetArchitecture(null);
         }
 
-        //事件system実体化
-        ITypeEventSystem mTypeEventSystem = new TypeEventSystem();
-
         /// <summary>
-        /// 事件発送
+        ///     事件発送
         /// </summary>
         /// <typeparam name="TEvent"></typeparam>
         public void SendEvent<TEvent>() where TEvent : new()
@@ -230,38 +162,38 @@ namespace Framework
         }
 
         /// <summary>
-        /// 事件発送
+        ///     事件発送
         /// </summary>
         /// <typeparam name="TEvent"></typeparam>
         /// <param name="e"></param>
         public void SendEvent<TEvent>(TEvent e)
         {
-            mTypeEventSystem.Send<TEvent>(e);
+            mTypeEventSystem.Send(e);
         }
 
         /// <summary>
-        /// 事件登録
+        ///     事件登録
         /// </summary>
         /// <typeparam name="TEvent">事件のタイプ</typeparam>
         /// <param name="onEvent">トリガー方法</param>
         /// <returns></returns>
         public IUnregister RegisterEvent<TEvent>(Action<TEvent> onEvent)
         {
-            return mTypeEventSystem.Register<TEvent>(onEvent);
+            return mTypeEventSystem.Register(onEvent);
         }
 
         /// <summary>
-        /// 事件除外
+        ///     事件除外
         /// </summary>
         /// <typeparam name="TEvent">事件のタイプ</typeparam>
         /// <param name="onEvent">トリガー方法</param>
         public void UnregisterEvent<TEvent>(Action<TEvent> onEvent)
         {
-            mTypeEventSystem.Unregister<TEvent>(onEvent);
+            mTypeEventSystem.Unregister(onEvent);
         }
 
         /// <summary>
-        /// modelにデータサーチ
+        ///     modelにデータサーチ
         /// </summary>
         /// <typeparam name="TResult">リターンのデータのタイプ</typeparam>
         /// <param name="query"></param>
@@ -270,6 +202,57 @@ namespace Framework
         {
             query.SetArchitecture(this);
             return query.Do();
+        }
+
+        /// <summary>
+        ///     フレイムがヌルじゃないを確保関数
+        /// </summary>
+        private static void MakeSureArchitecture()
+        {
+            if (mArchitecture == null)
+            {
+                mArchitecture = new T();
+                //フレイム初期化関数、initは子供クラスに実現される
+                mArchitecture.Init();
+                OnRegisterPatch?.Invoke(mArchitecture);
+                //modle初期化
+                foreach (var architectureModel in mArchitecture.mModels) architectureModel.Init();
+
+                //初期化完成した後、も使えなかったリストを解放
+                mArchitecture.mModels.Clear();
+                //system初期化
+                foreach (var architectureSystem in mArchitecture.mSystems) architectureSystem.Init();
+
+                mArchitecture.mSystems.Clear();
+                //フレイム初期化完成
+                mArchitecture.mInited = true;
+            }
+        }
+
+        //一般的各systemとmodelの初期化がこのoverriderの中に書きます
+        protected abstract void Init();
+
+        /// <summary>
+        ///     外部からIOCを獲得の方法
+        /// </summary>
+        /// <typeparam name="TContainer"></typeparam>
+        /// <returns></returns>
+        //一般的にはそうしませんですが、一応API提供する
+        public static TContainer Get<TContainer>() where TContainer : class
+        {
+            MakeSureArchitecture();
+            return mArchitecture.mContainer.Get<TContainer>();
+        }
+
+        /// <summary>
+        ///     IOC自身登録
+        /// </summary>
+        /// <typeparam name="TContainer"></typeparam>
+        /// <param name="instance"></param>
+        public static void Register<TContainer>(TContainer instance)
+        {
+            MakeSureArchitecture();
+            mArchitecture.mContainer.Register(instance);
         }
     }
 
@@ -397,13 +380,12 @@ namespace Framework
 
     public abstract class AbstractQuery<T> : IQuery<T>
     {
+        private IArchitecture mArchitecture;
+
         public T Do()
         {
             return OnDo();
         }
-
-        protected abstract T OnDo();
-        private IArchitecture mArchitecture;
 
         public IArchitecture GetArchitecture()
         {
@@ -414,6 +396,8 @@ namespace Framework
         {
             mArchitecture = architecture;
         }
+
+        protected abstract T OnDo();
     }
 
     #endregion
@@ -475,12 +459,12 @@ namespace Framework
     {
         public static IUnregister RegisterEvent<T>(this ICanRegisterEvent self, Action<T> onEvent)
         {
-            return self.GetArchitecture().RegisterEvent<T>(onEvent);
+            return self.GetArchitecture().RegisterEvent(onEvent);
         }
 
         public static void UnregisterEvent<T>(this ICanRegisterEvent self, Action<T> onEvent)
         {
-            self.GetArchitecture().UnregisterEvent<T>(onEvent);
+            self.GetArchitecture().UnregisterEvent(onEvent);
         }
     }
 
@@ -497,7 +481,7 @@ namespace Framework
 
         public static void SendCommand<T>(this ICanSendCommand self, T command) where T : ICommand
         {
-            self.GetArchitecture().SendCommand<T>(command);
+            self.GetArchitecture().SendCommand(command);
         }
     }
 
@@ -514,7 +498,7 @@ namespace Framework
 
         public static void SendEvent<T>(this ICanSendEvent self, T e)
         {
-            self.GetArchitecture().SendEvent<T>(e);
+            self.GetArchitecture().SendEvent(e);
         }
     }
 
@@ -555,47 +539,41 @@ namespace Framework
 
         public void Unregister()
         {
-            TypeEventSystem.Unregister<T>(OnEvent);
+            TypeEventSystem.Unregister(OnEvent);
             TypeEventSystem = null;
             OnEvent = null;
         }
     }
 
     /// <summary>
-    /// MonoBehaviourの生命周期によって、自動的に事件解除
+    ///     MonoBehaviourの生命周期によって、自動的に事件解除
     /// </summary>
     public class UnregisterOnDestroyTrigger : MonoBehaviour
     {
-        private HashSet<IUnregister> mUnregistered = new HashSet<IUnregister>();
+        private readonly HashSet<IUnregister> mUnregistered = new();
+
+        private void OnDestroy()
+        {
+            foreach (var unRegister in mUnregistered) unRegister.Unregister();
+
+            mUnregistered.Clear();
+        }
 
         public void AddUnregister(IUnregister unregister)
         {
             mUnregistered.Add(unregister);
         }
-
-        private void OnDestroy()
-        {
-            foreach (var unRegister in mUnregistered)
-            {
-                unRegister.Unregister();
-            }
-
-            mUnregistered.Clear();
-        }
     }
 
     /// <summary>
-    /// 事件解除静的エクステンション
+    ///     事件解除静的エクステンション
     /// </summary>
     public static class UnregisterExtension
     {
         public static void UnregisterWhenGameObjectDestroyed(this IUnregister unRegister, GameObject gameObject)
         {
             var trigger = gameObject.GetComponent<UnregisterOnDestroyTrigger>();
-            if (!trigger)
-            {
-                trigger = gameObject.AddComponent<UnregisterOnDestroyTrigger>();
-            }
+            if (!trigger) trigger = gameObject.AddComponent<UnregisterOnDestroyTrigger>();
 
             trigger.AddUnregister(unRegister);
         }
@@ -603,16 +581,7 @@ namespace Framework
 
     public class TypeEventSystem : ITypeEventSystem
     {
-        public interface IRegistrations
-        {
-        }
-
-        public class Registrations<T> : IRegistrations
-        {
-            public Action<T> OnEvent = e => { };
-        }
-
-        Dictionary<Type, IRegistrations> mEventRegistration = new Dictionary<Type, IRegistrations>();
+        private readonly Dictionary<Type, IRegistrations> mEventRegistration = new();
 
         public IUnregister Register<TEvent>(Action<TEvent> onEvent)
         {
@@ -629,7 +598,7 @@ namespace Framework
             }
 
             (registrations as Registrations<TEvent>).OnEvent += onEvent;
-            return new TypeEventSystemUnregister<TEvent>()
+            return new TypeEventSystemUnregister<TEvent>
             {
                 OnEvent = onEvent,
                 TypeEventSystem = this
@@ -639,7 +608,7 @@ namespace Framework
         public void Send<T>() where T : new()
         {
             var e = new T();
-            Send<T>(e);
+            Send(e);
         }
 
         public void Send<T>(T e)
@@ -647,10 +616,7 @@ namespace Framework
             var type = typeof(T);
             IRegistrations registrations;
 
-            if (mEventRegistration.TryGetValue(type, out registrations))
-            {
-                (registrations as Registrations<T>).OnEvent(e);
-            }
+            if (mEventRegistration.TryGetValue(type, out registrations)) (registrations as Registrations<T>).OnEvent(e);
         }
 
         public void Unregister<T>(Action<T> onEvent)
@@ -658,9 +624,16 @@ namespace Framework
             var type = typeof(T);
             IRegistrations registrations;
             if (mEventRegistration.TryGetValue(type, out registrations))
-            {
                 (registrations as Registrations<T>).OnEvent -= onEvent;
-            }
+        }
+
+        public interface IRegistrations
+        {
+        }
+
+        public class Registrations<T> : IRegistrations
+        {
+            public Action<T> OnEvent = e => { };
         }
     }
 
@@ -670,28 +643,21 @@ namespace Framework
 
     public class IOCContainer
     {
-        private Dictionary<Type, object> mInstances = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> mInstances = new();
 
         public void Register<T>(T instance)
         {
             var key = typeof(T);
             if (mInstances.ContainsKey(key))
-            {
                 mInstances[key] = instance;
-            }
             else
-            {
                 mInstances.Add(key, instance);
-            }
         }
 
         public T Get<T>() where T : class
         {
             var key = typeof(T);
-            if (mInstances.TryGetValue(key, out var reinstance))
-            {
-                return reinstance as T;
-            }
+            if (mInstances.TryGetValue(key, out var reinstance)) return reinstance as T;
 
             return null;
         }
@@ -702,17 +668,19 @@ namespace Framework
     #region BindableProperty
 
     /// <summary>
-    /// 事件つける属性
+    ///     事件つける属性
     /// </summary>
     /// <typeparam name="T">属性の形</typeparam>
     public class BindableProperty<T>
     {
+        public Action<T> mOnValueChanged = v => { };
+
+        private T mValue;
+
         public BindableProperty(T defaultValue = default)
         {
             mValue = defaultValue;
         }
-
-        private T mValue = default(T);
 
         public T Value
         {
@@ -727,12 +695,10 @@ namespace Framework
             }
         }
 
-        public Action<T> mOnValueChanged = (v) => { };
-
         public IUnregister Register(Action<T> onValueChanged)
         {
             mOnValueChanged += onValueChanged;
-            return new BindablePropertyUnregister<T>()
+            return new BindablePropertyUnregister<T>
             {
                 BindableProperty = this,
                 onValueChanged = onValueChanged
@@ -740,7 +706,7 @@ namespace Framework
         }
 
         /// <summary>
-        /// 初期化with値
+        ///     初期化with値
         /// </summary>
         /// <param name="onValueChanged">value変更時動かすの方法</param>
         /// <returns></returns>
@@ -751,7 +717,7 @@ namespace Framework
         }
 
         /// <summary>
-        /// 属性のvalueを隠蔽的に形転換
+        ///     属性のvalueを隠蔽的に形転換
         /// </summary>
         /// <param name="property"></param>
         public static implicit operator T(BindableProperty<T> property)
@@ -793,12 +759,9 @@ namespace Framework
         [MenuItem("Tools/CreateFolder")]
         public static void CreateFolder()
         {
-            string path = Application.dataPath;
-            string script = Path.Combine(path, "Script");
-            if (!Directory.Exists(script))
-            {
-                Directory.CreateDirectory(script);
-            }
+            var path = Application.dataPath;
+            var script = Path.Combine(path, "Script");
+            if (!Directory.Exists(script)) Directory.CreateDirectory(script);
 
             string[] folderNames =
             {
@@ -810,16 +773,13 @@ namespace Framework
                 "Game",
                 "Command",
                 "Editor",
-                "Event",
+                "Event"
             };
 
             foreach (var folderName in folderNames)
             {
-                string tempStr = Path.Combine(script, folderName);
-                if (!Directory.Exists(tempStr))
-                {
-                    Directory.CreateDirectory(tempStr);
-                }
+                var tempStr = Path.Combine(script, folderName);
+                if (!Directory.Exists(tempStr)) Directory.CreateDirectory(tempStr);
             }
 
             AssetDatabase.Refresh();

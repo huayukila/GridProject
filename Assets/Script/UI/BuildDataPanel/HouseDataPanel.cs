@@ -1,11 +1,16 @@
+using UnityEngine.UI;
+
 namespace Framework.BuildProject
 {
     public class HouseDataPanel : BuildDataPanelBase
     {
+        public Text WorkText;
+
         protected override void ShowData()
         {
-            DataText.text =
-                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}\nWorker:{m_BuildBase.MaxWorkerNum}";
+            NameText.text = $"{m_BuildBase.BuildingName}";
+            WorkText.text = $"{m_BuildBase.MaxWorkerNum}";
+            HpText.text = $"{m_BuildBase.BuildingHp}/{m_BuildBase.BuildingMaxHp}";
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Framework.BuildProject
     {
         protected override void ShowData()
         {
-            DataText.text =
-                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}";
+            NameText.text = m_BuildBase.BuildingName;
+            HpText.text = $"{m_BuildBase.BuildingHp}/{m_BuildBase.BuildingMaxHp}";
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Framework.BuildProject
     public class BuildDataPanelBase : BuildController
     {
         public Button DeletButton;
-        public Text DataText;
+        public Text NameText;
+        public Text HpText;
         protected BuildingBase m_BuildBase;
 
         protected virtual void Start()
@@ -14,7 +15,12 @@ namespace Framework.BuildProject
             DeletButton.onClick.AddListener(DeleteBuilding);
         }
 
-        void DeleteBuilding()
+        protected virtual void OnDestroy()
+        {
+            DeletButton.onClick.RemoveAllListeners();
+        }
+
+        private void DeleteBuilding()
         {
             this.GetSystem<IGridBuildSystem>().DestroyBuilding(m_BuildBase.gameObject);
             m_BuildBase = null;
@@ -37,11 +43,6 @@ namespace Framework.BuildProject
         {
             gameObject.SetActive(false);
             m_BuildBase = null;
-        }
-
-        protected virtual void OnDestroy()
-        {
-            DeletButton.onClick.RemoveAllListeners();
         }
     }
 }

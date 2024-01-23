@@ -3,12 +3,9 @@ using UnityEngine;
 
 namespace NaughtyAttributes
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field)]
     public class AnimatorParamAttribute : DrawerAttribute
     {
-        public string AnimatorName { get; private set; }
-        public AnimatorControllerParameterType? AnimatorParamType { get; private set; }
-
         public AnimatorParamAttribute(string animatorName)
         {
             AnimatorName = animatorName;
@@ -20,5 +17,8 @@ namespace NaughtyAttributes
             AnimatorName = animatorName;
             AnimatorParamType = animatorParamType;
         }
+
+        public string AnimatorName { get; private set; }
+        public AnimatorControllerParameterType? AnimatorParamType { get; private set; }
     }
 }

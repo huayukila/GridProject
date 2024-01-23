@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,23 +13,18 @@ namespace Framework.BuildProject
 
     public class BulletSystem : AbstractSystem, IBulletSystem
     {
-        private GameObject m_BulletPool; // 弾丸プールのGameObject
         private Dictionary<BulletType, SimpleObjectPool<GameObject>> m_BulletDic; // 弾丸プールの辞書
-
-        // システムの初期化
-        protected override void OnInit()
-        {
-            // 必要な初期化処理をここに追加
-        }
+        private GameObject m_BulletPool; // 弾丸プールのGameObject
 
         // 弾丸を取得する
         public BulletBase GetBullet(BulletType bulletType_)
         {
-            if(m_BulletDic.TryGetValue(bulletType_, out SimpleObjectPool<GameObject> temp))
+            if (m_BulletDic.TryGetValue(bulletType_, out var temp))
             {
-                GameObject obj = temp.Allocate();
+                var obj = temp.Allocate();
                 return obj.GetComponent<BulletBase>();
             }
+
             return null;
         }
 
@@ -38,10 +32,7 @@ namespace Framework.BuildProject
         public void RecycleBullet(GameObject obj)
         {
             obj.transform.parent = m_BulletPool.transform;
-            if(m_BulletDic.TryGetValue(obj.GetComponent<BulletBase>().BulletType, out SimpleObjectPool<GameObject> temp))
-            {
-                temp.Recycle(obj);
-            }
+            if (m_BulletDic.TryGetValue(obj.GetComponent<BulletBase>().BulletType, out var temp)) temp.Recycle(obj);
         }
 
         // マネージャーによる初期化
@@ -49,31 +40,35 @@ namespace Framework.BuildProject
         {
             m_BulletPool = new GameObject("BulletPool");
             m_BulletPool.transform.position = Vector3.zero;
-            BulletDataBase m_BulletsData = Resources.Load<BulletDataBase>("BulletDatabase");
+            var m_BulletsData = Resources.Load<BulletDataBase>("BulletDatabase");
             m_BulletDic = new Dictionary<BulletType, SimpleObjectPool<GameObject>>();
             foreach (var bulletData in m_BulletsData.BulletDataList)
             {
-                SimpleObjectPool<GameObject> temp = new SimpleObjectPool<GameObject>(() =>
+                var temp = new SimpleObjectPool<GameObject>(() =>
                 {
-                    GameObject obj = GameObject.Instantiate(bulletData.bulletPrefab, Vector3.zero, Quaternion.identity);
+                    var obj = Object.Instantiate(bulletData.bulletPrefab, Vector3.zero, Quaternion.identity);
                     obj.transform.parent = m_BulletPool.transform;
                     obj.SetActive(false);
                     return obj;
                 }, obj => { obj.GetComponent<BulletBase>().ResetBulletObj(); }, 10);
                 m_BulletDic.Add(bulletData.bulletType, temp);
             }
+
             Resources.UnloadAsset(m_BulletsData);
         }
 
         // デストラクター
         public void Deinit()
         {
-            GameObject.Destroy(m_BulletPool);
-            foreach (var pool in m_BulletDic.Values)
-            {
-                pool.Clear();
-            }
+            Object.Destroy(m_BulletPool);
+            foreach (var pool in m_BulletDic.Values) pool.Clear();
             m_BulletDic.Clear();
+        }
+
+        // システムの初期化
+        protected override void OnInit()
+        {
+            // 必要な初期化処理をここに追加
         }
     }
 }

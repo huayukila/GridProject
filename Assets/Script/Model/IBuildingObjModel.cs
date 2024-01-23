@@ -15,27 +15,18 @@ namespace Framework.BuildProject
 
     public class BuildingObjModel : AbstractModel, IBuildingObjModel
     {
-        Dictionary<int, BuildingBase> m_BuildingDic;
-
-        // 初期化処理
-        protected override void OnInit()
-        {
-            m_BuildingDic = new Dictionary<int, BuildingBase>();
-        }
+        private Dictionary<int, BuildingBase> m_BuildingDic;
 
         // 建物の登録
         public void RegisterBuild(int id_, BuildingBase buildingBase_)
         {
-            if (!m_BuildingDic.ContainsKey(id_))
-            {
-                m_BuildingDic.Add(id_, buildingBase_);
-            }
+            if (!m_BuildingDic.ContainsKey(id_)) m_BuildingDic.Add(id_, buildingBase_);
         }
 
         // 建物の登録解除
         public void UnregisterBuild(int id_)
         {
-            if (m_BuildingDic.TryGetValue(id_, out BuildingBase obj))
+            if (m_BuildingDic.TryGetValue(id_, out var obj))
             {
                 obj.Reset();
                 m_BuildingDic.Remove(id_);
@@ -45,10 +36,10 @@ namespace Framework.BuildProject
         // 建物データの取得
         public BuildingBase GetBuildData(int id_)
         {
-            m_BuildingDic.TryGetValue(id_, out BuildingBase data);
+            m_BuildingDic.TryGetValue(id_, out var data);
             return data;
         }
-        
+
         // 特定タイプの建物データリストを取得
         public List<BuildingBase> GetBuildDataList(BuildingType type_)
         {
@@ -65,6 +56,12 @@ namespace Framework.BuildProject
         public void Deinit()
         {
             m_BuildingDic.Clear();
+        }
+
+        // 初期化処理
+        protected override void OnInit()
+        {
+            m_BuildingDic = new Dictionary<int, BuildingBase>();
         }
     }
 }

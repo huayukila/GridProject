@@ -2,7 +2,7 @@
 
 namespace NaughtyAttributes
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class ShowNativePropertyAttribute : SpecialCaseDrawerAttribute
     {
     }

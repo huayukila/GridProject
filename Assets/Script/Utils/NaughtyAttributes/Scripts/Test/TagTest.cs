@@ -1,11 +1,11 @@
+using System;
 using UnityEngine;
 
 namespace NaughtyAttributes.Test
 {
     public class TagTest : MonoBehaviour
     {
-        [Tag]
-        public string tag0;
+        [Tag] public string tag0;
 
         public TagNest1 nest1;
 
@@ -16,19 +16,17 @@ namespace NaughtyAttributes.Test
         }
     }
 
-    [System.Serializable]
+    [Serializable]
     public class TagNest1
     {
-        [Tag]
-        public string tag1;
+        [Tag] public string tag1;
 
         public TagNest2 nest2;
     }
 
-    [System.Serializable]
+    [Serializable]
     public struct TagNest2
     {
-        [Tag]
-        public string tag2;
+        [Tag] public string tag2;
     }
 }

@@ -4,10 +4,9 @@ namespace Framework.BuildProject
 {
     public class PlayerController : BuildController
     {
-        IGridBuildSystem m_GridBuildSystem;
-        private IPlayerDataModel m_PlayerDataModel;
-
         public BuildDataPanelManager m_BuildDataPanelManager;
+        private IGridBuildSystem m_GridBuildSystem;
+        private IPlayerDataModel m_PlayerDataModel;
 
         // スタート時の初期化
         private void Start()
@@ -17,7 +16,7 @@ namespace Framework.BuildProject
         }
 
         // 毎フレームの更新
-        void Update()
+        private void Update()
         {
             switch (m_PlayerDataModel.playerState)
             {
@@ -33,15 +32,9 @@ namespace Framework.BuildProject
         // ノーマル状態の処理
         private void HandleNormalState()
         {
-            if (Input.GetMouseButton(0))
-            {
-                TryOpenBuildPanel();
-            }
+            if (Input.GetMouseButton(0)) TryOpenBuildPanel();
 
-            if (Input.GetMouseButton(1))
-            {
-                m_BuildDataPanelManager.ClosePanel();
-            }
+            if (Input.GetMouseButton(1)) m_BuildDataPanelManager.ClosePanel();
         }
 
         // ビルド状態の処理
@@ -49,20 +42,11 @@ namespace Framework.BuildProject
         {
             m_GridBuildSystem.VisualBuildingFollowMouse();
 
-            if (Input.GetMouseButtonDown(0))
-            {
-                TrySetBuilding();
-            }
+            if (Input.GetMouseButtonDown(0)) TrySetBuilding();
 
-            if (Input.GetMouseButtonDown(1))
-            {
-                m_GridBuildSystem.CancelSelect();
-            }
+            if (Input.GetMouseButtonDown(1)) m_GridBuildSystem.CancelSelect();
 
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                m_GridBuildSystem.BuildingRota();
-            }
+            if (Input.GetKeyDown(KeyCode.R)) m_GridBuildSystem.BuildingRota();
         }
 
         // 建築パネルを開く試み
@@ -70,21 +54,16 @@ namespace Framework.BuildProject
         {
             if (!Utils.IsMouseOverUI())
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out var hit, 1000, LayerMask.GetMask(Global.TARGET_STRING_BUILDING)))
-                {
                     m_BuildDataPanelManager.OpenPanel(hit.transform.parent.gameObject);
-                }
             }
         }
 
         // 建築設定を試みる
         private void TrySetBuilding()
         {
-            if (!Utils.IsMouseOverUI())
-            {
-                m_GridBuildSystem.SetBuilding();
-            }
+            if (!Utils.IsMouseOverUI()) m_GridBuildSystem.SetBuilding();
         }
     }
 }

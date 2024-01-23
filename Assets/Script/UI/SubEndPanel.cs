@@ -11,7 +11,7 @@ namespace Framework.BuildProject
         public Button failBtn;
 
         private IPlayerDataModel m_PlayerDataModel;
-        private Vector3 m_TargetPos = Vector3.zero;
+        private readonly Vector3 m_TargetPos = Vector3.zero;
 
         private void Awake()
         {
@@ -21,7 +21,7 @@ namespace Framework.BuildProject
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (m_PlayerDataModel.playerState == PlayerState.Win)
             {
@@ -42,15 +42,15 @@ namespace Framework.BuildProject
             }
         }
 
-        void ReturnToTitle()
-        {
-            this.SendEvent<BackToTitleEvent>();
-        }
-
         private void OnDestroy()
         {
             winBtn.onClick.RemoveAllListeners();
             failBtn.onClick.RemoveAllListeners();
+        }
+
+        private void ReturnToTitle()
+        {
+            this.SendEvent<BackToTitleEvent>();
         }
     }
 }

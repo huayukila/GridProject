@@ -3,6 +3,12 @@ using UnityEngine;
 public class BrightnessSaturationAndContrast : PostEffectsBase
 {
     public Shader briSatConShader;
+
+    [Range(0.0f, 3.0f)] public float brightness = 1.0f;
+
+    [Range(0.0f, 3.0f)] public float saturation = 1.0f;
+
+    [Range(0.0f, 3.0f)] public float contrast = 1.0f;
     private Material briSatConMaterial;
 
     public Material material
@@ -14,13 +20,7 @@ public class BrightnessSaturationAndContrast : PostEffectsBase
         }
     }
 
-    [Range(0.0f, 3.0f)] public float brightness = 1.0f;
-
-    [Range(0.0f, 3.0f)] public float saturation = 1.0f;
-
-    [Range(0.0f, 3.0f)] public float contrast = 1.0f;
-
-    void OnRenderImage(RenderTexture src, RenderTexture dest)
+    private void OnRenderImage(RenderTexture src, RenderTexture dest)
     {
         if (material != null)
         {

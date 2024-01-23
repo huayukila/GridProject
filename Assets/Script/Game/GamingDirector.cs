@@ -1,4 +1,3 @@
-using Kit;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -42,7 +41,7 @@ namespace Framework.BuildProject
             subCanvas.SetActive(false);
         }
 
-        void OnGameEnd()
+        private void OnGameEnd()
         {
             this.GetModel<IPlayerDataModel>().playerState = PlayerState.Win;
             mainCanvas.SetActive(false);

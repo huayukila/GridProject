@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
-    [CreateAssetMenu(menuName = "Buildings",fileName = "BuildingData")]
+    [CreateAssetMenu(menuName = "Buildings", fileName = "BuildingData")]
     public class BuildingData : ScriptableObject
     {
         public string NameString;
@@ -15,7 +14,7 @@ namespace Framework.BuildProject
         public int Width;
         public int Height;
         public ResourceType NeedResource;
-        [SerializeField] public List<BuildingLevelData> LevelDatasList = new List<BuildingLevelData>();
+        [SerializeField] public List<BuildingLevelData> LevelDatasList = new();
     }
 
     [Serializable]

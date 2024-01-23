@@ -1,28 +1,30 @@
 using System;
 using System.Collections.Generic;
 
-namespace Kit {
-
-    public interface ISequence:IAction
+namespace Kit
+{
+    public interface ISequence : IAction
     {
         ISequence Append(IAction action);
     }
 
     internal class Sequence : ISequence
     {
+        private static readonly SimpleObjectPool<Sequence> mSimpleObjectPool = new(() => new Sequence(), null, 10);
+
+        private readonly List<IAction> mActions = ListPool<IAction>.Get();
+
+        private IAction mCurrentAction;
+        private int mCurrentActionIndex;
+
+        private Sequence()
+        {
+        }
+
         public ulong ActionID { get; set; }
         public ActionStatus Status { get; set; }
         public bool Deinited { get; set; }
         public bool Paused { get; set; }
-
-        private IAction mCurrentAction=null;
-        private int mCurrentActionIndex = 0;
-        private List<IAction> mActions = ListPool<IAction>.Get();
-
-        private static SimpleObjectPool<Sequence> mSimpleObjectPool =
-            new SimpleObjectPool<Sequence>(() => new Sequence(), null, 10);
-
-        private Sequence() { }
 
         public ISequence Append(IAction action)
         {
@@ -30,19 +32,10 @@ namespace Kit {
             return this;
         }
 
-        public static Sequence Allocate()
-        {
-            var sequence = mSimpleObjectPool.Allocate();
-            sequence.ActionID = ActionKit.ID_GENERATOR++;
-            sequence.Reset();
-            sequence.Deinited = false;
-            return sequence;
-        }
-
 
         public void OnStart()
         {
-            if(mActions.Count > 0)
+            if (mActions.Count > 0)
             {
                 mCurrentActionIndex = 0;
                 mCurrentAction = mActions[mCurrentActionIndex];
@@ -57,7 +50,7 @@ namespace Kit {
 
         public void OnExecute(float deltaTime)
         {
-            if(mCurrentAction!=null)
+            if (mCurrentAction != null)
             {
                 if (mCurrentAction.Execute(deltaTime))
                 {
@@ -90,10 +83,7 @@ namespace Kit {
             mCurrentActionIndex = 0;
             Status = ActionStatus.NotStart;
             Paused = false;
-            foreach (var action in mActions)
-            {
-                action.Reset();
-            }
+            foreach (var action in mActions) action.Reset();
         }
 
         public void Deinit()
@@ -102,17 +92,23 @@ namespace Kit {
             {
                 Deinited = true;
 
-                foreach (var action in mActions)
-                {
-                    action.Deinit();
-                }
+                foreach (var action in mActions) action.Deinit();
                 mActions.Clear();
                 mSimpleObjectPool.Recycle(this);
             }
         }
 
+        public static Sequence Allocate()
+        {
+            var sequence = mSimpleObjectPool.Allocate();
+            sequence.ActionID = ActionKit.ID_GENERATOR++;
+            sequence.Reset();
+            sequence.Deinited = false;
+            return sequence;
+        }
 
-        void TryExecuteUntilNextNotFinished()
+
+        private void TryExecuteUntilNextNotFinished()
         {
             while (mCurrentAction != null && mCurrentAction.Execute(0))
             {
@@ -134,7 +130,7 @@ namespace Kit {
 
     public static class SequenceExtension
     {
-        public static ISequence Sequence(this ISequence self,Action<ISequence> sequenceSetting)
+        public static ISequence Sequence(this ISequence self, Action<ISequence> sequenceSetting)
         {
             var repeat = Kit.Sequence.Allocate();
             sequenceSetting(repeat);

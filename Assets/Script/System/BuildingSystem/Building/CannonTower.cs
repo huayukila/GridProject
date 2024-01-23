@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Kit;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
@@ -13,15 +12,15 @@ namespace Framework.BuildProject
         public float LockSpeed; // ロックスピード
 
         public float m_ElevationAngle; // 仰角
-
-        private TowerState m_State;
-        private int m_IdleStateYRotationDir; // アイドル状態のY軸回転方向
-        private float m_StartTime; // 開始時間
+        private readonly float m_AttackRadius = 200; // 攻撃範囲
         private float m_ChangeDirDurationTime; // 方向変更持続時間
         private float m_CurrentYAngle; // 現在のY軸角度
-        private float m_AttackRadius = 200; // 攻撃範囲
+        private int m_IdleStateYRotationDir; // アイドル状態のY軸回転方向
+        private float m_StartTime; // 開始時間
+
+        private TowerState m_State;
         private Collider[] m_Target; // ターゲット
-        
+
         public override void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_, Dir dir_)
         {
             base.Init(data_, gridObjList_, gridXY_, dir_);
@@ -66,17 +65,14 @@ namespace Framework.BuildProject
         private void LockOnTarget()
         {
             // ターゲット方向の計算
-            Vector3 targetDir = -(m_Target[0].transform.position - YRotationPoint.position).normalized;
-            Vector3 dirHor = new Vector3(targetDir.x, 0, targetDir.z);
+            var targetDir = -(m_Target[0].transform.position - YRotationPoint.position).normalized;
+            var dirHor = new Vector3(targetDir.x, 0, targetDir.z);
 
             // Y軸とX軸の回転
             RotateTowardsTarget(dirHor);
 
             // 射撃判定
-            if (IsAimedAtTarget(dirHor))
-            {
-                PerformShooting();
-            }
+            if (IsAimedAtTarget(dirHor)) PerformShooting();
         }
 
         private void RotateTowardsTarget(Vector3 dirHor)
@@ -86,7 +82,7 @@ namespace Framework.BuildProject
                 Quaternion.LookRotation(dirHor), 2f * Time.deltaTime);
 
             // X軸の回転
-            Quaternion targetRotationX = Quaternion.Euler(m_ElevationAngle - 90, 0, 0);
+            var targetRotationX = Quaternion.Euler(m_ElevationAngle - 90, 0, 0);
             XRotatioinPoint.localRotation =
                 Quaternion.Slerp(XRotatioinPoint.localRotation, targetRotationX, Time.deltaTime * 2f);
         }
@@ -125,9 +121,7 @@ namespace Framework.BuildProject
             // ターゲット検出処理
             if (Physics.OverlapSphereNonAlloc(YRotationPoint.position, m_AttackRadius, m_Target,
                     LayerMask.GetMask(Global.TARGET_STRING_ENEMY)) > 0)
-            {
                 m_State = TowerState.LockTarget;
-            }
         }
     }
 }

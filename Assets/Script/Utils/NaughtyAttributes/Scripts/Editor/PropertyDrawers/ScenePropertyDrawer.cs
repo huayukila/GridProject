@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System;
+using UnityEditor;
+using UnityEngine;
 
 namespace NaughtyAttributes.Editor
 {
@@ -16,10 +16,11 @@ namespace NaughtyAttributes.Editor
 
         protected override float GetPropertyHeight_Internal(SerializedProperty property, GUIContent label)
         {
-            bool validPropertyType = property.propertyType == SerializedPropertyType.String || property.propertyType == SerializedPropertyType.Integer;
-            bool anySceneInBuildSettings = GetScenes().Length > 0;
+            var validPropertyType = property.propertyType == SerializedPropertyType.String ||
+                                    property.propertyType == SerializedPropertyType.Integer;
+            var anySceneInBuildSettings = GetScenes().Length > 0;
 
-            return (validPropertyType && anySceneInBuildSettings)
+            return validPropertyType && anySceneInBuildSettings
                 ? GetPropertyHeight(property)
                 : GetPropertyHeight(property) + GetHelpBoxHeight();
         }
@@ -28,15 +29,15 @@ namespace NaughtyAttributes.Editor
         {
             EditorGUI.BeginProperty(rect, label, property);
 
-            string[] scenes = GetScenes();
-            bool anySceneInBuildSettings = scenes.Length > 0;
+            var scenes = GetScenes();
+            var anySceneInBuildSettings = scenes.Length > 0;
             if (!anySceneInBuildSettings)
             {
                 DrawDefaultPropertyAndHelpBox(rect, property, BuildSettingsWarningMessage, MessageType.Warning);
                 return;
             }
 
-            string[] sceneOptions = GetSceneOptions(scenes);
+            var sceneOptions = GetSceneOptions(scenes);
             switch (property.propertyType)
             {
                 case SerializedPropertyType.String:
@@ -46,7 +47,7 @@ namespace NaughtyAttributes.Editor
                     DrawPropertyForInt(rect, property, label, sceneOptions);
                     break;
                 default:
-                    string message = string.Format(TypeWarningMessage, property.name);
+                    var message = string.Format(TypeWarningMessage, property.name);
                     DrawDefaultPropertyAndHelpBox(rect, property, message, MessageType.Warning);
                     break;
             }
@@ -67,27 +68,24 @@ namespace NaughtyAttributes.Editor
             return scenes.Select((s, i) => string.Format(SceneListItem, s, i)).ToArray();
         }
 
-        private static void DrawPropertyForString(Rect rect, SerializedProperty property, GUIContent label, string[] scenes, string[] sceneOptions)
+        private static void DrawPropertyForString(Rect rect, SerializedProperty property, GUIContent label,
+            string[] scenes, string[] sceneOptions)
         {
-            int index = IndexOf(scenes, property.stringValue);
-            int newIndex = EditorGUI.Popup(rect, label.text, index, sceneOptions);
-            string newScene = scenes[newIndex];
+            var index = IndexOf(scenes, property.stringValue);
+            var newIndex = EditorGUI.Popup(rect, label.text, index, sceneOptions);
+            var newScene = scenes[newIndex];
 
             if (!property.stringValue.Equals(newScene, StringComparison.Ordinal))
-            {
                 property.stringValue = scenes[newIndex];
-            }
         }
 
-        private static void DrawPropertyForInt(Rect rect, SerializedProperty property, GUIContent label, string[] sceneOptions)
+        private static void DrawPropertyForInt(Rect rect, SerializedProperty property, GUIContent label,
+            string[] sceneOptions)
         {
-            int index = property.intValue;
-            int newIndex = EditorGUI.Popup(rect, label.text, index, sceneOptions);
+            var index = property.intValue;
+            var newIndex = EditorGUI.Popup(rect, label.text, index, sceneOptions);
 
-            if (property.intValue != newIndex)
-            {
-                property.intValue = newIndex;
-            }
+            if (property.intValue != newIndex) property.intValue = newIndex;
         }
 
         private static int IndexOf(string[] scenes, string scene)

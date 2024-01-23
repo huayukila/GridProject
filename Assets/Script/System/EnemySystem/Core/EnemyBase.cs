@@ -1,5 +1,5 @@
-using UnityEngine;
 using Kit;
+using UnityEngine;
 
 namespace Framework.BuildProject
 {
@@ -19,6 +19,10 @@ namespace Framework.BuildProject
 
     public class EnemyBase : BuildController, IGetHurt
     {
+        private static readonly int m_AnimRun = Animator.StringToHash("Goblin_run");
+        private static readonly int m_AnimIdle = Animator.StringToHash("Goblin_idle");
+        private static readonly int m_AnimAttack = Animator.StringToHash("Goblin_attack");
+        private static readonly int m_AnimDeath = Animator.StringToHash("Goblin_death");
         public EnemyType Type; // 敵のタイプ
         public float ClaimsRadius; // 攻撃範囲
         public float AttackRadius; // 攻撃範囲
@@ -27,19 +31,15 @@ namespace Framework.BuildProject
         public float AttackCD; // 攻撃クールダウン
         public float ClaimsCD; // 攻撃クールダウン
         public int Damage; //攻撃ダメージ
+        private Animator m_Animator;
+        private Collider m_Collider;
+        private int m_CurrentHp;
 
         private float m_DurationTime;
-        private float m_StartTime;
-        private Animator m_Animator;
-        private EnemyState m_State;
-        private int m_CurrentHp;
-        private Collider[] m_Target;
         private int m_LayerMask; // レイヤーマスクをキャッシュ
-        private Collider m_Collider;
-        private static readonly int m_AnimRun = Animator.StringToHash("Goblin_run");
-        private static readonly int m_AnimIdle = Animator.StringToHash("Goblin_idle");
-        private static readonly int m_AnimAttack = Animator.StringToHash("Goblin_attack");
-        private static readonly int m_AnimDeath = Animator.StringToHash("Goblin_death");
+        private float m_StartTime;
+        private EnemyState m_State;
+        private Collider[] m_Target;
 
         private void Awake()
         {
@@ -48,13 +48,6 @@ namespace Framework.BuildProject
             m_CurrentHp = MaxHp;
             m_Target = new Collider[1];
             m_LayerMask = LayerMask.GetMask(Global.TARGET_STRING_BUILDING);
-        }
-
-        private void OnEnable()
-        {
-            m_StartTime = Time.time;
-            m_State = EnemyState.Move;
-            m_Animator.Play(m_AnimRun);
         }
 
         private void Update()
@@ -81,6 +74,28 @@ namespace Framework.BuildProject
             }
         }
 
+        private void OnEnable()
+        {
+            m_StartTime = Time.time;
+            m_State = EnemyState.Move;
+            m_Animator.Play(m_AnimRun);
+        }
+
+        public void GetDamage(int damage)
+        {
+            if (m_State == EnemyState.Dead) return;
+            m_CurrentHp -= damage;
+            if (m_CurrentHp <= 0)
+            {
+                m_State = EnemyState.Dead;
+                m_Collider.enabled = false;
+                m_Animator.Play(m_AnimDeath);
+                // 死亡処理
+                this.SendEvent<EnemyGetKilledEvent>();
+                ActionKit.Delay(3, () => this.GetSystem<IEnemySystem>().RecycleEnemy(gameObject)).Start(this);
+            }
+        }
+
         private void Move()
         {
             transform.localPosition += transform.forward * (Speed * Time.deltaTime);
@@ -99,11 +114,13 @@ namespace Framework.BuildProject
         private void Trace()
         {
             transform.localPosition += transform.forward * (Speed * Time.deltaTime);
-            if (m_Target[0] == null||Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target, m_LayerMask) == 0)
+            if (m_Target[0] == null ||
+                Physics.OverlapSphereNonAlloc(transform.localPosition, ClaimsRadius, m_Target, m_LayerMask) == 0)
             {
                 ResetToMoveState();
                 return;
             }
+
             UpdateRotation(m_Target[0].transform.position);
         }
 
@@ -142,23 +159,8 @@ namespace Framework.BuildProject
 
         private void UpdateRotation(Vector3 targetPosition)
         {
-            Vector3 direction = targetPosition - transform.position;
+            var direction = targetPosition - transform.position;
             transform.rotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        }
-
-        public void GetDamage(int damage)
-        {
-            if (m_State == EnemyState.Dead) return;
-            m_CurrentHp -= damage;
-            if (m_CurrentHp <= 0)
-            {
-                m_State = EnemyState.Dead;
-                m_Collider.enabled = false;
-                m_Animator.Play(m_AnimDeath);
-                // 死亡処理
-                this.SendEvent<EnemyGetKilledEvent>();
-                ActionKit.Delay(3, () => this.GetSystem<IEnemySystem>().RecycleEnemy(gameObject)).Start(this);
-            }
         }
 
         protected virtual void OnAttack()

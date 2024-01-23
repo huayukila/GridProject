@@ -25,16 +25,20 @@ namespace Framework.BuildProject
             GridXY = Vector2Int.zero;
             Dir = Dir.Down;
 
-            foreach (var gridObject in BuildingOccupancyGrids)
-            {
-                gridObject.IsEmpty = true;
-            }
+            foreach (var gridObject in BuildingOccupancyGrids) gridObject.IsEmpty = true;
 
             BuildingOccupancyGrids.Clear();
         }
 
+        public void GetDamage(int damage)
+        {
+            BuildingHp -= damage;
+            if (BuildingHp <= 0) OnDead();
+        }
+
         protected virtual void OnDead()
         {
+            this.SendEvent(new BuildingHasBeenDestroyEvent { id = gameObject.GetInstanceID() });
             this.GetSystem<IGridBuildSystem>().DestroyBuilding(gameObject);
         }
 
@@ -48,22 +52,13 @@ namespace Framework.BuildProject
         }
 
         // åöï®ÉfÅ[É^ê›íË
-        void SetInitData(BuildingData data_)
+        private void SetInitData(BuildingData data_)
         {
             BuildingName = data_.NameString;
             BuildingMaxHp = data_.LevelDatasList[0].MaxHp;
             BuildingHp = BuildingMaxHp;
             BuildingLevel = data_.LevelDatasList[0].Level;
             BuildingType = data_.BuildingType;
-        }
-
-        public void GetDamage(int damage)
-        {
-            BuildingHp -= damage;
-            if (BuildingHp <= 0)
-            {
-                OnDead();
-            }
         }
     }
 }

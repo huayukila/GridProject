@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-[CreateAssetMenu(menuName ="AudioKit/AudioData",fileName ="New AudioData")]
+
+[CreateAssetMenu(menuName = "AudioKit/AudioData", fileName = "New AudioData")]
 [Serializable]
 public class AudioData : ScriptableObject
 {

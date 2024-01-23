@@ -6,12 +6,18 @@ namespace Framework.BuildProject
     public class BulletBase : BuildController
     {
         public BulletType BulletType; // 弾の種類
-        protected float m_Speed; // 弾の速度
         protected int m_Damage; // 弾のダメージ
-        protected Collider[] m_Target = new Collider[1]; // ターゲットのコライダー
+        protected float m_Speed; // 弾の速度
 
         protected Vector3 m_StartPos; // 弾の初期位置
+        protected Collider[] m_Target = new Collider[1]; // ターゲットのコライダー
         protected Transform m_TargetTrans; // ターゲットのトランスフォーム
+
+        // 更新処理
+        private void Update()
+        {
+            OnUpdate();
+        }
 
         // 弾の発射処理
         public void Shoot()
@@ -20,7 +26,7 @@ namespace Framework.BuildProject
         }
 
         /// <summary>
-        /// 弾の設定関数
+        ///     弾の設定関数
         /// </summary>
         /// <param name="speed_">速度</param>
         /// <param name="damage_">ダメージ</param>
@@ -50,12 +56,6 @@ namespace Framework.BuildProject
             m_Target[0] = null;
         }
 
-        // 更新処理
-        private void Update()
-        {
-            OnUpdate();
-        }
-
         // フレーム毎の更新
         protected virtual void OnUpdate()
         {
@@ -65,9 +65,7 @@ namespace Framework.BuildProject
             {
                 // 敵にダメージを与える処理
                 if (m_Target[0].CompareTag(Global.TARGET_STRING_ENEMY))
-                {
                     m_Target[0].GetComponent<IGetHurt>().GetDamage(m_Damage);
-                }
 
                 // 弾の再利用または破棄
                 RecycleBullet();

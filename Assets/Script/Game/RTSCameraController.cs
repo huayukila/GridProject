@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -8,7 +7,7 @@ namespace Framework.BuildProject
         Idle,
         OnGameSceneEnter,
         OnGaming,
-        OnEnd,
+        OnEnd
     }
 
     public class RTSCameraController : BuildController
@@ -19,27 +18,27 @@ namespace Framework.BuildProject
         public Vector3 zoomAmount;
         public float minZoom;
         public float maxZoom;
-
-        private Vector3 m_NewPosition;
-        private Quaternion m_NewRotation;
-        private Transform m_CameraTrans;
-        private Vector3 m_NewZoom;
-        private Vector3 m_DragStartPosition;
-        private Vector3 m_DragCurrentPostion;
-        private Vector3 m_RotateStartPosition;
-        private Vector3 m_RotateCurrentPosition;
-        private Plane m_DragPlane;
-        private CameraState m_State = CameraState.Idle;
+        private readonly Vector3 CenterPos = new(50, 10, 50);
 
         //スクリーン処理用
         private BrightnessSaturationAndContrast m_Brightness;
+        private Transform m_CameraTrans;
+        private Vector3 m_DragCurrentPostion;
+        private Plane m_DragPlane;
+        private Vector3 m_DragStartPosition;
+        private readonly float m_DurationTime = 6f;
         private GaussianBlur m_GBlur;
-        private float m_TargetBrightness;
-        private Vector3 CenterPos = new Vector3(50, 10, 50);
-        private Vector3 m_TargetPos;
-        private float m_TargetAngle;
+
+        private Vector3 m_NewPosition;
+        private Quaternion m_NewRotation;
+        private Vector3 m_NewZoom;
+        private Vector3 m_RotateCurrentPosition;
+        private Vector3 m_RotateStartPosition;
         private float m_StartTime;
-        private float m_DurationTime = 6f;
+        private CameraState m_State = CameraState.Idle;
+        private float m_TargetAngle;
+        private float m_TargetBrightness;
+        private Vector3 m_TargetPos;
 
         private void Start()
         {
@@ -55,7 +54,7 @@ namespace Framework.BuildProject
             m_TargetAngle = 0;
             m_TargetBrightness = 0;
             m_TargetPos = m_CameraTrans.localPosition;
-            this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
+            this.SendEvent(new CameraEvent { State = m_State });
         }
 
 
@@ -91,7 +90,7 @@ namespace Framework.BuildProject
                     m_GBlur.blurSpread += Time.unscaledDeltaTime;
                     if (m_GBlur.blurSpread >= 3f)
                     {
-                        this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
+                        this.SendEvent(new CameraEvent { State = m_State });
                         m_State = CameraState.Idle;
                     }
 
@@ -107,7 +106,7 @@ namespace Framework.BuildProject
 
         #region 内部用
 
-        void HandleGameSceneEnter()
+        private void HandleGameSceneEnter()
         {
             if (m_Brightness.brightness - m_TargetBrightness < 0.01f)
             {
@@ -124,68 +123,48 @@ namespace Framework.BuildProject
                 m_CameraTrans.localPosition = m_TargetPos;
                 m_State = CameraState.OnGaming;
                 m_NewZoom = m_TargetPos;
-                this.SendEvent<CameraEvent>(new CameraEvent() { State = m_State });
+                this.SendEvent(new CameraEvent { State = m_State });
             }
         }
 
-        void HandleMovemtInput()
+        private void HandleMovemtInput()
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            {
                 m_NewPosition += transform.forward * movementAmount;
-            }
 
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            {
                 m_NewPosition -= transform.forward * movementAmount;
-            }
 
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-            {
                 m_NewPosition += transform.right * movementAmount;
-            }
 
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-            {
                 m_NewPosition -= transform.right * movementAmount;
-            }
 
-            if (Input.GetKey(KeyCode.Q))
-            {
-                m_NewRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-            }
+            if (Input.GetKey(KeyCode.Q)) m_NewRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
 
-            if (Input.GetKey(KeyCode.E))
-            {
-                m_NewRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-            }
+            if (Input.GetKey(KeyCode.E)) m_NewRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
         }
 
-        void HandleMouseInput()
+        private void HandleMouseInput()
         {
             if (Input.mouseScrollDelta.y != 0)
             {
-                Vector3 zoomDelta = Input.mouseScrollDelta.y * zoomAmount;
-                Vector3 potentialZoom = m_NewZoom + zoomDelta;
-                if (potentialZoom.magnitude >= minZoom && potentialZoom.magnitude <= maxZoom)
-                {
-                    m_NewZoom = potentialZoom;
-                }
+                var zoomDelta = Input.mouseScrollDelta.y * zoomAmount;
+                var potentialZoom = m_NewZoom + zoomDelta;
+                if (potentialZoom.magnitude >= minZoom && potentialZoom.magnitude <= maxZoom) m_NewZoom = potentialZoom;
             }
 
             if (Input.GetMouseButtonDown(0))
             {
-                Ray ray = m_CameraTrans.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                var ray = m_CameraTrans.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 
-                if (m_DragPlane.Raycast(ray, out var entry))
-                {
-                    m_DragStartPosition = ray.GetPoint(entry);
-                }
+                if (m_DragPlane.Raycast(ray, out var entry)) m_DragStartPosition = ray.GetPoint(entry);
             }
 
             if (Input.GetMouseButton(0))
             {
-                Ray ray = m_CameraTrans.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+                var ray = m_CameraTrans.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 
                 if (m_DragPlane.Raycast(ray, out var entry))
                 {
@@ -195,16 +174,13 @@ namespace Framework.BuildProject
                 }
             }
 
-            if (Input.GetMouseButtonDown(2))
-            {
-                m_RotateStartPosition = Input.mousePosition;
-            }
+            if (Input.GetMouseButtonDown(2)) m_RotateStartPosition = Input.mousePosition;
 
             if (Input.GetMouseButton(2))
             {
                 m_RotateCurrentPosition = Input.mousePosition;
 
-                Vector3 difference = m_RotateStartPosition - m_RotateCurrentPosition;
+                var difference = m_RotateStartPosition - m_RotateCurrentPosition;
 
                 m_RotateStartPosition = m_RotateCurrentPosition;
 

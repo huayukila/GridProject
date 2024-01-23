@@ -24,9 +24,9 @@ public class Test : MonoBehaviour
         //     Quaternion.Euler(0, yAngle, 0), 1f);
 
 
-        Vector3 dir = Target.position - transform.position;
+        var dir = Target.position - transform.position;
 
-        Vector3 dirXZ = new Vector3(dir.x, 0, dir.z);
+        var dirXZ = new Vector3(dir.x, 0, dir.z);
 
         Head.rotation = Quaternion.Lerp(Head.transform.rotation, Quaternion.LookRotation(dir), 0.8f);
         Body.rotation = Quaternion.Lerp(Body.transform.rotation, Quaternion.LookRotation(dirXZ), 0.8f);

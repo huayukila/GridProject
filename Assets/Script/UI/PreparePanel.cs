@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using Kit;
 using UnityEngine;
@@ -32,7 +29,7 @@ namespace Framework.BuildProject
         }
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             StartStageButton.gameObject.SetActive(false);
             m_PreCD = Global.PREPARE_TIME;
@@ -51,12 +48,13 @@ namespace Framework.BuildProject
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (!m_IsCountDownStart)
                 return;
             m_PreCD -= Time.deltaTime;
-            CounterText.text = Math.Round(m_PreCD, 1).ToString(CultureInfo.CurrentCulture);
+            if (m_PreCD % 1 == 0) CounterText.text = m_PreCD.ToString();
+
             if (m_PreCD <= 0)
             {
                 ShowObj.SetActive(false);

@@ -1,50 +1,41 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TowerTrigger : MonoBehaviour {
-
-	public Tower twr;    
+public class TowerTrigger : MonoBehaviour
+{
+    public Tower twr;
     public bool lockE;
-	public GameObject curTarget;
-    
+    public GameObject curTarget;
 
-
-    void OnTriggerEnter(Collider other)
-	{
-		if(other.CompareTag("enemyBug") && !lockE)
-		{   
-			twr.target = other.gameObject.transform;            
-            curTarget = other.gameObject;
-			lockE = true;
-		}
-       
-    }
-	void Update()
-	{
+    private void Update()
+    {
         if (curTarget)
-        {
             if (curTarget.CompareTag("Dead")) // get it from EnemyHealth
             {
                 lockE = false;
-                twr.target = null;               
+                twr.target = null;
             }
+
+
+        if (!curTarget) lockE = false;
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("enemyBug") && !lockE)
+        {
+            twr.target = other.gameObject.transform;
+            curTarget = other.gameObject;
+            lockE = true;
         }
+    }
 
-
-
-
-        if (!curTarget) 
-		{
-			lockE = false;            
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("enemyBug") && other.gameObject == curTarget)
+        {
+            lockE = false;
+            twr.target = null;
         }
-	}
-	void OnTriggerExit(Collider other)
-	{
-		if(other.CompareTag("enemyBug") && other.gameObject == curTarget)
-		{
-			lockE = false;
-            twr.target = null;            
-        }
-	}
-	
+    }
 }

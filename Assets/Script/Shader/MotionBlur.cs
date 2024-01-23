@@ -3,7 +3,11 @@ using UnityEngine;
 public class MotionBlur : PostEffectsBase
 {
     public Shader motionBlurShader;
-    private Material motionBlurMaterial = null;
+
+    [Range(0f, 0.9f)] public float blurAmount = 0.5f;
+    private readonly int BlurAmount = Shader.PropertyToID("_BlurAmount");
+    private RenderTexture accumulationTexture;
+    private Material motionBlurMaterial;
 
     public Material material
     {
@@ -13,10 +17,6 @@ public class MotionBlur : PostEffectsBase
             return motionBlurMaterial;
         }
     }
-
-    [Range(0f, 0.9f)] public float blurAmount = 0.5f;
-    private RenderTexture accumulationTexture;
-    private readonly int BlurAmount = Shader.PropertyToID("_BlurAmount");
 
     private void OnDisable()
     {
@@ -36,8 +36,6 @@ public class MotionBlur : PostEffectsBase
                 accumulationTexture.hideFlags = HideFlags.HideAndDontSave;
                 Graphics.Blit(source, accumulationTexture);
             }
-            
-            accumulationTexture.MarkRestoreExpected();
 
             material.SetFloat(BlurAmount, 1.0f - blurAmount);
 

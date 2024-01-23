@@ -1,16 +1,16 @@
+using System;
 using UnityEngine;
 
 namespace NaughtyAttributes.Test
 {
     public class InfoBoxTest : MonoBehaviour
     {
-        [InfoBox("Normal", EInfoBoxType.Normal)]
-        public int normal;
+        [InfoBox("Normal")] public int normal;
 
         public InfoBoxNest1 nest1;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class InfoBoxNest1
     {
         [InfoBox("Warning", EInfoBoxType.Warning)]
@@ -19,10 +19,9 @@ namespace NaughtyAttributes.Test
         public InfoBoxNest2 nest2;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class InfoBoxNest2
     {
-        [InfoBox("Error", EInfoBoxType.Error)]
-        public int error;
+        [InfoBox("Error", EInfoBoxType.Error)] public int error;
     }
 }

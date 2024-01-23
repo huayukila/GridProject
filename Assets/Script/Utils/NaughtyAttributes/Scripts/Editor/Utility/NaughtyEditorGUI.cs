@@ -3,9 +3,10 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace NaughtyAttributes.Editor
 {
@@ -14,9 +15,7 @@ namespace NaughtyAttributes.Editor
         public const float IndentLength = 15.0f;
         public const float HorizontalSpacing = 2.0f;
 
-        private static GUIStyle _buttonStyle = new GUIStyle(GUI.skin.button) { richText = true };
-
-        private delegate void PropertyFieldFunction(Rect rect, SerializedProperty property, GUIContent label, bool includeChildren);
+        private static readonly GUIStyle _buttonStyle = new(GUI.skin.button) { richText = true };
 
         public static void PropertyField(Rect rect, SerializedProperty property, bool includeChildren)
         {
@@ -25,23 +24,26 @@ namespace NaughtyAttributes.Editor
 
         public static void PropertyField_Layout(SerializedProperty property, bool includeChildren)
         {
-            Rect dummyRect = new Rect();
+            var dummyRect = new Rect();
             PropertyField_Implementation(dummyRect, property, includeChildren, DrawPropertyField_Layout);
         }
 
-        private static void DrawPropertyField(Rect rect, SerializedProperty property, GUIContent label, bool includeChildren)
+        private static void DrawPropertyField(Rect rect, SerializedProperty property, GUIContent label,
+            bool includeChildren)
         {
             EditorGUI.PropertyField(rect, property, label, includeChildren);
         }
 
-        private static void DrawPropertyField_Layout(Rect rect, SerializedProperty property, GUIContent label, bool includeChildren)
+        private static void DrawPropertyField_Layout(Rect rect, SerializedProperty property, GUIContent label,
+            bool includeChildren)
         {
             EditorGUILayout.PropertyField(property, label, includeChildren);
         }
 
-        private static void PropertyField_Implementation(Rect rect, SerializedProperty property, bool includeChildren, PropertyFieldFunction propertyFieldFunction)
+        private static void PropertyField_Implementation(Rect rect, SerializedProperty property, bool includeChildren,
+            PropertyFieldFunction propertyFieldFunction)
         {
-            SpecialCaseDrawerAttribute specialCaseAttribute = PropertyUtility.GetAttribute<SpecialCaseDrawerAttribute>(property);
+            var specialCaseAttribute = PropertyUtility.GetAttribute<SpecialCaseDrawerAttribute>(property);
             if (specialCaseAttribute != null)
             {
                 specialCaseAttribute.GetDrawer().OnGUI(rect, property);
@@ -49,40 +51,32 @@ namespace NaughtyAttributes.Editor
             else
             {
                 // Check if visible
-                bool visible = PropertyUtility.IsVisible(property);
-                if (!visible)
-                {
-                    return;
-                }
+                var visible = PropertyUtility.IsVisible(property);
+                if (!visible) return;
 
                 // Validate
-                ValidatorAttribute[] validatorAttributes = PropertyUtility.GetAttributes<ValidatorAttribute>(property);
+                var validatorAttributes = PropertyUtility.GetAttributes<ValidatorAttribute>(property);
                 foreach (var validatorAttribute in validatorAttributes)
-                {
                     validatorAttribute.GetValidator().ValidateProperty(property);
-                }
 
                 // Check if enabled and draw
                 EditorGUI.BeginChangeCheck();
-                bool enabled = PropertyUtility.IsEnabled(property);
+                var enabled = PropertyUtility.IsEnabled(property);
 
-                using (new EditorGUI.DisabledScope(disabled: !enabled))
+                using (new EditorGUI.DisabledScope(!enabled))
                 {
                     propertyFieldFunction.Invoke(rect, property, PropertyUtility.GetLabel(property), includeChildren);
                 }
 
                 // Call OnValueChanged callbacks
-                if (EditorGUI.EndChangeCheck())
-                {
-                    PropertyUtility.CallOnValueChangedCallbacks(property);
-                }
+                if (EditorGUI.EndChangeCheck()) PropertyUtility.CallOnValueChangedCallbacks(property);
             }
         }
 
         public static float GetIndentLength(Rect sourceRect)
         {
-            Rect indentRect = EditorGUI.IndentedRect(sourceRect);
-            float indentLength = indentRect.x - sourceRect.x;
+            var indentRect = EditorGUI.IndentedRect(sourceRect);
+            var indentLength = indentRect.x - sourceRect.x;
 
             return indentLength;
         }
@@ -90,10 +84,7 @@ namespace NaughtyAttributes.Editor
         public static void BeginBoxGroup_Layout(string label = "")
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            if (!string.IsNullOrEmpty(label))
-            {
-                EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
-            }
+            if (!string.IsNullOrEmpty(label)) EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
         }
 
         public static void EndBoxGroup_Layout()
@@ -102,7 +93,7 @@ namespace NaughtyAttributes.Editor
         }
 
         /// <summary>
-        /// Creates a dropdown
+        ///     Creates a dropdown
         /// </summary>
         /// <param name="rect">The rect the defines the position and size of the dropdown in the inspector</param>
         /// <param name="serializedObject">The serialized object that is being updated</param>
@@ -118,10 +109,10 @@ namespace NaughtyAttributes.Editor
         {
             EditorGUI.BeginChangeCheck();
 
-            int newIndex = EditorGUI.Popup(rect, label, selectedValueIndex, displayOptions);
-            object newValue = values[newIndex];
+            var newIndex = EditorGUI.Popup(rect, label, selectedValueIndex, displayOptions);
+            var newValue = values[newIndex];
 
-            object dropdownValue = dropdownField.GetValue(target);
+            var dropdownValue = dropdownField.GetValue(target);
             if (dropdownValue == null || !dropdownValue.Equals(newValue))
             {
                 Undo.RecordObject(serializedObject.targetObject, "Dropdown");
@@ -132,56 +123,48 @@ namespace NaughtyAttributes.Editor
             }
         }
 
-        public static void Button(UnityEngine.Object target, MethodInfo methodInfo)
+        public static void Button(Object target, MethodInfo methodInfo)
         {
-            bool visible = ButtonUtility.IsVisible(target, methodInfo);
-            if (!visible)
-            {
-                return;
-            }
+            var visible = ButtonUtility.IsVisible(target, methodInfo);
+            if (!visible) return;
 
             if (methodInfo.GetParameters().All(p => p.IsOptional))
             {
-                ButtonAttribute buttonAttribute = (ButtonAttribute)methodInfo.GetCustomAttributes(typeof(ButtonAttribute), true)[0];
-                string buttonText = string.IsNullOrEmpty(buttonAttribute.Text) ? ObjectNames.NicifyVariableName(methodInfo.Name) : buttonAttribute.Text;
+                var buttonAttribute = (ButtonAttribute)methodInfo.GetCustomAttributes(typeof(ButtonAttribute), true)[0];
+                var buttonText = string.IsNullOrEmpty(buttonAttribute.Text)
+                    ? ObjectNames.NicifyVariableName(methodInfo.Name)
+                    : buttonAttribute.Text;
 
-                bool buttonEnabled = ButtonUtility.IsEnabled(target, methodInfo);
+                var buttonEnabled = ButtonUtility.IsEnabled(target, methodInfo);
 
-                EButtonEnableMode mode = buttonAttribute.SelectedEnableMode;
+                var mode = buttonAttribute.SelectedEnableMode;
                 buttonEnabled &=
                     mode == EButtonEnableMode.Always ||
-                    mode == EButtonEnableMode.Editor && !Application.isPlaying ||
-                    mode == EButtonEnableMode.Playmode && Application.isPlaying;
+                    (mode == EButtonEnableMode.Editor && !Application.isPlaying) ||
+                    (mode == EButtonEnableMode.Playmode && Application.isPlaying);
 
-                bool methodIsCoroutine = methodInfo.ReturnType == typeof(IEnumerator);
-                if (methodIsCoroutine)
-                {
-                    buttonEnabled &= (Application.isPlaying ? true : false);
-                }
+                var methodIsCoroutine = methodInfo.ReturnType == typeof(IEnumerator);
+                if (methodIsCoroutine) buttonEnabled &= Application.isPlaying ? true : false;
 
                 EditorGUI.BeginDisabledGroup(!buttonEnabled);
 
                 if (GUILayout.Button(buttonText, _buttonStyle))
                 {
-                    object[] defaultParams = methodInfo.GetParameters().Select(p => p.DefaultValue).ToArray();
-                    IEnumerator methodResult = methodInfo.Invoke(target, defaultParams) as IEnumerator;
+                    var defaultParams = methodInfo.GetParameters().Select(p => p.DefaultValue).ToArray();
+                    var methodResult = methodInfo.Invoke(target, defaultParams) as IEnumerator;
 
                     if (!Application.isPlaying)
                     {
                         // Set target object and scene dirty to serialize changes to disk
                         EditorUtility.SetDirty(target);
 
-                        PrefabStage stage = PrefabStageUtility.GetCurrentPrefabStage();
+                        var stage = PrefabStageUtility.GetCurrentPrefabStage();
                         if (stage != null)
-                        {
                             // Prefab mode
                             EditorSceneManager.MarkSceneDirty(stage.scene);
-                        }
                         else
-                        {
                             // Normal scene
-                            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-                        }
+                            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
                     }
                     else if (methodResult != null && target is MonoBehaviour behaviour)
                     {
@@ -193,40 +176,44 @@ namespace NaughtyAttributes.Editor
             }
             else
             {
-                string warning = typeof(ButtonAttribute).Name + " works only on methods with no parameters";
-                HelpBox_Layout(warning, MessageType.Warning, context: target, logToConsole: true);
+                var warning = typeof(ButtonAttribute).Name + " works only on methods with no parameters";
+                HelpBox_Layout(warning, MessageType.Warning, target, true);
             }
         }
 
-        public static void NativeProperty_Layout(UnityEngine.Object target, PropertyInfo property)
+        public static void NativeProperty_Layout(Object target, PropertyInfo property)
         {
-            object value = property.GetValue(target, null);
+            var value = property.GetValue(target, null);
 
             if (value == null)
             {
-                string warning = string.Format("{0} is null. {1} doesn't support reference types with null value", ObjectNames.NicifyVariableName(property.Name), typeof(ShowNativePropertyAttribute).Name);
-                HelpBox_Layout(warning, MessageType.Warning, context: target);
+                var warning = string.Format("{0} is null. {1} doesn't support reference types with null value",
+                    ObjectNames.NicifyVariableName(property.Name), typeof(ShowNativePropertyAttribute).Name);
+                HelpBox_Layout(warning, MessageType.Warning, target);
             }
             else if (!Field_Layout(value, ObjectNames.NicifyVariableName(property.Name)))
             {
-                string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNativePropertyAttribute).Name, property.PropertyType.Name);
-                HelpBox_Layout(warning, MessageType.Warning, context: target);
+                var warning = string.Format("{0} doesn't support {1} types", typeof(ShowNativePropertyAttribute).Name,
+                    property.PropertyType.Name);
+                HelpBox_Layout(warning, MessageType.Warning, target);
             }
         }
 
-        public static void NonSerializedField_Layout(UnityEngine.Object target, FieldInfo field)
+        public static void NonSerializedField_Layout(Object target, FieldInfo field)
         {
-            object value = field.GetValue(target);
+            var value = field.GetValue(target);
 
             if (value == null)
             {
-                string warning = string.Format("{0} is null. {1} doesn't support reference types with null value", ObjectNames.NicifyVariableName(field.Name), typeof(ShowNonSerializedFieldAttribute).Name);
-                HelpBox_Layout(warning, MessageType.Warning, context: target);
+                var warning = string.Format("{0} is null. {1} doesn't support reference types with null value",
+                    ObjectNames.NicifyVariableName(field.Name), typeof(ShowNonSerializedFieldAttribute).Name);
+                HelpBox_Layout(warning, MessageType.Warning, target);
             }
             else if (!Field_Layout(value, ObjectNames.NicifyVariableName(field.Name)))
             {
-                string warning = string.Format("{0} doesn't support {1} types", typeof(ShowNonSerializedFieldAttribute).Name, field.FieldType.Name);
-                HelpBox_Layout(warning, MessageType.Warning, context: target);
+                var warning = string.Format("{0} doesn't support {1} types",
+                    typeof(ShowNonSerializedFieldAttribute).Name, field.FieldType.Name);
+                HelpBox_Layout(warning, MessageType.Warning, target);
             }
         }
 
@@ -236,131 +223,81 @@ namespace NaughtyAttributes.Editor
             EditorGUI.DrawRect(rect, color);
         }
 
-        public static void HelpBox(Rect rect, string message, MessageType type, UnityEngine.Object context = null, bool logToConsole = false)
+        public static void HelpBox(Rect rect, string message, MessageType type, Object context = null,
+            bool logToConsole = false)
         {
             EditorGUI.HelpBox(rect, message, type);
 
-            if (logToConsole)
-            {
-                DebugLogMessage(message, type, context);
-            }
+            if (logToConsole) DebugLogMessage(message, type, context);
         }
 
-        public static void HelpBox_Layout(string message, MessageType type, UnityEngine.Object context = null, bool logToConsole = false)
+        public static void HelpBox_Layout(string message, MessageType type, Object context = null,
+            bool logToConsole = false)
         {
             EditorGUILayout.HelpBox(message, type);
 
-            if (logToConsole)
-            {
-                DebugLogMessage(message, type, context);
-            }
+            if (logToConsole) DebugLogMessage(message, type, context);
         }
 
         public static bool Field_Layout(object value, string label)
         {
-            using (new EditorGUI.DisabledScope(disabled: true))
+            using (new EditorGUI.DisabledScope(true))
             {
-                bool isDrawn = true;
-                Type valueType = value.GetType();
+                var isDrawn = true;
+                var valueType = value.GetType();
 
                 if (valueType == typeof(bool))
-                {
                     EditorGUILayout.Toggle(label, (bool)value);
-                }
                 else if (valueType == typeof(short))
-                {
                     EditorGUILayout.IntField(label, (short)value);
-                }
                 else if (valueType == typeof(ushort))
-                {
                     EditorGUILayout.IntField(label, (ushort)value);
-                }
                 else if (valueType == typeof(int))
-                {
                     EditorGUILayout.IntField(label, (int)value);
-                }
                 else if (valueType == typeof(uint))
-                {
                     EditorGUILayout.LongField(label, (uint)value);
-                }
                 else if (valueType == typeof(long))
-                {
                     EditorGUILayout.LongField(label, (long)value);
-                }
                 else if (valueType == typeof(ulong))
-                {
                     EditorGUILayout.TextField(label, ((ulong)value).ToString());
-                }
                 else if (valueType == typeof(float))
-                {
                     EditorGUILayout.FloatField(label, (float)value);
-                }
                 else if (valueType == typeof(double))
-                {
                     EditorGUILayout.DoubleField(label, (double)value);
-                }
                 else if (valueType == typeof(string))
-                {
                     EditorGUILayout.TextField(label, (string)value);
-                }
                 else if (valueType == typeof(Vector2))
-                {
                     EditorGUILayout.Vector2Field(label, (Vector2)value);
-                }
                 else if (valueType == typeof(Vector3))
-                {
                     EditorGUILayout.Vector3Field(label, (Vector3)value);
-                }
                 else if (valueType == typeof(Vector4))
-                {
                     EditorGUILayout.Vector4Field(label, (Vector4)value);
-                }
                 else if (valueType == typeof(Vector2Int))
-                {
                     EditorGUILayout.Vector2IntField(label, (Vector2Int)value);
-                }
                 else if (valueType == typeof(Vector3Int))
-                {
                     EditorGUILayout.Vector3IntField(label, (Vector3Int)value);
-                }
                 else if (valueType == typeof(Color))
-                {
                     EditorGUILayout.ColorField(label, (Color)value);
-                }
                 else if (valueType == typeof(Bounds))
-                {
                     EditorGUILayout.BoundsField(label, (Bounds)value);
-                }
                 else if (valueType == typeof(Rect))
-                {
                     EditorGUILayout.RectField(label, (Rect)value);
-                }
                 else if (valueType == typeof(RectInt))
-                {
                     EditorGUILayout.RectIntField(label, (RectInt)value);
-                }
-                else if (typeof(UnityEngine.Object).IsAssignableFrom(valueType))
-                {
-                    EditorGUILayout.ObjectField(label, (UnityEngine.Object)value, valueType, true);
-                }
+                else if (typeof(Object).IsAssignableFrom(valueType))
+                    EditorGUILayout.ObjectField(label, (Object)value, valueType, true);
                 else if (valueType.BaseType == typeof(Enum))
-                {
                     EditorGUILayout.EnumPopup(label, (Enum)value);
-                }
-                else if (valueType.BaseType == typeof(System.Reflection.TypeInfo))
-                {
+                else if (valueType.BaseType == typeof(TypeInfo))
                     EditorGUILayout.TextField(label, value.ToString());
-                }
                 else
-                {
                     isDrawn = false;
-                }
 
                 return isDrawn;
             }
         }
 
-        private static void DebugLogMessage(string message, MessageType type, UnityEngine.Object context)
+        private static void DebugLogMessage(string message, MessageType type, Object context)
         {
             switch (type)
             {
@@ -376,5 +313,8 @@ namespace NaughtyAttributes.Editor
                     break;
             }
         }
+
+        private delegate void PropertyFieldFunction(Rect rect, SerializedProperty property, GUIContent label,
+            bool includeChildren);
     }
 }

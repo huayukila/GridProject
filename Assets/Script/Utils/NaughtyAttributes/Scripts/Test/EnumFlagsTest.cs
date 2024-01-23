@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace NaughtyAttributes.Test
 {
@@ -15,25 +16,22 @@ namespace NaughtyAttributes.Test
 
     public class EnumFlagsTest : MonoBehaviour
     {
-        [EnumFlags]
-        public TestEnum flags0;
+        [EnumFlags] public TestEnum flags0;
 
         public EnumFlagsNest1 nest1;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class EnumFlagsNest1
     {
-        [EnumFlags]
-        public TestEnum flags1;
+        [EnumFlags] public TestEnum flags1;
 
         public EnumFlagsNest2 nest2;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class EnumFlagsNest2
     {
-        [EnumFlags]
-        public TestEnum flags2;
+        [EnumFlags] public TestEnum flags2;
     }
 }

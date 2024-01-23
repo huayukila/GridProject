@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Framework.BuildProject
 {
@@ -8,17 +7,31 @@ namespace Framework.BuildProject
         public BuildDataPanelBase factoryPanel;
         public BuildDataPanelBase housePanel;
         public BuildDataPanelBase centerCorePanel;
-        BuildDataPanelBase m_FocusPanelBase;
+        private GameObject m_CurrentBuilding;
+        private BuildDataPanelBase m_FocusPanelBase;
+
+        private void Start()
+        {
+            this.RegisterEvent<BuildingHasBeenDestroyEvent>(e =>
+            {
+                if (e.id == m_CurrentBuilding.GetInstanceID())
+                {
+                    ClosePanel();
+                    m_CurrentBuilding = null;
+                }
+            }).UnregisterWhenGameObjectDestroyed(gameObject);
+        }
 
         public void OpenPanel(GameObject gameObject)
         {
+            m_CurrentBuilding = gameObject;
             if (m_FocusPanelBase != null && m_FocusPanelBase.gameObject.activeSelf)
             {
                 m_FocusPanelBase.CloseLabe();
                 m_FocusPanelBase = null;
             }
 
-            BuildingType tempType = this.GetModel<IBuildingObjModel>().GetBuildData(gameObject.GetInstanceID())
+            var tempType = this.GetModel<IBuildingObjModel>().GetBuildData(gameObject.GetInstanceID())
                 .BuildingType;
             switch (tempType)
             {

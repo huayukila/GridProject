@@ -5,9 +5,9 @@ using UnityEngine;
 public class Bloom : PostEffectsBase
 {
     public Shader bloomShader;
+    [SerializeField] [Range(0, 3)] public float threshold = 0.8f;
+    [SerializeField] [Range(0, 7)] public int blurTime = 5;
     private Material bloomMaterial;
-    [SerializeField, Range(0, 3)] public float threshold = 0.8f;
-    [SerializeField, Range(0, 7)] public int blurTime = 5;
 
     public Material material
     {
@@ -54,21 +54,21 @@ public class Bloom : PostEffectsBase
         // Graphics.Blit(tmpSource, destination, material, 3);
         material.SetFloat("_Threshold", threshold);
         material.SetTexture("_SourceTex", source);
-    
-        int width = source.width;
-        int height = source.height;
-    
-        RenderTexture tmpSource = RenderTexture.GetTemporary(width, height, 0, source.format);
+
+        var width = source.width;
+        var height = source.height;
+
+        var tmpSource = RenderTexture.GetTemporary(width, height, 0, source.format);
         Graphics.Blit(source, tmpSource, material, 0);
 
-        RenderTexture[] textures = new RenderTexture[blurTime];
-    
-        for (int i = 1; i < blurTime; i++)
+        var textures = new RenderTexture[blurTime];
+
+        for (var i = 1; i < blurTime; i++)
         {
             width /= 2;
             height /= 2;
 
-            RenderTexture tmpDest = RenderTexture.GetTemporary(width, height, 0, source.format);
+            var tmpDest = RenderTexture.GetTemporary(width, height, 0, source.format);
             textures[i] = tmpDest;
 
             Graphics.Blit(tmpSource, tmpDest, material, 1);
@@ -81,9 +81,6 @@ public class Bloom : PostEffectsBase
 
         RenderTexture.ReleaseTemporary(tmpSource);
 
-        for (int i = 1; i < blurTime; i++)
-        {
-            RenderTexture.ReleaseTemporary(textures[i]);
-        }
+        for (var i = 1; i < blurTime; i++) RenderTexture.ReleaseTemporary(textures[i]);
     }
 }

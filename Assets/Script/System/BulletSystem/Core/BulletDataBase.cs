@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(menuName = "DataBase/BulletDatabase", fileName = "BulletDatabase")]
 public class BulletDataBase : ScriptableObject
@@ -20,5 +19,5 @@ public enum BulletType
 {
     Arrow,
     Magic,
-    Cannon,
+    Cannon
 }

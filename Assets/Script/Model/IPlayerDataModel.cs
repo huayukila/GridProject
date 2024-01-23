@@ -1,6 +1,6 @@
 namespace Framework.BuildProject
 {
-    interface IPlayerDataModel : IModel
+    internal interface IPlayerDataModel : IModel
     {
         PlayerState playerState { get; set; }
         void InitByManager();

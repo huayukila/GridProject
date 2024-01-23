@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace NaughtyAttributes.Test
 {
@@ -33,19 +34,17 @@ namespace NaughtyAttributes.Test
         public HorizontalLineNest1 nest1;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class HorizontalLineNest1
     {
-        [HorizontalLine]
-        public int line1;
+        [HorizontalLine] public int line1;
 
         public HorizontalLineNest2 nest2;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class HorizontalLineNest2
     {
-        [HorizontalLine]
-        public int line2;
+        [HorizontalLine] public int line2;
     }
 }

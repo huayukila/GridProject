@@ -1,7 +1,6 @@
-using DG.Tweening;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Framework.BuildProject
 {
@@ -15,7 +14,7 @@ namespace Framework.BuildProject
         void VisualBuildingFollowMouse();
 
         /// <summary>
-        /// 建物構築
+        ///     建物構築
         /// </summary>
         /// <param name="name_"></param>
         /// <param name="gridPosition_"></param>
@@ -28,28 +27,24 @@ namespace Framework.BuildProject
 
     public class GridBuildSystem : AbstractSystem, IGridBuildSystem
     {
-        //グリッドマップ対象
-        GridUtils<GridObject> m_Grid;
-
         //建物データ
-        BuildingData m_BuildingData;
-
-        Transform m_VisualBuilding;
-        Dir m_Dir = Dir.Down;
+        private BuildingData m_BuildingData;
 
         private BuildingType m_buildingType;
 
+        private Dir m_Dir = Dir.Down;
+
+        //グリッドマップ対象
+        private GridUtils<GridObject> m_Grid;
+
         private IPlayerDataModel m_playerDataModel;
 
-        protected override void OnInit()
-        {
-            m_playerDataModel = this.GetModel<IPlayerDataModel>();
-        }
+        private Transform m_VisualBuilding;
 
         public void CreateGrid(int gridWidth, int gridHeight, float cellSize)
         {
             m_Grid = new GridUtils<GridObject>(gridWidth, gridHeight, cellSize, Vector3.zero,
-                (GridUtils<GridObject> g, int x, int z) => new GridObject(x, z)
+                (g, x, z) => new GridObject(x, z)
             );
         }
 
@@ -82,9 +77,9 @@ namespace Framework.BuildProject
                 return;
 
             // マウスの世界座標を取得
-            Vector3 mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
+            var mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             // マウス座標をグリッド座標に変換
-            m_Grid.GetXY3D(mousePosition, out int x, out int z);
+            m_Grid.GetXY3D(mousePosition, out var x, out var z);
 
             if (CheckInMap(x, z))
             {
@@ -105,25 +100,21 @@ namespace Framework.BuildProject
         public void DestroyBuilding(GameObject gameObj)
         {
             // リソースと建物オブジェクトモデルを取得
-            IResourceDataModel resDataModel = this.GetModel<IResourceDataModel>();
-            IBuildingObjModel buildObjModel = this.GetModel<IBuildingObjModel>();
+            var resDataModel = this.GetModel<IResourceDataModel>();
+            var buildObjModel = this.GetModel<IBuildingObjModel>();
 
-            BuildingBase buildingBase = buildObjModel.GetBuildData(gameObj.GetInstanceID());
+            var buildingBase = buildObjModel.GetBuildData(gameObj.GetInstanceID());
 
             if (buildingBase.BuildingType == BuildingType.House)
             {
-                int removeWorkerNums = buildingBase.MaxWorkerNum;
+                var removeWorkerNums = buildingBase.MaxWorkerNum;
                 resDataModel.MaxWorkerNum -= removeWorkerNums;
 
-                if (!resDataModel.IsResEnough(new ResourceCost()
+                if (!resDataModel.IsResEnough(new ResourceCost
                         { resType = ResourceType.Worker, Cost = removeWorkerNums }))
-                {
                     RemoveWorkers(resDataModel, buildObjModel, removeWorkerNums);
-                }
                 else
-                {
                     resDataModel.MinusRes(ResourceType.Worker, removeWorkerNums);
-                }
             }
             else if (buildingBase.WorkerNum != 0)
             {
@@ -131,7 +122,7 @@ namespace Framework.BuildProject
             }
 
             buildObjModel.UnregisterBuild(gameObj.GetInstanceID());
-            GameObject.Destroy(gameObj);
+            Object.Destroy(gameObj);
         }
 
         public void SelectBuilding(BuildingData buildingData)
@@ -141,17 +132,17 @@ namespace Framework.BuildProject
             m_Dir = Dir.Down;
 
             // マウス座標を取得
-            Vector3 mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
+            var mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             // マウス座標をグリッド座標に変換
-            m_Grid.GetXY3D(mousePosition, out int x, out int z);
+            m_Grid.GetXY3D(mousePosition, out var x, out var z);
 
             // 回転時の基点オフセットを取得
-            Vector2Int rotationOffset = GetRotationOffset(m_Dir);
+            var rotationOffset = GetRotationOffset(m_Dir);
 
             // 正しい建物のワールド座標を計算
-            Vector3 buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(x, z) +
-                                                  new Vector3(rotationOffset.x, 0.6f, rotationOffset.y) *
-                                                  m_Grid.GetCellSize;
+            var buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(x, z) +
+                                              new Vector3(rotationOffset.x, 0.6f, rotationOffset.y) *
+                                              m_Grid.GetCellSize;
 
             // ゴースト建物の生成
             if (m_VisualBuilding == null)
@@ -178,17 +169,17 @@ namespace Framework.BuildProject
         public void VisualBuildingFollowMouse()
         {
             // マウスの世界座標を取得
-            Vector3 mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
+            var mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             // マウス座標をグリッド座標に変換
-            m_Grid.GetXY3D(mousePosition, out int x, out int z);
+            m_Grid.GetXY3D(mousePosition, out var x, out var z);
 
             // 回転基点のオフセットを取得
-            Vector2Int rotationOffset = GetRotationOffset(m_Dir);
+            var rotationOffset = GetRotationOffset(m_Dir);
 
             // 建物の正しいワールド座標を計算
-            Vector3 buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(x, z) +
-                                                  new Vector3(rotationOffset.x, 0.3f, rotationOffset.y) *
-                                                  m_Grid.GetCellSize;
+            var buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(x, z) +
+                                              new Vector3(rotationOffset.x, 0.3f, rotationOffset.y) *
+                                              m_Grid.GetCellSize;
 
             if (x >= 0 && z >= 0 && x < m_Grid.GetGridSize().x && z < m_Grid.GetGridSize().y &&
                 m_VisualBuilding != null)
@@ -201,17 +192,22 @@ namespace Framework.BuildProject
 
         public void CreateBuilding(string name_, Vector2Int gridPosition_, Dir dir_)
         {
-            BuildingData buildingData = this.GetModel<IBuilDataModel>().GetBuildingConfig(name_);
+            var buildingData = this.GetModel<IBuilDataModel>().GetBuildingConfig(name_);
             if (buildingData == null)
                 return;
 
             CreatBuilding(buildingData, m_buildingType, gridPosition_, dir_);
         }
 
+        protected override void OnInit()
+        {
+            m_playerDataModel = this.GetModel<IPlayerDataModel>();
+        }
+
 
         #region 内部用関数
 
-        int GetRotationAngle(Dir dir)
+        private int GetRotationAngle(Dir dir)
         {
             switch (dir)
             {
@@ -224,7 +220,7 @@ namespace Framework.BuildProject
         }
 
         //ロール時の基準点偏移
-        Vector2Int GetRotationOffset(Dir dir)
+        private Vector2Int GetRotationOffset(Dir dir)
         {
             switch (dir)
             {
@@ -237,7 +233,7 @@ namespace Framework.BuildProject
         }
 
         //建物の方向によって、更新後の建物のグリッドリストを獲得
-        List<Vector2Int> GetGridPositionList(BuildingData data_,　Vector2Int offset, Dir dir)
+        private List<Vector2Int> GetGridPositionList(BuildingData data_,　Vector2Int offset, Dir dir)
         {
             List<Vector2Int> gridPositionList = new();
             switch (dir)
@@ -245,24 +241,16 @@ namespace Framework.BuildProject
                 default:
                 case Dir.Down:
                 case Dir.Up:
-                    for (int x = 0; x < data_.Width; x++)
-                    {
-                        for (int y = 0; y < data_.Height; y++)
-                        {
-                            gridPositionList.Add(offset + new Vector2Int(x, y));
-                        }
-                    }
+                    for (var x = 0; x < data_.Width; x++)
+                    for (var y = 0; y < data_.Height; y++)
+                        gridPositionList.Add(offset + new Vector2Int(x, y));
 
                     break;
                 case Dir.Left:
                 case Dir.Right:
-                    for (int x = 0; x < m_BuildingData.Height; x++)
-                    {
-                        for (int y = 0; y < m_BuildingData.Width; y++)
-                        {
-                            gridPositionList.Add(offset + new Vector2Int(x, y));
-                        }
-                    }
+                    for (var x = 0; x < m_BuildingData.Height; x++)
+                    for (var y = 0; y < m_BuildingData.Width; y++)
+                        gridPositionList.Add(offset + new Vector2Int(x, y));
 
                     break;
             }
@@ -270,7 +258,7 @@ namespace Framework.BuildProject
             return gridPositionList;
         }
 
-        Dir GetNextDir(Dir dir)
+        private Dir GetNextDir(Dir dir)
         {
             switch (dir)
             {
@@ -286,17 +274,17 @@ namespace Framework.BuildProject
             }
         }
 
-        bool CheckInMap(int x, int y)
+        private bool CheckInMap(int x, int y)
         {
             //クリックした場所はマップの中ではないか？
             if (!(x >= 0 && y >= 0 && x <= m_Grid.GetGridSize().x && y <= m_Grid.GetGridSize().y))
                 return false;
 
             //建物の占有グリッドリスト
-            List<Vector2Int> gridPositionList = GetGridPositionList(m_BuildingData, new Vector2Int(x, y), m_Dir);
+            var gridPositionList = GetGridPositionList(m_BuildingData, new Vector2Int(x, y), m_Dir);
 
             //建物の毎グリッドはマップの中にあるのか
-            foreach (Vector2Int gridPosition in gridPositionList)
+            foreach (var gridPosition in gridPositionList)
             {
                 if (!(gridPosition.x >= m_Grid.GetGridSize().x) &&
                     !(gridPosition.y >= m_Grid.GetGridSize().y)) continue;
@@ -305,9 +293,9 @@ namespace Framework.BuildProject
 
 
             //グリッドの中にも建物がありました
-            foreach (Vector2Int gridPosition in gridPositionList)
+            foreach (var gridPosition in gridPositionList)
             {
-                GridObject gObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
+                var gObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
                 if (gObj.IsEmpty && gObj.TerrainData.resType == m_BuildingData.NeedResource) continue;
                 return false;
             }
@@ -317,37 +305,38 @@ namespace Framework.BuildProject
 
 
         /// <summary>
-        /// runtime建物構築
+        ///     runtime建物構築
         /// </summary>
         /// <param name="buildingData_"></param>
         /// <param name="buildingType_"></param>
         /// <param name="gridPosition_"></param>
         /// <param name="dir_"></param>
-        void CreatBuilding(BuildingData buildingData_, BuildingType buildingType_, Vector2Int gridPosition_, Dir dir_)
+        private void CreatBuilding(BuildingData buildingData_, BuildingType buildingType_, Vector2Int gridPosition_,
+            Dir dir_)
         {
             // 基準点のオフセットを取得
-            Vector2Int rotationOffset = GetRotationOffset(dir_);
+            var rotationOffset = GetRotationOffset(dir_);
             // 正しいワールド座標を取得
-            Vector3 buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(gridPosition_.x, gridPosition_.y) +
-                                                  new Vector3(rotationOffset.x, 0, rotationOffset.y) *
-                                                  m_Grid.GetCellSize;
+            var buildingObjectWorldPosition = m_Grid.GetWorldPosition3D(gridPosition_.x, gridPosition_.y) +
+                                              new Vector3(rotationOffset.x, 0, rotationOffset.y) *
+                                              m_Grid.GetCellSize;
 
-            List<Vector2Int> gridPositionList = GetGridPositionList(buildingData_, gridPosition_, dir_);
+            var gridPositionList = GetGridPositionList(buildingData_, gridPosition_, dir_);
 
             // 一時的なGridObjectリストを作成
-            List<GridObject> tempGridObjList = new List<GridObject>(gridPositionList.Count);
-            foreach (Vector2Int gridPosition in gridPositionList)
+            var tempGridObjList = new List<GridObject>(gridPositionList.Count);
+            foreach (var gridPosition in gridPositionList)
             {
-                GridObject gridObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
+                var gridObj = m_Grid.GetGridObjectByXY(gridPosition.x, gridPosition.y);
                 gridObj.IsEmpty = false;
                 tempGridObjList.Add(gridObj);
             }
 
             // 建物の実体を生成
-            Transform tempBuilding = GameObject.Instantiate(buildingData_.Prefab,
+            var tempBuilding = Object.Instantiate(buildingData_.Prefab,
                 buildingObjectWorldPosition,
                 Quaternion.Euler(0, GetRotationAngle(dir_), 0));
-            BuildingBase buildingBase = tempBuilding.GetComponent<BuildingBase>();
+            var buildingBase = tempBuilding.GetComponent<BuildingBase>();
             buildingBase.Init(buildingData_, tempGridObjList, gridPosition_, dir_);
             this.GetModel<IBuildingObjModel>().RegisterBuild(tempBuilding.gameObject.GetInstanceID(), buildingBase);
         }
@@ -356,18 +345,18 @@ namespace Framework.BuildProject
         private void RemoveWorkers(IResourceDataModel resDataModel, IBuildingObjModel buildObjModel,
             int removeWorkerNums)
         {
-            int tempNums = resDataModel.GetRes(ResourceType.Worker);
+            var tempNums = resDataModel.GetRes(ResourceType.Worker);
             removeWorkerNums -= tempNums;
             resDataModel.MinusRes(ResourceType.Worker, tempNums);
 
-            if(removeWorkerNums==0)
+            if (removeWorkerNums == 0)
                 return;
-            List<BuildingBase> tempList = buildObjModel.GetBuildDataList(BuildingType.Factory);
+            var tempList = buildObjModel.GetBuildDataList(BuildingType.Factory);
             foreach (var buildingObj in tempList)
             {
                 if (buildingObj.WorkerNum <= 0) continue;
 
-                int deduction = Mathf.Min(buildingObj.WorkerNum, removeWorkerNums);
+                var deduction = Mathf.Min(buildingObj.WorkerNum, removeWorkerNums);
                 buildingObj.WorkerNum -= deduction;
                 removeWorkerNums -= deduction;
 

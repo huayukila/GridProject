@@ -8,7 +8,7 @@ namespace Framework.BuildProject
         public List<Button> buttonList;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             buttonList[0].onClick.AddListener(() => SelectBuilding("House"));
             buttonList[1].onClick.AddListener(() => SelectBuilding("Sawmill"));
@@ -21,18 +21,15 @@ namespace Framework.BuildProject
 
         private void OnDestroy()
         {
-            foreach (Button button in buttonList)
-            {
-                button.onClick.RemoveAllListeners();
-            }
+            foreach (var button in buttonList) button.onClick.RemoveAllListeners();
 
             buttonList.Clear();
         }
 
-        void SelectBuilding(string name_)
+        private void SelectBuilding(string name_)
         {
             this.GetModel<IPlayerDataModel>().playerState = PlayerState.Build;
-            BuildingData buildingData =
+            var buildingData =
                 this.GetModel<IBuilDataModel>().GetBuildingConfig(name_);
 
             if (this.GetModel<IResourceDataModel>().IsResEnough(buildingData.LevelDatasList[0].CostList))

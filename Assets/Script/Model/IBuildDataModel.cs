@@ -10,7 +10,19 @@ namespace Framework.BuildProject
 
     public class BuildDataModel : AbstractModel, IBuilDataModel
     {
-        Dictionary<string, BuildingData> m_BuildingConfigDic;
+        private Dictionary<string, BuildingData> m_BuildingConfigDic;
+
+        // 建築の設定を取得
+        public BuildingData GetBuildingConfig(string name_)
+        {
+            if (m_BuildingConfigDic.TryGetValue(name_, out var buildingData))
+            {
+                return buildingData;
+            }
+
+            Debug.LogWarning($"探している建物のタイプ ({name_}) は存在していない");
+            return null;
+        }
 
         // モデルの初期化
         protected override void OnInit()
@@ -22,28 +34,11 @@ namespace Framework.BuildProject
         private void LoadBuildingData()
         {
             m_BuildingConfigDic = new Dictionary<string, BuildingData>();
-            BuildingDatabase database = Resources.Load<BuildingDatabase>("BuildingDatabase");
+            var database = Resources.Load<BuildingDatabase>("BuildingDatabase");
 
-            foreach (var data in database.BuildingDatas)
-            {
-                m_BuildingConfigDic.Add(data.NameString, data);
-            }
+            foreach (var data in database.BuildingDatas) m_BuildingConfigDic.Add(data.NameString, data);
 
             Resources.UnloadAsset(database);
-        }
-
-        // 建築の設定を取得
-        public BuildingData GetBuildingConfig(string name_)
-        {
-            if (m_BuildingConfigDic.TryGetValue(name_, out BuildingData buildingData))
-            {
-                return buildingData;
-            }
-            else
-            {
-                Debug.LogWarning($"探している建物のタイプ ({name_}) は存在していない");
-                return null;
-            }
         }
     }
 }

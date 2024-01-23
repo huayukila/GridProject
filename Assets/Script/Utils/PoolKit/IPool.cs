@@ -1,12 +1,13 @@
 public interface IPool<T>
 {
     /// <summary>
-    /// 分配オブジェクト
+    ///     分配オブジェクト
     /// </summary>
     /// <returns></returns>
     T Allocate();
+
     /// <summary>
-    /// 回収オブジェクト
+    ///     回収オブジェクト
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>

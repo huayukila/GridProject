@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace NaughtyAttributes.Test
@@ -7,12 +7,12 @@ namespace NaughtyAttributes.Test
     {
     }
 
-    [System.Serializable]
+    [Serializable]
     public class MyClass
     {
     }
 
-    [System.Serializable]
+    [Serializable]
     public struct MyStruct
     {
     }

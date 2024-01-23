@@ -8,6 +8,8 @@ namespace Framework.BuildProject
 
         public Button RemoveButton;
 
+        public Text WorkText;
+
         // Start is called before the first frame update
         protected override void Start()
         {
@@ -16,34 +18,30 @@ namespace Framework.BuildProject
             RemoveButton.onClick.AddListener(RemoveWorker);
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        }
-
-        protected override void ShowData()
-        {
-            DataText.text =
-                $"Name:{m_BuildBase.BuildingName}\nLevel:{m_BuildBase.BuildingLevel}\nHP:{m_BuildBase.BuildingHp}\nWorkerNums:{m_BuildBase.WorkerNum}/{m_BuildBase.MaxWorkerNum}";
-        }
-
-        void AddWorker()
-        {
-            this.GetSystem<IBuildingSystem>().AddWorker(m_BuildBase.gameObject);
-            ShowData();
-        }
-
-        void RemoveWorker()
-        {
-            this.GetSystem<IBuildingSystem>().RemoveWorker(m_BuildBase.gameObject);
-            ShowData();
-        }
-
         protected override void OnDestroy()
         {
             base.OnDestroy();
             AddButton.onClick.RemoveAllListeners();
             RemoveButton.onClick.RemoveAllListeners();
+        }
+
+        protected override void ShowData()
+        {
+            NameText.text = $"{m_BuildBase.BuildingName}";
+            HpText.text = $"{m_BuildBase.BuildingHp}/{m_BuildBase.BuildingMaxHp}";
+            WorkText.text = $"{m_BuildBase.WorkerNum}/{m_BuildBase.MaxWorkerNum}";
+        }
+
+        private void AddWorker()
+        {
+            this.GetSystem<IBuildingSystem>().AddWorker(m_BuildBase.gameObject);
+            ShowData();
+        }
+
+        private void RemoveWorker()
+        {
+            this.GetSystem<IBuildingSystem>().RemoveWorker(m_BuildBase.gameObject);
+            ShowData();
         }
     }
 }

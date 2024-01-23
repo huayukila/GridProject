@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace Framework.BuildProject
 {
-    interface IAudioSystem : ISystem
+    internal interface IAudioSystem : ISystem
     {
         void StopAllMusic();
 

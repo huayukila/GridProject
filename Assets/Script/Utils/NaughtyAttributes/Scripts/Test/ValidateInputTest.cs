@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace NaughtyAttributes.Test
 {
@@ -7,36 +8,34 @@ namespace NaughtyAttributes.Test
         [ValidateInput("NotZero0", "int0 must not be zero")]
         public int int0;
 
+        public ValidateInputNest1 nest1;
+
+        public ValidateInputInheritedNest inheritedNest;
+
         private bool NotZero0(int value)
         {
             return value != 0;
         }
-
-        public ValidateInputNest1 nest1;
-
-        public ValidateInputInheritedNest inheritedNest;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ValidateInputNest1
     {
-        [ValidateInput("NotZero1")]
-        [AllowNesting] // Because it's nested we need to explicitly allow nesting
+        [ValidateInput("NotZero1")] [AllowNesting] // Because it's nested we need to explicitly allow nesting
         public int int1;
+
+        public ValidateInputNest2 nest2;
 
         private bool NotZero1(int value)
         {
             return value != 0;
         }
-
-        public ValidateInputNest2 nest2;
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ValidateInputNest2
     {
-        [ValidateInput("NotZero2")]
-        [AllowNesting] // Because it's nested we need to explicitly allow nesting
+        [ValidateInput("NotZero2")] [AllowNesting] // Because it's nested we need to explicitly allow nesting
         public int int2;
 
         private bool NotZero2(int value)
@@ -45,7 +44,7 @@ namespace NaughtyAttributes.Test
         }
     }
 
-    [System.Serializable]
+    [Serializable]
     public class ValidateInputInheritedNest : ValidateInputNest1
     {
     }

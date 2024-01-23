@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public static class Global
 {
     public static int GRID_SIZE_WIDTH = 10;

@@ -13,32 +13,27 @@ public class AudioDataBase : ScriptableObject
     {
         if (FXAudioDatasList != null)
         {
-            Dictionary<string, AudioClip> m_AudioDic = new Dictionary<string, AudioClip>();
+            var m_AudioDic = new Dictionary<string, AudioClip>();
             foreach (var data in FXAudioDatasList)
-            {
                 if (!m_AudioDic.ContainsKey(data.audioName))
-                {
                     m_AudioDic.Add(data.audioName, data.audioClip);
-                }
-            }
             return m_AudioDic;
         }
+
         return null;
     }
+
     public Dictionary<string, AudioClip> GetBGMAudioDic()
     {
-        if(BGMAudioDatasList != null)
+        if (BGMAudioDatasList != null)
         {
-            Dictionary<string, AudioClip> m_AudioDic = new Dictionary<string, AudioClip>();
+            var m_AudioDic = new Dictionary<string, AudioClip>();
             foreach (var data in BGMAudioDatasList)
-            {
                 if (!m_AudioDic.ContainsKey(data.audioName))
-                {
                     m_AudioDic.Add(data.audioName, data.audioClip);
-                }
-            }
             return m_AudioDic;
         }
+
         return null;
     }
 }

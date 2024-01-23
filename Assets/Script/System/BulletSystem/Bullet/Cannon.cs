@@ -29,7 +29,6 @@ namespace Framework.BuildProject
                 // 敵に対する範囲攻撃の確認
                 if (Physics.OverlapSphereNonAlloc(transform.position, 15, m_Targets,
                         LayerMask.GetMask(Global.TARGET_STRING_ENEMY)) > 0)
-                {
                     // 敵にダメージを与える
                     foreach (var target in m_Targets)
                     {
@@ -37,7 +36,6 @@ namespace Framework.BuildProject
                             break;
                         target.GetComponent<IGetHurt>().GetDamage(m_Damage);
                     }
-                }
 
                 // 爆発エフェクトの生成と弾の回収
                 Instantiate(Explosion, m_hitInfo[0].point, Quaternion.identity);
@@ -50,10 +48,7 @@ namespace Framework.BuildProject
         {
             base.ResetBulletObj();
             // ターゲット配列のリセット
-            for (int i = 0; i < m_Targets.Length; i++)
-            {
-                m_Targets[i] = null;
-            }
+            for (var i = 0; i < m_Targets.Length; i++) m_Targets[i] = null;
         }
     }
 }

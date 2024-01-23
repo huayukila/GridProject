@@ -1,4 +1,3 @@
-using Kit;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,9 +5,9 @@ namespace Framework.BuildProject
 {
     public class GameManager : BuildController
     {
-        private int StageLevel;
-        private IGridBuildSystem m_GridBuildSystem;
         private IBulletSystem m_BulletSystem;
+        private IGridBuildSystem m_GridBuildSystem;
+        private int StageLevel;
 
         private void Awake()
         {
@@ -24,6 +23,13 @@ namespace Framework.BuildProject
             LoadInitialScene();
         }
 
+        // 破棄時の処理
+        private void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        }
+
         // 必要なシステムを取得して初期化する
         private void InitializeSystems()
         {
@@ -35,8 +41,6 @@ namespace Framework.BuildProject
         private void RegisterEvents()
         {
             // イベントリスナーを登録し、必要に応じて削除する
-            this.RegisterEvent<ReStartEvent>(e => Restart())
-                .UnregisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<GameStartEvent>(e => LoadScene(GameScene.Gaming))
                 .UnregisterWhenGameObjectDestroyed(gameObject);
             this.RegisterEvent<BackToTitleEvent>(e =>
@@ -65,10 +69,7 @@ namespace Framework.BuildProject
         // シーンが読み込まれたときの処理
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name == GameScene.Gaming.ToString())
-            {
-                InitializeGamingScene();
-            }
+            if (scene.name == GameScene.Gaming.ToString()) InitializeGamingScene();
         }
 
         // 「Gaming」シーンの初期化
@@ -84,10 +85,7 @@ namespace Framework.BuildProject
         // シーンがアンロードされたときの処理
         private void OnSceneUnloaded(Scene scene)
         {
-            if (scene.name == GameScene.Gaming.ToString())
-            {
-                DeinitializeGamingScene();
-            }
+            if (scene.name == GameScene.Gaming.ToString()) DeinitializeGamingScene();
         }
 
         // 「Gaming」シーンの終了処理
@@ -105,19 +103,12 @@ namespace Framework.BuildProject
         {
             StageLevel = 0;
         }
-
-        // 破棄時の処理
-        private void OnDestroy()
-        {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
-        }
     }
 
     // ゲームシーンの列挙型
     public enum GameScene
     {
         Title,
-        Gaming,
+        Gaming
     }
 }

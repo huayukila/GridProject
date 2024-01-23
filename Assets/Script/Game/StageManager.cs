@@ -7,9 +7,9 @@ namespace Framework.BuildProject
         // 出現ポイント (北、東、南、西)
         public Transform[] SpawnPoints;
         private int m_CurrentStage;
-        private int m_StageCounts;
         private int m_CurrentStageEnemyCounts;
         private IEnemySystem m_EnemySystem;
+        private int m_StageCounts;
 
         // 起動時の初期化
         private void Awake()
@@ -44,13 +44,9 @@ namespace Framework.BuildProject
             if (m_CurrentStageEnemyCounts <= 0)
             {
                 if (CheckIsAllStageClear())
-                {
                     this.SendEvent<GameClearEvent>();
-                }
                 else
-                {
                     ProceedToNextStage();
-                }
             }
         }
 

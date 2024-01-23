@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace NaughtyAttributes.Editor
 {
@@ -10,20 +10,13 @@ namespace NaughtyAttributes.Editor
         {
             if (property.propertyType == SerializedPropertyType.ObjectReference)
             {
-                Texture2D previewTexture = GetAssetPreview(property);
+                var previewTexture = GetAssetPreview(property);
                 if (previewTexture != null)
-                {
                     return GetPropertyHeight(property) + GetAssetPreviewSize(property).y;
-                }
-                else
-                {
-                    return GetPropertyHeight(property);
-                }
+                return GetPropertyHeight(property);
             }
-            else
-            {
-                return GetPropertyHeight(property) + GetHelpBoxHeight();
-            }
+
+            return GetPropertyHeight(property) + GetHelpBoxHeight();
         }
 
         protected override void OnGUI_Internal(Rect rect, SerializedProperty property, GUIContent label)
@@ -32,7 +25,7 @@ namespace NaughtyAttributes.Editor
 
             if (property.propertyType == SerializedPropertyType.ObjectReference)
             {
-                Rect propertyRect = new Rect()
+                var propertyRect = new Rect
                 {
                     x = rect.x,
                     y = rect.y,
@@ -42,10 +35,10 @@ namespace NaughtyAttributes.Editor
 
                 EditorGUI.PropertyField(propertyRect, property, label);
 
-                Texture2D previewTexture = GetAssetPreview(property);
+                var previewTexture = GetAssetPreview(property);
                 if (previewTexture != null)
                 {
-                    Rect previewRect = new Rect()
+                    var previewRect = new Rect
                     {
                         x = rect.x + NaughtyEditorGUI.GetIndentLength(rect),
                         y = rect.y + EditorGUIUtility.singleLineHeight,
@@ -58,7 +51,7 @@ namespace NaughtyAttributes.Editor
             }
             else
             {
-                string message = property.name + " doesn't have an asset preview";
+                var message = property.name + " doesn't have an asset preview";
                 DrawDefaultPropertyAndHelpBox(rect, property, message, MessageType.Warning);
             }
 
@@ -71,7 +64,7 @@ namespace NaughtyAttributes.Editor
             {
                 if (property.objectReferenceValue != null)
                 {
-                    Texture2D previewTexture = AssetPreview.GetAssetPreview(property.objectReferenceValue);
+                    var previewTexture = AssetPreview.GetAssetPreview(property.objectReferenceValue);
                     return previewTexture;
                 }
 
@@ -83,28 +76,23 @@ namespace NaughtyAttributes.Editor
 
         private Vector2 GetAssetPreviewSize(SerializedProperty property)
         {
-            Texture2D previewTexture = GetAssetPreview(property);
-            if (previewTexture == null)
+            var previewTexture = GetAssetPreview(property);
+            if (previewTexture == null) return Vector2.zero;
+
+            var targetWidth = ShowAssetPreviewAttribute.DefaultWidth;
+            var targetHeight = ShowAssetPreviewAttribute.DefaultHeight;
+
+            var showAssetPreviewAttribute = PropertyUtility.GetAttribute<ShowAssetPreviewAttribute>(property);
+            if (showAssetPreviewAttribute != null)
             {
-                return Vector2.zero;
+                targetWidth = showAssetPreviewAttribute.Width;
+                targetHeight = showAssetPreviewAttribute.Height;
             }
-            else
-            {
-                int targetWidth = ShowAssetPreviewAttribute.DefaultWidth;
-                int targetHeight = ShowAssetPreviewAttribute.DefaultHeight;
 
-                ShowAssetPreviewAttribute showAssetPreviewAttribute = PropertyUtility.GetAttribute<ShowAssetPreviewAttribute>(property);
-                if (showAssetPreviewAttribute != null)
-                {
-                    targetWidth = showAssetPreviewAttribute.Width;
-                    targetHeight = showAssetPreviewAttribute.Height;
-                }
+            var width = Mathf.Clamp(targetWidth, 0, previewTexture.width);
+            var height = Mathf.Clamp(targetHeight, 0, previewTexture.height);
 
-                int width = Mathf.Clamp(targetWidth, 0, previewTexture.width);
-                int height = Mathf.Clamp(targetHeight, 0, previewTexture.height);
-
-                return new Vector2(width, height);
-            }
+            return new Vector2(width, height);
         }
     }
 }

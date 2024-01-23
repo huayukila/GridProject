@@ -22,16 +22,16 @@ namespace Framework.BuildProject
         public Transform LockTrans;
         public float LoadSpeed;
         public ParticleSystem Particle;
-
-        private Collider[] m_Target;
-        private float m_AttackRadius = 50;
+        private readonly float m_LockSpeed = 3f;
+        private readonly float m_AttackRadius = 50;
         private bool m_IsAmmoLoaded;
         private TowerState m_State;
-        private readonly float m_LockSpeed = 3f;
+
+        private Collider[] m_Target;
+        private float m_X;
 
         // ターゲット時の方向記録用変数
         private float m_YDir;
-        private float m_X;
 
         public override void Init(BuildingData data_, List<GridObject> gridObjList_, Vector2Int gridXY_, Dir dir_)
         {
@@ -73,10 +73,10 @@ namespace Framework.BuildProject
             }
         }
 
-        void Fire()
+        private void Fire()
         {
             Particle.Play();
-            BulletBase bullet = this.GetSystem<IBulletSystem>().GetBullet(BulletType.Arrow);
+            var bullet = this.GetSystem<IBulletSystem>().GetBullet(BulletType.Arrow);
             bullet.Set(100f, 10, FirePoint.position, m_Target[0].transform).Shoot();
             bullet.transform.rotation = FirePoint.rotation;
             m_IsAmmoLoaded = false;
@@ -84,7 +84,7 @@ namespace Framework.BuildProject
             FirePoint.gameObject.SetActive(false);
         }
 
-        void Reload()
+        private void Reload()
         {
             if (m_IsAmmoLoaded) return;
             if (Vector3.Distance(StringTrans.position, StringEndPoint.position) < 0.1f)
@@ -95,21 +95,21 @@ namespace Framework.BuildProject
             }
 
             StringTrans.Translate(Vector3.up * (LoadSpeed * Time.deltaTime), Space.Self);
-            RootTrans.Rotate(Vector3.right, (LoadSpeed * Time.deltaTime) * 70);
+            RootTrans.Rotate(Vector3.right, LoadSpeed * Time.deltaTime * 70);
         }
 
-        void IdleRotation()
+        private void IdleRotation()
         {
             m_X += Time.deltaTime;
-            float rotAngles = Mathf.Sin(m_X) * 20;
+            var rotAngles = Mathf.Sin(m_X) * 20;
             YRotationPoint.rotation =
                 Quaternion.Lerp(YRotationPoint.rotation, Quaternion.Euler(0, rotAngles + m_YDir, 0), 0.8f);
         }
 
-        void LockOnTarget()
+        private void LockOnTarget()
         {
-            Vector3 targetDir = -(m_Target[0].transform.position - LockTrans.position);
-            Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
+            var targetDir = -(m_Target[0].transform.position - LockTrans.position);
+            var rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
             XRotationPoint.rotation = Quaternion.Lerp(XRotationPoint.rotation, rot, m_LockSpeed * Time.deltaTime);
 
             var rotationY = Quaternion.Lerp(YRotationPoint.rotation, Quaternion.LookRotation(targetDir),
@@ -117,7 +117,7 @@ namespace Framework.BuildProject
             YRotationPoint.rotation = rotationY;
             m_YDir = rotationY.eulerAngles.y;
 
-            float angle = Vector3.SignedAngle(FirePoint.up, m_Target[0].transform.position - FirePoint.position,
+            var angle = Vector3.SignedAngle(FirePoint.up, m_Target[0].transform.position - FirePoint.position,
                 Vector3.up);
 
             if (Mathf.Abs(angle) < 3f && m_IsAmmoLoaded)

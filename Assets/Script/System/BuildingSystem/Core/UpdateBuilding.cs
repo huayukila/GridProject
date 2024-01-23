@@ -5,8 +5,8 @@ namespace Framework.BuildProject
 {
     public class UpdateBuilding : BuildingBase
     {
-        private int m_UpdateTime; // 公共?量，更新時間の設定
         private float m_DurationTime; // 最後の更新からの経過時間
+        private int m_UpdateTime; // 公共?量，更新時間の設定
         private bool m_IsWorking => WorkerNum > 0; // 労働者がいるかどうか
 
         private void Update()

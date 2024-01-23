@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -9,13 +10,13 @@ namespace NaughtyAttributes.Editor
     [CustomPropertyDrawer(typeof(InputAxisAttribute))]
     public class InputAxisPropertyDrawer : PropertyDrawerBase
     {
-        private static readonly string AssetPath = Path.Combine("ProjectSettings", "InputManager.asset");
         private const string AxesPropertyPath = "m_Axes";
         private const string NamePropertyPath = "m_Name";
+        private static readonly string AssetPath = Path.Combine("ProjectSettings", "InputManager.asset");
 
         protected override float GetPropertyHeight_Internal(SerializedProperty property, GUIContent label)
         {
-            return (property.propertyType == SerializedPropertyType.String)
+            return property.propertyType == SerializedPropertyType.String
                 ? GetPropertyHeight(property)
                 : GetPropertyHeight(property) + GetHelpBoxHeight();
         }
@@ -35,39 +36,35 @@ namespace NaughtyAttributes.Editor
 
                 for (var i = 0; i < axesProperty.arraySize; i++)
                 {
-                    var axis = axesProperty.GetArrayElementAtIndex(i).FindPropertyRelative(NamePropertyPath).stringValue;
+                    var axis = axesProperty.GetArrayElementAtIndex(i).FindPropertyRelative(NamePropertyPath)
+                        .stringValue;
                     axesSet.Add(axis);
                 }
 
                 var axes = axesSet.ToArray();
 
-                string propertyString = property.stringValue;
-                int index = 0;
+                var propertyString = property.stringValue;
+                var index = 0;
                 // check if there is an entry that matches the entry and get the index
                 // we skip index 0 as that is a special custom case
-                for (int i = 1; i < axes.Length; i++)
-                {
-                    if (axes[i].Equals(propertyString, System.StringComparison.Ordinal))
+                for (var i = 1; i < axes.Length; i++)
+                    if (axes[i].Equals(propertyString, StringComparison.Ordinal))
                     {
                         index = i;
                         break;
                     }
-                }
 
                 // Draw the popup box with the current selected index
-                int newIndex = EditorGUI.Popup(rect, label.text, index, axes);
+                var newIndex = EditorGUI.Popup(rect, label.text, index, axes);
 
                 // Adjust the actual string value of the property based on the selection
-                string newValue = newIndex > 0 ? axes[newIndex] : string.Empty;
+                var newValue = newIndex > 0 ? axes[newIndex] : string.Empty;
 
-                if (!property.stringValue.Equals(newValue, System.StringComparison.Ordinal))
-                {
-                    property.stringValue = newValue;
-                }
+                if (!property.stringValue.Equals(newValue, StringComparison.Ordinal)) property.stringValue = newValue;
             }
             else
             {
-                string message = string.Format("{0} supports only string fields", typeof(InputAxisAttribute).Name);
+                var message = string.Format("{0} supports only string fields", typeof(InputAxisAttribute).Name);
                 DrawDefaultPropertyAndHelpBox(rect, property, message, MessageType.Warning);
             }
 

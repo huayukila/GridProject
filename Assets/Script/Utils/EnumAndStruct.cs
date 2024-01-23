@@ -16,6 +16,7 @@ public enum Dir
     Up,
     Right
 }
+
 public enum PlayerState
 {
     Normal,
@@ -23,21 +24,24 @@ public enum PlayerState
     Win,
     Fail
 }
+
 public enum BuildingType
 {
     Non,
     House,
     Factory,
     Wall,
-    Core,
+    Core
 }
+
 public enum Terrain
 {
     Normal,
     Goldmine,
     Forests,
-    StoneMine,
+    StoneMine
 }
+
 [Serializable]
 public struct ResourceCost
 {
