@@ -4,11 +4,19 @@ namespace Framework.BuildProject
 {
     public class CenterCore : BuildingBase
     {
-        public ParticleSystem particle;
+        private void Start()
+        {
+            this.RegisterEvent<GameClearEvent>(e =>
+            {
+                winParticle.Play();
+            }).UnregisterWhenGameObjectDestroyed(gameObject);
+        }
 
+        public ParticleSystem explosionParticle;
+        public ParticleSystem winParticle;
         protected override void OnDead()
         {
-            particle.Play();
+            explosionParticle.Play();
             this.SendEvent<GameOverEvent>();
         }
     }

@@ -29,9 +29,17 @@ namespace Framework.BuildProject
                 }
             }).UnregisterWhenGameObjectDestroyed(gameObject);
 
-            this.RegisterEvent<GameOverEvent>(e => OnGameEnd())
+            this.RegisterEvent<GameOverEvent>(e =>
+                {
+                    this.GetModel<IPlayerDataModel>().playerState = PlayerState.Fail;
+                    OnGameEnd();
+                })
                 .UnregisterWhenGameObjectDestroyed(gameObject);
-            this.RegisterEvent<GameClearEvent>(e => OnGameEnd())
+            this.RegisterEvent<GameClearEvent>(e =>
+                {
+                    this.GetModel<IPlayerDataModel>().playerState = PlayerState.Win;
+                    OnGameEnd();
+                })
                 .UnregisterWhenGameObjectDestroyed(gameObject);
         }
 
@@ -43,7 +51,6 @@ namespace Framework.BuildProject
 
         private void OnGameEnd()
         {
-            this.GetModel<IPlayerDataModel>().playerState = PlayerState.Win;
             mainCanvas.SetActive(false);
             cameraCtrl.ChangeToEnd();
             Time.timeScale = 0;

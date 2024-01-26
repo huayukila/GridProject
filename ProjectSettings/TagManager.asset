@@ -8,8 +8,6 @@ TagManager:
   - Bullet
   - Enemy
   - Ground
-  - Castle
-  - enemyBug
   - Dead
   layers:
   - Default

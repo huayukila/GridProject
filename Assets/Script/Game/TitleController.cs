@@ -46,8 +46,9 @@ namespace Framework.BuildProject
                 case State.Normal:
                     HandleRayCast();
                     clickObj.SetActive(m_IsRay);
+                    if (!m_IsRay)
+                        break;
                     if (m_IsRay) clickObj.transform.position = Input.mousePosition + Vector3.left * 45f;
-
                     if (Input.GetMouseButtonDown(0)) m_State = State.OnEnterGaming;
 
                     break;

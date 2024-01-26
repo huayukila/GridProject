@@ -756,6 +756,7 @@ namespace Framework
 
     public static class CreatFiles
     {
+#if UNITY_EDITOR
         [MenuItem("Tools/CreateFolder")]
         public static void CreateFolder()
         {
@@ -784,7 +785,7 @@ namespace Framework
 
             AssetDatabase.Refresh();
         }
+#endif
     }
-
     #endregion
 }

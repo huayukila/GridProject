@@ -50,7 +50,10 @@ namespace Framework.BuildProject
                     obj.transform.parent = m_BulletPool.transform;
                     obj.SetActive(false);
                     return obj;
-                }, obj => { obj.GetComponent<BulletBase>().ResetBulletObj(); }, 10);
+                }, obj =>
+                {
+                    obj.GetComponent<BulletBase>().ResetBulletObj();
+                }, 10);
                 m_BulletDic.Add(bulletData.bulletType, temp);
             }
 

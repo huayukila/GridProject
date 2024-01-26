@@ -128,6 +128,9 @@ namespace Framework.BuildProject
 
         public void SelectBuilding(BuildingData buildingData)
         {
+            if (m_VisualBuilding!=null)
+                return;
+
             m_playerDataModel.playerState = PlayerState.Build;
             m_BuildingData = buildingData;
             m_Dir = Dir.Down;
