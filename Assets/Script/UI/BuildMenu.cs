@@ -28,7 +28,8 @@ namespace Framework.BuildProject
 
         private void SelectBuilding(string name_)
         {
-            this.GetModel<IPlayerDataModel>().playerState = PlayerState.Build;
+            if (this.GetModel<IPlayerDataModel>().playerState == PlayerState.Build)
+                return;
             var buildingData =
                 this.GetModel<IBuilDataModel>().GetBuildingConfig(name_);
 

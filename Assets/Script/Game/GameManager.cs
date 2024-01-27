@@ -89,7 +89,7 @@ namespace Framework.BuildProject
             m_GridBuildSystem.CreateBuilding("Core", new Vector2Int(4, 4), Dir.Down);
             m_BulletSystem.InitByManager();
             this.GetSystem<IEnemySystem>().InitByManager();
-            this.GetModel<IPlayerDataModel>().playerState = PlayerState.Normal;
+            this.GetModel<IPlayerDataModel>().InitByManager();
         }
 
         // シーンがアンロードされたときの処理

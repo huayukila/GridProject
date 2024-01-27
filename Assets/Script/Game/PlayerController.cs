@@ -43,9 +43,17 @@ namespace Framework.BuildProject
             m_BuildDataPanelManager.ClosePanel();
             m_GridBuildSystem.VisualBuildingFollowMouse();
 
-            if (Input.GetMouseButtonDown(0)) TrySetBuilding();
+            if (Input.GetMouseButtonDown(0))
+            {
+                TrySetBuilding();
+                return;
+            }
 
-            if (Input.GetMouseButtonDown(1)) m_GridBuildSystem.CancelSelect();
+            if (Input.GetMouseButtonDown(1))
+            {
+                m_GridBuildSystem.CancelSelect();
+                return;
+            }
 
             if (Input.GetKeyDown(KeyCode.R)) m_GridBuildSystem.BuildingRota();
         }

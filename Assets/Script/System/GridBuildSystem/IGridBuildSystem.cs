@@ -63,11 +63,12 @@ namespace Framework.BuildProject
 
         public void CancelSelect()
         {
+            m_playerDataModel.playerState = PlayerState.Normal;
             m_VisualBuilding.DOKill();
             Object.Destroy(m_VisualBuilding.gameObject);
+            m_VisualBuilding = null;
             m_BuildingData = null;
             m_buildingType = BuildingType.Non;
-            m_playerDataModel.playerState = PlayerState.Normal;
         }
 
         public void SetBuilding()
@@ -128,9 +129,6 @@ namespace Framework.BuildProject
 
         public void SelectBuilding(BuildingData buildingData)
         {
-            if (m_VisualBuilding!=null)
-                return;
-
             m_playerDataModel.playerState = PlayerState.Build;
             m_BuildingData = buildingData;
             m_Dir = Dir.Down;
@@ -167,11 +165,15 @@ namespace Framework.BuildProject
 
         public void BuildingRota()
         {
+            if (m_VisualBuilding == null)
+                return;
             m_Dir = GetNextDir(m_Dir);
         }
 
         public void VisualBuildingFollowMouse()
         {
+            if(m_VisualBuilding==null)
+                return;
             // マウスの世界座標を取得
             var mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
             // マウス座標をグリッド座標に変換
