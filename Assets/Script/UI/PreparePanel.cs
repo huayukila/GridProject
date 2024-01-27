@@ -1,5 +1,6 @@
 using System.Globalization;
 using Kit;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +9,8 @@ namespace Framework.BuildProject
     public class PreparePanel : BuildController
     {
         public Button StartStageButton;
-        public Text CounterText;
-        public Text ShowMsgTxt;
+        public TextMeshProUGUI CounterText;
+        public GameObject ShowStartImg;
         public GameObject ShowObj;
 
         private bool m_IsCountDownStart;
@@ -24,7 +25,7 @@ namespace Framework.BuildProject
                 ShowObj.SetActive(false);
             });
             m_IsCountDownStart = false;
-            ShowMsgTxt.text = "Game Start";
+            ShowStartImg.SetActive(true);
             CounterText.text = Global.PREPARE_TIME.ToString(CultureInfo.CurrentCulture);
         }
 
@@ -43,7 +44,7 @@ namespace Framework.BuildProject
             {
                 StartStageButton.gameObject.SetActive(true);
                 m_IsCountDownStart = true;
-                ShowMsgTxt.gameObject.SetActive(false);
+                ShowStartImg.gameObject.SetActive(false);
             }).Start(this);
         }
 
@@ -53,7 +54,7 @@ namespace Framework.BuildProject
             if (!m_IsCountDownStart)
                 return;
             m_PreCD -= Time.deltaTime;
-            
+
             if (m_PreCD <= 0)
             {
                 ShowObj.SetActive(false);

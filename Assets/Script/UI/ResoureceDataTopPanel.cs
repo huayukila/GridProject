@@ -1,15 +1,14 @@
-using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 namespace Framework.BuildProject
 {
     public class ResoureceDataTopPanel : BuildController
     {
-        public Text WoodTxt;
-        public Text StoneTxt;
-        public Text GoldTxt;
-        public Text IdleWorkerTxt;
-        public Text MaxWorkerTxt;
+        public TextMeshProUGUI WoodTxt;
+        public TextMeshProUGUI StoneTxt;
+        public TextMeshProUGUI GoldTxt;
+        public TextMeshProUGUI IdleWorkerTxt;
+        public TextMeshProUGUI MaxWorkerTxt;
         private IResourceDataModel dataModel;
 
         // Start is called before the first frame update
@@ -20,13 +19,14 @@ namespace Framework.BuildProject
             this.RegisterEvent<RefreshResPanel>(e => RefreshResPanel()
             ).UnregisterWhenGameObjectDestroyed(gameObject);
         }
+
         private void RefreshResPanel()
         {
-            MaxWorkerTxt.text = dataModel.MaxWorkerNum.ToString();
             WoodTxt.text = dataModel.GetRes(ResourceType.Wood).ToString();
             StoneTxt.text = dataModel.GetRes(ResourceType.Stone).ToString();
             GoldTxt.text = dataModel.GetRes(ResourceType.Gold).ToString();
             IdleWorkerTxt.text = dataModel.GetRes(ResourceType.Worker).ToString();
+            MaxWorkerTxt.text = dataModel.MaxWorkerNum.ToString();
         }
     }
 }

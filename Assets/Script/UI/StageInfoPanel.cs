@@ -1,11 +1,11 @@
-using UnityEngine.UI;
+using TMPro;
 
 namespace Framework.BuildProject
 {
     public class StageInfoPanel : BuildController
     {
-        public Text EnemyCountsTxt;
-        public Text CurrentStage;
+        public TextMeshProUGUI EnemyCountsTxt;
+        public TextMeshProUGUI CurrentStage;
 
         private int m_CurrentEnemy;
         private int m_CurrentStage;

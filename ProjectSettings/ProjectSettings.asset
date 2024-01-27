@@ -154,6 +154,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
+    Android: com..2023__RingOfEmet_
     Standalone: com.------------------------.2023--------------------Ring-Of-Emet----------------
   buildNumber:
     Standalone: 0

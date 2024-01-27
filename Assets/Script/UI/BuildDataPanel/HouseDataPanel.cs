@@ -1,10 +1,11 @@
+using TMPro;
 using UnityEngine.UI;
 
 namespace Framework.BuildProject
 {
     public class HouseDataPanel : BuildDataPanelBase
     {
-        public Text WorkText;
+        public TextMeshProUGUI WorkText;
 
         protected override void ShowData()
         {

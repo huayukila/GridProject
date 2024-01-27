@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,8 +7,8 @@ namespace Framework.BuildProject
     public class BuildDataPanelBase : BuildController
     {
         public Button DeletButton;
-        public Text NameText;
-        public Text HpText;
+        public TextMeshProUGUI NameText;
+        public TextMeshProUGUI HpText;
         protected BuildingBase m_BuildBase;
 
         protected virtual void Start()

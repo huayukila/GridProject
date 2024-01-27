@@ -23,6 +23,16 @@ namespace Framework.BuildProject
             LoadInitialScene();
         }
 
+
+        private void Update()
+        {
+            //いつでもescキーを押すとゲーム退出できるように
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+        }
+
         // 破棄時の処理
         private void OnDestroy()
         {

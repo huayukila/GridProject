@@ -40,6 +40,7 @@ namespace Framework.BuildProject
         // ƒrƒ‹ƒhó‘Ô‚Ìˆ—
         private void HandleBuildState()
         {
+            m_BuildDataPanelManager.ClosePanel();
             m_GridBuildSystem.VisualBuildingFollowMouse();
 
             if (Input.GetMouseButtonDown(0)) TrySetBuilding();

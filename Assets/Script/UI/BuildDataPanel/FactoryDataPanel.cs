@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine.UI;
 
 namespace Framework.BuildProject
@@ -8,7 +9,7 @@ namespace Framework.BuildProject
 
         public Button RemoveButton;
 
-        public Text WorkText;
+        public TextMeshProUGUI WorkText;
 
         // Start is called before the first frame update
         protected override void Start()
