@@ -23,7 +23,7 @@ MonoBehaviour:
   - Level: 1
     MaxWorker: 2
     MaxHp: 100
-    UpdateTime: 15
+    UpdateTime: 10
     CostList:
     - resType: 1
       Cost: 70

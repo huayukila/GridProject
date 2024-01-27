@@ -55,6 +55,11 @@ namespace Framework.BuildProject
                 return;
             m_PreCD -= Time.deltaTime;
 
+            if (Mathf.FloorToInt(m_PreCD) % 1 == 0)
+            {
+                CounterText.text = Mathf.FloorToInt(m_PreCD).ToString();
+            }
+
             if (m_PreCD <= 0)
             {
                 ShowObj.SetActive(false);
