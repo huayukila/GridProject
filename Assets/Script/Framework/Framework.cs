@@ -330,6 +330,32 @@ namespace Framework
 
     #endregion
 
+    #region IOC
+
+    public class IOCContainer
+    {
+        private readonly Dictionary<Type, object> mInstances = new();
+
+        public void Register<T>(T instance)
+        {
+            var key = typeof(T);
+            if (mInstances.ContainsKey(key))
+                mInstances[key] = instance;
+            else
+                mInstances.Add(key, instance);
+        }
+
+        public T Get<T>() where T : class
+        {
+            var key = typeof(T);
+            if (mInstances.TryGetValue(key, out var reinstance)) return reinstance as T;
+
+            return null;
+        }
+    }
+
+    #endregion
+
     #region Utility
 
     public interface IUtility
@@ -634,32 +660,6 @@ namespace Framework
         public class Registrations<T> : IRegistrations
         {
             public Action<T> OnEvent = e => { };
-        }
-    }
-
-    #endregion
-
-    #region IOC
-
-    public class IOCContainer
-    {
-        private readonly Dictionary<Type, object> mInstances = new();
-
-        public void Register<T>(T instance)
-        {
-            var key = typeof(T);
-            if (mInstances.ContainsKey(key))
-                mInstances[key] = instance;
-            else
-                mInstances.Add(key, instance);
-        }
-
-        public T Get<T>() where T : class
-        {
-            var key = typeof(T);
-            if (mInstances.TryGetValue(key, out var reinstance)) return reinstance as T;
-
-            return null;
         }
     }
 

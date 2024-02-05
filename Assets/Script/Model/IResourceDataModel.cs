@@ -101,8 +101,8 @@ namespace Framework.BuildProject
         {
             resDic = new Dictionary<ResourceType, int>
             {
-                { ResourceType.Wood, 700 },
-                { ResourceType.Stone, 400 },
+                { ResourceType.Wood, 800 },
+                { ResourceType.Stone, 500 },
                 { ResourceType.Gold, 160 },
                 { ResourceType.Worker, 0 }
             };

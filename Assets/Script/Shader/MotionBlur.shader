@@ -1,6 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
- 
-Shader "Unlit/My_MotionBlur"
+Shader "Unlit/MyMotionBlur"
 {
     Properties
     {

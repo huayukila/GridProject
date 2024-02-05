@@ -944,8 +944,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   briSatConShader: {fileID: 4800000, guid: f69d294c5ae6847498fdae24dabb077a, type: 3}
   brightness: 0
-  saturation: 1.62
-  contrast: 0.8
+  saturation: 1.88
+  contrast: 0.99
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -975,7 +975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloomShader: {fileID: 4800000, guid: 0627336743eeedd44930cd0af9bd2422, type: 3}
-  threshold: 0.7
+  threshold: 0.61
   blurTime: 7
 --- !u!114 &963194232
 MonoBehaviour:
@@ -1420,7 +1420,7 @@ MonoBehaviour:
   subCanvas: {fileID: 1359641858}
   targetPos: {x: 0, y: 52, z: -77}
   targetAngle: 45
-  targetBrightness: 0.959
+  targetBrightness: 0.86
 --- !u!4 &1463384922
 Transform:
   m_ObjectHideFlags: 0

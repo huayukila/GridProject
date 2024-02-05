@@ -4,11 +4,6 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class PostEffectsBase : MonoBehaviour
 {
-// Use this for initialization
-    private void Start()
-    {
-    }
-
     protected Material CheckShaderAndCreateMaterial(Shader shader, Material material)
     {
         if (shader == null) return null;

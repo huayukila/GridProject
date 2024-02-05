@@ -32,7 +32,6 @@ public class MotionBlur : PostEffectsBase
             {
                 DestroyImmediate(accumulationTexture);
                 accumulationTexture = new RenderTexture(source.width, source.height, 0);
-                //ïsï€ë∂òaïs?é¶ç›HierarchyíÜ
                 accumulationTexture.hideFlags = HideFlags.HideAndDontSave;
                 Graphics.Blit(source, accumulationTexture);
             }

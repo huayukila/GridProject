@@ -22,7 +22,7 @@ MonoBehaviour:
   LevelDatasList:
   - Level: 1
     MaxWorker: 2
-    MaxHp: 30
+    MaxHp: 60
     UpdateTime: 15
     CostList:
     - resType: 1

@@ -1,4 +1,4 @@
-Shader "Custom/BrightnessSaturateAndContrast"
+Shader "Unlit/BrightnessSaturateAndContrast"
 {
     Properties
     {

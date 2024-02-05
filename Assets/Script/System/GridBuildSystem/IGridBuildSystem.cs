@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 
 namespace Framework.BuildProject
@@ -64,7 +63,6 @@ namespace Framework.BuildProject
         public void CancelSelect()
         {
             m_playerDataModel.playerState = PlayerState.Normal;
-            m_VisualBuilding.DOKill();
             Object.Destroy(m_VisualBuilding.gameObject);
             m_VisualBuilding = null;
             m_BuildingData = null;
@@ -172,7 +170,7 @@ namespace Framework.BuildProject
 
         public void VisualBuildingFollowMouse()
         {
-            if(m_VisualBuilding==null)
+            if (m_VisualBuilding == null)
                 return;
             // マウスの世界座標を取得
             var mousePosition = Utils.GetMouseWorldPosition3D(Input.mousePosition, "Ground");
@@ -190,8 +188,10 @@ namespace Framework.BuildProject
             if (x >= 0 && z >= 0 && x < m_Grid.GetGridSize().x && z < m_Grid.GetGridSize().y &&
                 m_VisualBuilding != null)
             {
-                m_VisualBuilding.DORotate(new Vector3(0, GetRotationAngle(m_Dir), 0), 0.5f);
-                m_VisualBuilding.DOMove(buildingObjectWorldPosition, 0.5f);
+                m_VisualBuilding.rotation = Quaternion.Lerp(m_VisualBuilding.rotation,
+                    Quaternion.Euler(0, GetRotationAngle(m_Dir), 0), 7f * Time.deltaTime);
+                m_VisualBuilding.position = Vector3.Lerp(m_VisualBuilding.position, buildingObjectWorldPosition,
+                    7f * Time.deltaTime);
             }
         }
 
