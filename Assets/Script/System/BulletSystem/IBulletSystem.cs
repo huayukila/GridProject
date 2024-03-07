@@ -32,7 +32,12 @@ namespace Framework.BuildProject
         public void RecycleBullet(GameObject obj)
         {
             obj.transform.parent = m_BulletPool.transform;
-            if (m_BulletDic.TryGetValue(obj.GetComponent<BulletBase>().BulletType, out var temp)) temp.Recycle(obj);
+            if (m_BulletDic.TryGetValue
+                (
+                    obj.GetComponent<BulletBase>().BulletType, 
+                    out var temp)
+                )
+                temp.Recycle(obj);
         }
 
         // マネージャーによる初期化

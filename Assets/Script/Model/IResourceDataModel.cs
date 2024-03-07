@@ -94,6 +94,7 @@ namespace Framework.BuildProject
         protected override void OnInit()
         {
             // ここでリソースデータを初期化
+            //todo excelからデータを読み込み
             InitializeResources();
         }
 
